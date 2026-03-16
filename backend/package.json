@@ -1,0 +1,23 @@
+{
+  "name": "interaedu-backend",
+  "version": "1.0.0",
+  "private": true,
+  "description": "InteraEdu Backend Monorepo",
+  "workspaces": [
+    "shared",
+    "gateway",
+    "auth-service",
+    "profile-service",
+    "feed-service",
+    "messaging-service"
+  ],
+  "scripts": {
+    "build:all": "npm run build --workspaces",
+    "lint:all": "npm run lint --workspaces",
+    "test:all": "npm run test --workspaces",
+    "docker:up": "docker compose up -d",
+    "docker:down": "docker compose down",
+    "docker:logs": "docker compose logs -f",
+    "db:migrate": "npm run migration:run --workspaces --if-present"
+  }
+}
