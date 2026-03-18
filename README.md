@@ -6,7 +6,7 @@
 
 ## 📑 Documentação do Projeto
 
-Este projeto possui documentação técnica completa, organizada e 100% em Português do Brasil na pasta `/docs`.
+Este projeto possui documentação técnica completa e organizada na pasta `/docs`.
 
 **Antes de modificar qualquer código (Flutter ou NestJS), leia a documentação.**
 

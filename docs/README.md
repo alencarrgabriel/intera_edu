@@ -2,7 +2,7 @@
 
 Bem-vindo(a) à documentação técnica do **InteraEdu**.
 
-Toda a documentação foi padronizada em Português do Brasil e organizada em três pilares: Arquitetura, Guias de Desenvolvimento e MVP. Use este índice como ponto de entrada antes de qualquer implementação.
+Toda a documentação foi padronizada e organizada em três pilares: Arquitetura, Guias de Desenvolvimento e MVP. Use este índice como ponto de entrada antes de qualquer implementação.
 
 ---
 
