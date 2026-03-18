@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../../core/utils/validators.dart';
+import '../../../data/repositories/auth_repository_impl.dart';
+import '../../../domain/repositories/auth_repository.dart';
+import 'otp_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -12,6 +15,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   bool _isLoading = false;
+  final AuthRepository _authRepo = AuthRepositoryImpl();
 
   @override
   void dispose() {
@@ -23,20 +27,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
     if (!_formKey.currentState!.validate()) return;
     setState(() => _isLoading = true);
 
-    // TODO: Call AuthRepository.register
-    // On success, navigate to OTP screen
-    await Future.delayed(const Duration(seconds: 1));
-
-    setState(() => _isLoading = false);
-
-    // Navigate to OTP verification
-    if (mounted) {
+    try {
+      final email = _emailController.text.trim();
+      await _authRepo.register(email);
+      if (!mounted) return;
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(
-          builder: (_) => const Placeholder(), // TODO: OtpScreen(email)
-        ),
+        MaterialPageRoute(builder: (_) => OtpScreen(email: email)),
       );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../core/utils/validators.dart';
+import '../../../data/repositories/auth_repository_impl.dart';
+import '../../../domain/repositories/auth_repository.dart';
+import '../../onboarding/screens/profile_setup_screen.dart';
 
 class OtpScreen extends StatefulWidget {
   final String email;
@@ -14,6 +17,7 @@ class _OtpScreenState extends State<OtpScreen> {
   final _formKey = GlobalKey<FormState>();
   final _otpController = TextEditingController();
   bool _isLoading = false;
+  final AuthRepository _authRepo = AuthRepositoryImpl();
 
   @override
   void dispose() {
@@ -25,18 +29,37 @@ class _OtpScreenState extends State<OtpScreen> {
     if (!_formKey.currentState!.validate()) return;
     setState(() => _isLoading = true);
 
-    // TODO: Call AuthRepository.verifyOtp
-    // On success, navigate to profile setup screen
-    await Future.delayed(const Duration(seconds: 1));
-
-    setState(() => _isLoading = false);
+    try {
+      final token = await _authRepo.verifyOtp(widget.email, _otpController.text.trim());
+      if (!mounted) return;
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (_) => ProfileSetupScreen(
+            temporaryToken: token,
+            email: widget.email,
+          ),
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
   }
 
   Future<void> _handleResend() async {
-    // TODO: Call AuthRepository.register again (resend OTP)
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Verification code resent!')),
-    );
+    try {
+      await _authRepo.register(widget.email);
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Verification code resent!')),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
+    }
   }
 
   @override

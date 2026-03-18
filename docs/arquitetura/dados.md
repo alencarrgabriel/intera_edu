@@ -1,29 +1,29 @@
-# InteraEdu — Data Architecture
+# InteraEdu — Arquitetura de Dados
 
-**Version:** 2.0
-**Date:** March 2026
+**Versão:** 2.0
+**Data:** Março 2026
 
 ---
 
-## 1. Database Strategy
+## 1. Estratégia de Banco de Dados
 
-### 1.1 Shared Instance, Separate Schemas
-In the MVP, all services share a single PostgreSQL 16 instance but use **separate schemas** to maintain logical ownership boundaries:
+### 1.1 Instância Compartilhada, Schemas Separados
+No MVP, todos os serviços compartilham uma única instância PostgreSQL 16 mas usam **esquemas (schemas) separados** para manter os limites lógicos de propriedade:
 
-| Schema | Owner | Purpose |
+| Schema | Responsável | Propósito |
 |:---|:---|:---|
-| `auth` | Auth Service | Credentials, tokens, OTP, institutions |
-| `profile` | Profile Service | User profiles, skills, connections |
-| `feed` | Feed Service | Posts, reactions, comments |
-| `messaging` | Messaging Service | Chats, messages, read receipts |
+| `auth` | Serviço Auth | Credenciais, tokens, OTP, instituições |
+| `profile` | Serviço Profile | Perfis de usuário, habilidades, conexões |
+| `feed` | Serviço Feed | Posts, reações, comentários |
+| `messaging` | Serviço Messaging | Chats, mensagens, confirmações de leitura |
 
-Each service has exclusive read/write access to its own schema. Cross-schema queries are **forbidden** — services communicate via HTTP or events.
+Cada serviço tem acesso exclusivo de leitura/escrita ao seu próprio esquema. Consultas cruzadas entre esquemas são **proibidas** — os serviços se comunicam via HTTP ou eventos.
 
-### 1.2 Multi-Tenant Filtering
-Multi-tenancy is implemented via a `institution_id` column on relevant tables. PostgreSQL **Row-Level Security (RLS)** provides a database-level guardrail:
+### 1.2 Filtragem Multi-Inquilino (Multi-Tenant)
+O design multi-inquilino é implementado via coluna `institution_id` nas tabelas relevantes. **A Segurança em Nível de Linha (RLS)** do PostgreSQL fornece uma proteção nativa no nível do banco:
 
 ```sql
--- Example RLS policy for local-scoped feed queries
+-- Exemplo de política RLS para consultas de feed com escopo local
 ALTER TABLE feed.posts ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY local_feed_policy ON feed.posts
@@ -34,21 +34,21 @@ CREATE POLICY local_feed_policy ON feed.posts
   );
 ```
 
-The application sets `SET LOCAL app.current_institution_id = '<uuid>'` at the start of each transaction.
+A aplicação define `SET LOCAL app.current_institution_id = '<uuid>'` no início de cada transação.
 
 ---
 
-## 2. Schema Definitions
+## 2. Definições dos Schemas
 
-### 2.1 Auth Schema
+### 2.1 Schema Auth
 
 ```sql
--- Institutions (Tenants)
+-- Instituições Educacionais
 CREATE TABLE auth.institutions (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   name VARCHAR(255) NOT NULL,
   slug VARCHAR(100) NOT NULL UNIQUE,
-  domains TEXT[] NOT NULL,               -- Array of approved email domains
+  domains TEXT[] NOT NULL,               -- Array de domínios de e-mail aprovados
   is_verified BOOLEAN DEFAULT false,
   logo_url VARCHAR(500),
   created_at TIMESTAMPTZ DEFAULT NOW(),
@@ -57,7 +57,7 @@ CREATE TABLE auth.institutions (
 
 CREATE INDEX idx_institutions_domains ON auth.institutions USING GIN (domains);
 
--- User credentials
+-- Credenciais de usuário
 CREATE TABLE auth.user_credentials (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   email VARCHAR(320) NOT NULL UNIQUE,
@@ -68,18 +68,18 @@ CREATE TABLE auth.user_credentials (
   last_login_at TIMESTAMPTZ,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW(),
-  deleted_at TIMESTAMPTZ               -- Soft delete
+  deleted_at TIMESTAMPTZ               -- Exclusão lógica (Soft delete)
 );
 
 CREATE INDEX idx_user_credentials_email ON auth.user_credentials(email);
 CREATE INDEX idx_user_credentials_institution ON auth.user_credentials(institution_id);
 CREATE INDEX idx_user_credentials_status ON auth.user_credentials(status) WHERE status = 'active';
 
--- OTP codes
+-- Códigos OTP
 CREATE TABLE auth.otp_codes (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   email VARCHAR(320) NOT NULL,
-  code_hash VARCHAR(255) NOT NULL,      -- bcrypt hash of OTP
+  code_hash VARCHAR(255) NOT NULL,      -- Hash bcrypt do OTP
   purpose VARCHAR(20) NOT NULL
     CHECK (purpose IN ('registration', 'login', 'password_reset')),
   attempts INTEGER DEFAULT 0,
@@ -91,7 +91,7 @@ CREATE TABLE auth.otp_codes (
 
 CREATE INDEX idx_otp_email_purpose ON auth.otp_codes(email, purpose) WHERE used_at IS NULL;
 
--- Refresh tokens
+-- Tokens de Atualização (Refresh Tokens)
 CREATE TABLE auth.refresh_tokens (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID NOT NULL REFERENCES auth.user_credentials(id) ON DELETE CASCADE,
@@ -105,7 +105,7 @@ CREATE TABLE auth.refresh_tokens (
 CREATE INDEX idx_refresh_tokens_user ON auth.refresh_tokens(user_id) WHERE revoked_at IS NULL;
 CREATE INDEX idx_refresh_tokens_hash ON auth.refresh_tokens(token_hash);
 
--- LGPD consent records
+-- Registros de consentimento LGPD
 CREATE TABLE auth.consent_records (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID NOT NULL REFERENCES auth.user_credentials(id) ON DELETE CASCADE,
@@ -118,7 +118,7 @@ CREATE TABLE auth.consent_records (
 
 CREATE INDEX idx_consent_user ON auth.consent_records(user_id);
 
--- Auth audit log
+-- Log de auditoria de autenticação
 CREATE TABLE auth.audit_log (
   id BIGSERIAL PRIMARY KEY,
   user_id UUID,
@@ -134,17 +134,17 @@ CREATE INDEX idx_auth_audit_action ON auth.audit_log(action);
 CREATE INDEX idx_auth_audit_created ON auth.audit_log(created_at);
 ```
 
-### 2.2 Profile Schema
+### 2.2 Schema Profile
 
 ```sql
--- User profiles
+-- Perfis de usuário
 CREATE TABLE profile.users (
-  id UUID PRIMARY KEY,                  -- Same UUID as auth.user_credentials.id
+  id UUID PRIMARY KEY,                  -- Mesmo UUID de auth.user_credentials.id
   institution_id UUID NOT NULL,
   full_name VARCHAR(255) NOT NULL,
   bio TEXT,
   course VARCHAR(255),
-  period INTEGER,                       -- Current semester/year
+  period INTEGER,                       -- Semestre/período atual
   privacy_level VARCHAR(20) DEFAULT 'local_only'
     CHECK (privacy_level IN ('public', 'local_only', 'private')),
   avatar_url VARCHAR(500),
@@ -159,7 +159,7 @@ CREATE INDEX idx_profile_users_name_search ON profile.users USING GIN (
   to_tsvector('portuguese', full_name)
 );
 
--- Skill taxonomy
+-- Taxonomia de habilidades
 CREATE TABLE profile.skills (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   name VARCHAR(100) NOT NULL,
@@ -173,7 +173,7 @@ CREATE INDEX idx_skills_name_search ON profile.skills USING GIN (
   to_tsvector('simple', name)
 );
 
--- User-skill association
+-- Associação usuário-habilidade
 CREATE TABLE profile.user_skills (
   user_id UUID NOT NULL REFERENCES profile.users(id) ON DELETE CASCADE,
   skill_id UUID NOT NULL REFERENCES profile.skills(id) ON DELETE CASCADE,
@@ -182,7 +182,7 @@ CREATE TABLE profile.user_skills (
 
 CREATE INDEX idx_user_skills_skill ON profile.user_skills(skill_id);
 
--- External links
+-- Links externos
 CREATE TABLE profile.user_links (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID NOT NULL REFERENCES profile.users(id) ON DELETE CASCADE,
@@ -194,7 +194,7 @@ CREATE TABLE profile.user_links (
 
 CREATE INDEX idx_user_links_user ON profile.user_links(user_id);
 
--- Connections
+-- Conexões
 CREATE TABLE profile.connections (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   requester_id UUID NOT NULL REFERENCES profile.users(id) ON DELETE CASCADE,
@@ -209,7 +209,7 @@ CREATE TABLE profile.connections (
 CREATE INDEX idx_connections_requester ON profile.connections(requester_id, status);
 CREATE INDEX idx_connections_addressee ON profile.connections(addressee_id, status);
 
--- Block list
+-- Lista de bloqueio
 CREATE TABLE profile.blocked_users (
   blocker_id UUID NOT NULL REFERENCES profile.users(id) ON DELETE CASCADE,
   blocked_id UUID NOT NULL REFERENCES profile.users(id) ON DELETE CASCADE,
@@ -217,14 +217,14 @@ CREATE TABLE profile.blocked_users (
   PRIMARY KEY (blocker_id, blocked_id)
 );
 
--- Profile audit log
+-- Log de auditoria de perfil
 CREATE TABLE profile.audit_log (
   id BIGSERIAL PRIMARY KEY,
   user_id UUID,
   action VARCHAR(50) NOT NULL,
   target_type VARCHAR(50),
   target_id UUID,
-  changes JSONB,                        -- { field: { old, new } }
+  changes JSONB,                        -- { campo: { antigo, novo } }
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
@@ -232,10 +232,10 @@ CREATE INDEX idx_profile_audit_user ON profile.audit_log(user_id);
 CREATE INDEX idx_profile_audit_created ON profile.audit_log(created_at);
 ```
 
-### 2.3 Feed Schema
+### 2.3 Schema Feed
 
 ```sql
--- Posts
+-- Publicações (Posts)
 CREATE TABLE feed.posts (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   author_id UUID NOT NULL,
@@ -243,27 +243,27 @@ CREATE TABLE feed.posts (
   content TEXT NOT NULL,
   scope VARCHAR(10) DEFAULT 'global'
     CHECK (scope IN ('local', 'global')),
-  media_urls TEXT[],                    -- S3 URLs for attached files
-  reaction_count INTEGER DEFAULT 0,     -- Denormalized counter
-  comment_count INTEGER DEFAULT 0,      -- Denormalized counter
+  media_urls TEXT[],                    -- URLs S3 para arquivos anexados
+  reaction_count INTEGER DEFAULT 0,     -- Contador desnormalizado
+  comment_count INTEGER DEFAULT 0,      -- Contador desnormalizado
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW(),
   deleted_at TIMESTAMPTZ
 );
 
--- Primary feed query indexes
+-- Índices primários de consulta do feed
 CREATE INDEX idx_posts_local_feed ON feed.posts(institution_id, created_at DESC)
   WHERE deleted_at IS NULL;
 CREATE INDEX idx_posts_global_feed ON feed.posts(created_at DESC)
   WHERE deleted_at IS NULL AND scope = 'global';
 CREATE INDEX idx_posts_author ON feed.posts(author_id);
 
--- Full-text search on post content
+-- Busca de texto completo no conteúdo dos posts
 CREATE INDEX idx_posts_content_search ON feed.posts USING GIN (
   to_tsvector('portuguese', content)
 ) WHERE deleted_at IS NULL;
 
--- Reactions
+-- Reações
 CREATE TABLE feed.reactions (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   post_id UUID NOT NULL REFERENCES feed.posts(id) ON DELETE CASCADE,
@@ -271,17 +271,17 @@ CREATE TABLE feed.reactions (
   reaction_type VARCHAR(20) NOT NULL
     CHECK (reaction_type IN ('like', 'insightful', 'support')),
   created_at TIMESTAMPTZ DEFAULT NOW(),
-  UNIQUE (post_id, user_id)             -- One reaction per user per post
+  UNIQUE (post_id, user_id)             -- Uma reação por usuário por post
 );
 
 CREATE INDEX idx_reactions_post ON feed.reactions(post_id);
 
--- Comments
+-- Comentários
 CREATE TABLE feed.comments (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   post_id UUID NOT NULL REFERENCES feed.posts(id) ON DELETE CASCADE,
   user_id UUID NOT NULL,
-  parent_comment_id UUID REFERENCES feed.comments(id),  -- Single-level threading
+  parent_comment_id UUID REFERENCES feed.comments(id),  -- Encadeamento com apenas 1 nível
   content TEXT NOT NULL,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   deleted_at TIMESTAMPTZ
@@ -290,7 +290,7 @@ CREATE TABLE feed.comments (
 CREATE INDEX idx_comments_post ON feed.comments(post_id, created_at);
 CREATE INDEX idx_comments_parent ON feed.comments(parent_comment_id);
 
--- Abuse reports
+-- Denúncias de abuso
 CREATE TABLE feed.reports (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   reporter_id UUID NOT NULL,
@@ -308,7 +308,7 @@ CREATE TABLE feed.reports (
 
 CREATE INDEX idx_reports_status ON feed.reports(status) WHERE status = 'pending';
 
--- Feed audit log
+-- Log de auditoria do feed
 CREATE TABLE feed.audit_log (
   id BIGSERIAL PRIMARY KEY,
   user_id UUID,
@@ -322,15 +322,15 @@ CREATE TABLE feed.audit_log (
 CREATE INDEX idx_feed_audit_created ON feed.audit_log(created_at);
 ```
 
-### 2.4 Messaging Schema
+### 2.4 Schema Messaging
 
 ```sql
--- Chats
+-- Turmas e Conversas Privadas (Chats)
 CREATE TABLE messaging.chats (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   chat_type VARCHAR(10) NOT NULL
     CHECK (chat_type IN ('direct', 'group')),
-  name VARCHAR(255),                    -- NULL for direct chats
+  name VARCHAR(255),                    -- Nulo para conversas diretas
   description TEXT,
   topic_tags TEXT[],
   max_members INTEGER DEFAULT 50,
@@ -338,7 +338,7 @@ CREATE TABLE messaging.chats (
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Chat members
+-- Membros do chat
 CREATE TABLE messaging.chat_members (
   chat_id UUID NOT NULL REFERENCES messaging.chats(id) ON DELETE CASCADE,
   user_id UUID NOT NULL,
@@ -351,7 +351,7 @@ CREATE TABLE messaging.chat_members (
 
 CREATE INDEX idx_chat_members_user ON messaging.chat_members(user_id) WHERE left_at IS NULL;
 
--- Messages
+-- Mensagens Trocdas
 CREATE TABLE messaging.messages (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   chat_id UUID NOT NULL REFERENCES messaging.chats(id) ON DELETE CASCADE,
@@ -368,7 +368,7 @@ CREATE TABLE messaging.messages (
 CREATE INDEX idx_messages_chat_sent ON messaging.messages(chat_id, sent_at DESC);
 CREATE INDEX idx_messages_sender ON messaging.messages(sender_id);
 
--- Read receipts
+-- Recibos e Confirmações de leitura (Visto de última mensagem)
 CREATE TABLE messaging.read_receipts (
   chat_id UUID NOT NULL REFERENCES messaging.chats(id) ON DELETE CASCADE,
   user_id UUID NOT NULL,
@@ -377,7 +377,7 @@ CREATE TABLE messaging.read_receipts (
   PRIMARY KEY (chat_id, user_id)
 );
 
--- Messaging audit log
+-- Log de auditoria de mensagens
 CREATE TABLE messaging.audit_log (
   id BIGSERIAL PRIMARY KEY,
   user_id UUID,
@@ -392,13 +392,13 @@ CREATE INDEX idx_msg_audit_created ON messaging.audit_log(created_at);
 
 ---
 
-## 3. Rate Limiting Table
+## 3. Tabela de Limitação de Requisição (Rate Limiting)
 
 ```sql
--- Shared rate limiting (used by API Gateway via Redis, persisted for analytics)
+-- Log de Limite de Taxa compartilhado (usado pelo API Gateway via Redis, gravado para analytics)
 CREATE TABLE public.rate_limit_log (
   id BIGSERIAL PRIMARY KEY,
-  identifier VARCHAR(255) NOT NULL,     -- IP address or user_id
+  identifier VARCHAR(255) NOT NULL,     -- Endereço IP ou ID do usuário
   endpoint VARCHAR(255) NOT NULL,
   request_count INTEGER DEFAULT 1,
   window_start TIMESTAMPTZ NOT NULL,
@@ -410,34 +410,34 @@ CREATE TABLE public.rate_limit_log (
 CREATE INDEX idx_rate_limit_identifier ON public.rate_limit_log(identifier, endpoint, window_start);
 ```
 
-> **Note:** Real-time rate limiting uses Redis sliding window counters. This table is for audit/analytics only.
+> **Aviso:** O bloqueio em tempo real usa contadores de janela deslizante no Redis. O PostgreSQL anota isso friamente para auditoria depois (Analytics).
 
 ---
 
-## 4. Search Strategy
+## 4. Estratégia de Busca e Pesquisa
 
-### Phase 1 (MVP): PostgreSQL Native
-- **Full-text search**: `to_tsvector('portuguese', ...)` with GIN indexes on `profile.users.full_name`, `feed.posts.content`.
-- **Skills search**: B-tree index on `profile.user_skills.skill_id` with join queries.
-- **Filtered search**: Composite indexes on `(institution_id, course)`.
+### Fase 1 (MVP): PostgreSQL Nativo
+- **Busca via texto completo**: `to_tsvector('portuguese', ...)` somada com índices GIN pesados no campo de nomes (`profile.users.full_name`) e dos textos redigidos em posts (`feed.posts.content`).
+- **Peneira por habilidades formadas**: Índice pesado B-tree no elo `profile.user_skills.skill_id` unindo as views apropriadas.
+- **Filtro combinatório avançado**: Índices paralelos complexos (`institution_id, course`).
 
-### Phase 2 (Scale): Elasticsearch Migration
-When reaching >100K users:
-- Deploy Elasticsearch cluster.
-- Use Change Data Capture (CDC) via Debezium to sync PostgreSQL → Elasticsearch.
-- Migrate search queries to Elasticsearch API.
-- PostgreSQL remains the source of truth.
+### Fase 2 (Escala Global): Mudança Provisória para Elasticsearch
+No cenário de bater 100K pessoas fixas:
+- Levanta implantação Elasticsearch nativa.
+- Usa Change Data Capture (CDC) puxando a alavanca Debezium para forçar cópia fria do PostgreSQL → Elasticsearch.
+- Transfere as chamadas HTTP cruas das buscas complexas para a API do Elastic.
+- PostgreSQL enraíza intocável como a principal e única fonte de verdade final.
 
 ---
 
-## 5. Data Lifecycle & Retention
+## 5. Ciclo de Vida e Retenção de Dados
 
-| Data Type | Retention | Strategy |
+| Tipo de Base Lógica | Sobrevivência | Plano de Voo |
 |:---|:---|:---|
-| Active user data | Indefinite | Normalize, index |
-| Soft-deleted content | 90 days | `deleted_at` → purge job |
-| Audit logs | 5 years | Partition by month, archive to cold storage |
-| OTP codes | 10 minutes | Redis TTL + DB cleanup job |
-| Refresh tokens (revoked) | 30 days | Cleanup job |
-| Rate limit logs | 90 days | Cleanup job |
-| Anonymized user data | Indefinite | Replaced with "Deleted User" |
+| Conta base viva | De AdEternum | Deixar intocável |
+| Dado varrido por Soft Delete | Sobrevida de 90 dias | O ponteiro `deleted_at` engatilha e apaga do BD pra sempre (Pós Job Limpador) |
+| Entradas Frias de Auditoria | 5 anos longos | Mês a Mês os lotes são transferidos e jogados para um disco SSD parado de Cold Storage |
+| Códigos Descartáveis OTP | 10 minutinhos | Tempo limite no Redis espirra; Banco varre o vazio de hora em hora |
+| Tokens Defesos e Revogados | Menos de 1 Mês | Entra a vassoura mensal para varrer Tokens marcados como inválidos |
+| Lixos de Taxa de Requisição Diária | Sobrevida Fria de 90 dias | Job Noturno varre após Data Máxima |
+| Perfis Apagados pela Pessoa (LGPD) | AdEternum Vazio | As planilhas preservam o escarço sem ligar ao nome. Muda o flag pro vulgo textual "Usuário Excluído" |

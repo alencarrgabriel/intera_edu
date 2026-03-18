@@ -1,173 +1,56 @@
-# InteraEdu — Plataforma de Networking Acadêmico
+# InteraEdu
 
-> Conectando mentes, expandindo o conhecimento sem fronteiras.
-
-O **InteraEdu** é uma plataforma de networking acadêmico interuniversitário. Nossa missão é quebrar os "silos" institucionais, permitindo que estudantes e pesquisadores colaborem com base em habilidades e interesses, promovendo uma cultura de **Mastery Orientation**.
+> **Rede social acadêmica** restrita e validada em ambiente virtual que conecta universitários de forma exclusiva, funcional e segura.
 
 ---
 
-## 🚀 Funcionalidades Principais
+## 📑 A Documentação Principal Desse Projeto
 
-- **Autenticação Institucional** — Acesso exclusivo via e-mails educacionais (`.edu.br`) validados por OTP
-- **Busca Interuniversitária** — Encontre pares com habilidades complementares em qualquer IES do país
-- **Feed Híbrido** — Alterne entre Feed Local (sua universidade) e Feed Global (toda a base) com algoritmo _Force Exploration_ (≥20% conteúdo de outras IES)
-- **Mensagens em Tempo Real** — Chat 1:1 e grupos de estudo via WebSocket (Socket.IO)
-- **Privacy by Design** — Controle granular de visibilidade (público, local, privado) em conformidade com a LGPD
+Diferente de muitos repositórios, este aplicativo e seu ecossistema **possuem uma documentação exaustiva, profissional e 100% em português brasileiro** localizada na nossa pasta central `/docs`.
 
----
+Antes de você mexer em qualquer linha de código (Flutter ou Node/NestJs), é mandatório o entendimento da nossa Arquitetura Mestra e Padrões Base Apoiadores.
 
-## 🏗️ Arquitetura
+👉 **Vá direto para: [Índice Mestre de Engenharia, Guias e MVP](./docs/README.md).** 👈
 
-| Camada | Tecnologia |
-|:---|:---|
-| **Mobile** | Flutter (Dart) — Clean Architecture |
-| **API Gateway** | NestJS com rate limiting e proxy reverso |
-| **Microsserviços** | NestJS (TypeScript) — Auth, Profile, Feed, Messaging |
-| **Banco de Dados** | PostgreSQL 16 (esquema por serviço com RLS) |
-| **Cache / Pub-Sub** | Redis 7 (cache, sessões, WebSocket fan-out) |
-| **Object Storage** | MinIO (dev) / S3 (produção) |
-| **CI/CD** | GitHub Actions → Docker → Kubernetes |
-
-```
-┌─────────────┐
-│  Flutter App │
-└──────┬──────┘
-       │ HTTPS
-┌──────▼──────┐
-│  API Gateway │  (porta 3000)
-│   (NestJS)   │
-└──┬───┬───┬──┘
-   │   │   │
-┌──▼┐ ┌▼──┐ ┌▼───────────┐
-│Auth│ │Pro│ │Feed │ Msg  │
-│3001│ │3002│ │3003 │ 3004│
-└──┬─┘ └─┬─┘ └──┬──┴──┬──┘
-   │     │      │     │
-┌──▼─────▼──────▼─────▼──┐
-│     PostgreSQL + Redis   │
-└──────────────────────────┘
-```
+**(Ou acesse algumas ramificações isoladas diretas caso tenha pressa):**
+* 📕 [Padrões Rígidos de Desenvolvimento e Estruturas](./docs/guias/padroes-desenvolvimento.md)
+* 💡 [Visão Macro e Justificativa de Arquitetura Limpa](./docs/arquitetura/sistema.md)
+* 📊 [O Status de Produção e MVP — O que já está vivo?](./docs/mvp/status-implementacao.md)
 
 ---
 
-## 📖 Documentação
+## ⚡ Setup Dev Básico: Rodando o Projeto Completo
 
-Toda a documentação técnica está na pasta [`docs/`](docs/), organizada na seguinte ordem de leitura:
+Abaixo os passos básicos e sujos para colocar o chassi do backend/mobile vivo localmente. *(Os detalhes e armações profundas estão na documentação da sub-pasta `/docs` e nos seus guias de uso)*.
 
-| # | Documento | Conteúdo |
-|:--|:----------|:---------|
-| 01 | [Visão do Produto](docs/01_product_vision.md) | Personas, métricas de sucesso, análise competitiva, escopo |
-| 02 | [Especificação de Requisitos (SRS)](docs/02_srs.md) | 40 requisitos funcionais, 14 não-funcionais, casos de uso |
-| 03 | [Arquitetura do Sistema](docs/03_system_architecture.md) | Topologia de serviços, padrões de comunicação, diagramas |
-| 04 | [Design de Microsserviços](docs/04_microservices_design.md) | Contratos por serviço, fluxos de eventos, ownership de dados |
-| 05 | [Arquitetura de Dados](docs/05_data_architecture.md) | 20+ tabelas, índices, RLS, audit logs, soft deletes |
-| 06 | [Design da API](docs/06_api_design.md) | Convenções REST, paginação por cursor, todos os endpoints |
-| 07 | [Arquitetura de Segurança](docs/07_security_architecture.md) | Ciclo JWT, proteção OTP, rate limiting, modelo de ameaças |
-| 08 | [Arquitetura DevOps](docs/08_devops_architecture.md) | Docker, CI/CD, monitoramento, alertas, gestão de segredos |
-| 09 | [Estratégia de Escalabilidade](docs/09_scalability_strategy.md) | Cache, filas (BullMQ), busca, escala horizontal, DR |
-
----
-
-## 📂 Estrutura do Projeto
-
-```
-intera_edu/
-├── docs/                         # 9 documentos de arquitetura
-├── backend/                      # Monorepo NestJS
-│   ├── docker-compose.yml        # PostgreSQL, Redis, MinIO + serviços
-│   ├── shared/                   # Biblioteca compartilhada (@interaedu/shared)
-│   │   └── src/
-│   │       ├── database/         # DatabaseModule (TypeORM)
-│   │       ├── redis/            # RedisModule + RedisService
-│   │       ├── auth/             # JwtStrategy, JwtAuthGuard, @CurrentUser
-│   │       ├── dto/              # PaginationDto, ErrorResponseDto
-│   │       └── interfaces/       # JwtPayload, PaginatedResponse
-│   ├── gateway/                  # API Gateway (porta 3000)
-│   ├── auth-service/             # Serviço de Autenticação (porta 3001)
-│   ├── profile-service/          # Serviço de Perfis (porta 3002)
-│   ├── feed-service/             # Serviço de Feed (porta 3003)
-│   └── messaging-service/        # Serviço de Mensagens (porta 3004)
-└── lib/                          # App Flutter (Clean Architecture)
-    ├── core/                     # Config, tema, API client, storage
-    ├── domain/                   # Entidades e contratos (repositories)
-    ├── data/                     # Modelos e implementações
-    └── presentation/             # Telas (auth, onboarding)
-```
-
----
-
-## 🛠️ Como Iniciar
-
-### Pré-requisitos
-
-- [Node.js](https://nodejs.org/) v20+
-- [Docker](https://www.docker.com/) e Docker Compose
-- [Flutter](https://docs.flutter.dev/get-started/install) SDK ^3.11.0
-
-### Backend
+### 1. Backend e Microsserviços (Em Containers)
 
 ```bash
-# 1. Instalar dependências (todos os workspaces)
 cd backend
-npm install
-
-# 2. Copiar variáveis de ambiente
-cp .env.example .env
-
-# 3. Subir infraestrutura (PostgreSQL, Redis, MinIO)
-docker compose up -d postgres redis minio
-
-# 4. Rodar serviços em desenvolvimento
-# (em terminais separados ou use docker compose up)
-cd auth-service && npm run start:dev
-cd gateway && npm run start:dev
-# ... repetir para os demais serviços
+cp .env.example .env  # configure as variáveis de ambiente locais do desenvolvedor (ou use o mock falso base)
+docker-compose up --build
 ```
+> Após as máquinas subirem, o serviço primário Gateway estará atendendo requisições HTTP na fronteira em: `http://localhost:3000/api/v1`
 
-### Frontend (Flutter)
+### 2. Frontend Mobile View (Flutter / Dart)
 
 ```bash
-# 1. Instalar dependências
+# Na raiz do projeto / mobile:
 flutter pub get
 
-# 2. Rodar o app
+# Configure a URL da API em lib/core/config/app_config.dart
+# ex: apiBaseUrl = 'http://10.0.2.2:3000/api/v1' (No uso emulador Android Local)
+# ex: apiBaseUrl = 'http://localhost:3000/api/v1' (Para Chrome Web Dev Tester Local)
+
 flutter run
 ```
 
 ---
 
-## 🔒 Segurança
+## ⚙️ Tecnologias Fatais Empregadas
 
-- **JWT** com Access Token (15 min) + Refresh Token com rotação (7 dias)
-- **OTP** via e-mail institucional (6 dígitos, 5 tentativas, lockout de 15 min)
-- **Rate Limiting** por IP e por usuário no API Gateway
-- **RLS** (Row-Level Security) no PostgreSQL para isolamento multi-tenant
-- **LGPD** — Exportação de dados, exclusão com anonimização, registros de consentimento
+- **Back-end Core:** Microsserviços baseados em Node.js (20+) + Framework NestJS Frio (10+) rodando sob Linguagem TypeScript Fortemente Tipada. Banco Central TypeORM batendo num Relacional Poderoso PostgreSQL (16). E Cache de Filas Ocultas usando Redis (7). Armazém de Fotos Temporário Falso Cloud MinIO em Docker.
+- **Mobile C:** Flutter Clean Architecture Brutal (Camadas cegas UI x Repositories) batendo pacotes base de request nativo e lib dart de base HTTP.
 
 ---
-
-## 📊 Stack Tecnológica
-
-| Categoria | Tecnologia |
-|:---|:---|
-| Mobile | Flutter 3.x / Dart |
-| Backend | NestJS 10.x / TypeScript 5.x |
-| Banco de Dados | PostgreSQL 16 |
-| Cache | Redis 7 |
-| Mensageria | BullMQ (filas) + Redis Pub/Sub (WebSocket) |
-| WebSocket | Socket.IO + Redis Adapter |
-| Object Storage | MinIO (dev) / AWS S3 (produção) |
-| Containerização | Docker + Docker Compose |
-| CI/CD | GitHub Actions |
-| Monitoramento | Prometheus + Grafana + Pino (logs) |
-| Tracing | OpenTelemetry → Jaeger |
-
----
-
-## 📝 Licença
-
-Este projeto é de uso privado e acadêmico.
-
----
-
-*InteraEdu — Conectando mentes, expandindo o conhecimento sem fronteiras.* 🎓
+*Para um entendimento amplo de toda Base de Código com Diagramas, leia as pastas mapeadas em [`/docs/README.md`](./docs/README.md).*

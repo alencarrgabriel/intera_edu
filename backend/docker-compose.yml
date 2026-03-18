@@ -57,8 +57,8 @@ services:
   # ──────────────────────────────────────────
   gateway:
     build:
-      context: ./gateway
-      dockerfile: Dockerfile
+      context: .          # backend/ root — provides package-lock.json for npm ci
+      dockerfile: gateway/Dockerfile
     container_name: interaedu-gateway
     restart: unless-stopped
     ports:
@@ -79,8 +79,8 @@ services:
 
   auth-service:
     build:
-      context: ./auth-service
-      dockerfile: Dockerfile
+      context: .          # backend/ root — provides package-lock.json for npm ci
+      dockerfile: auth-service/Dockerfile
     container_name: interaedu-auth-service
     restart: unless-stopped
     ports:
@@ -111,8 +111,8 @@ services:
 
   profile-service:
     build:
-      context: ./profile-service
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: profile-service/Dockerfile
     container_name: interaedu-profile-service
     restart: unless-stopped
     ports:
@@ -138,8 +138,8 @@ services:
 
   feed-service:
     build:
-      context: ./feed-service
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: feed-service/Dockerfile
     container_name: interaedu-feed-service
     restart: unless-stopped
     ports:
@@ -166,8 +166,8 @@ services:
 
   messaging-service:
     build:
-      context: ./messaging-service
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: messaging-service/Dockerfile
     container_name: interaedu-messaging-service
     restart: unless-stopped
     ports:

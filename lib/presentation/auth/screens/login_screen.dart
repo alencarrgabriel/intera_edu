@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../../core/utils/validators.dart';
+import '../../../data/repositories/auth_repository_impl.dart';
+import '../../../domain/repositories/auth_repository.dart';
+import '../../feed/screens/feed_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -14,6 +17,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final _passwordController = TextEditingController();
   bool _isLoading = false;
   bool _obscurePassword = true;
+  final AuthRepository _authRepo = AuthRepositoryImpl();
 
   @override
   void dispose() {
@@ -26,10 +30,20 @@ class _LoginScreenState extends State<LoginScreen> {
     if (!_formKey.currentState!.validate()) return;
     setState(() => _isLoading = true);
 
-    // TODO: Call AuthRepository.login
-    await Future.delayed(const Duration(seconds: 1)); // Simulated
-
-    setState(() => _isLoading = false);
+    try {
+      await _authRepo.login(_emailController.text.trim(), _passwordController.text);
+      if (!mounted) return;
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (_) => const FeedScreen()),
+        (route) => false,
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
   }
 
   @override
@@ -140,7 +154,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       const Text("Don't have an account? "),
                       TextButton(
                         onPressed: () {
-                          // TODO: Navigate to RegisterScreen
+                          // Keep MVP simple: go back to Welcome and choose register
+                          Navigator.pop(context);
                         },
                         child: const Text('Create Account'),
                       ),

@@ -1,6 +1,7 @@
 import { Controller, Get, Patch, Delete, Body, Param, Query } from '@nestjs/common';
 import { ProfileService } from './profile.service';
-import { CurrentUser, JwtPayload, PaginationDto } from '@interaedu/shared';
+import { CurrentUser, JwtPayload } from '@interaedu/shared';
+import { UpdateProfileDto } from './dto/update-profile.dto';
 
 @Controller('users')
 export class ProfileController {
@@ -12,7 +13,7 @@ export class ProfileController {
   }
 
   @Patch('me')
-  async updateMyProfile(@CurrentUser() user: JwtPayload, @Body() dto: any) {
+  async updateMyProfile(@CurrentUser() user: JwtPayload, @Body() dto: UpdateProfileDto) {
     return this.profileService.update(user.sub, dto);
   }
 

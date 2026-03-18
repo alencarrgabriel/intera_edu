@@ -1,4 +1,4 @@
-import { Injectable, Logger, TooManyRequestsException } from '@nestjs/common';
+import { Injectable, Logger, HttpException, HttpStatus } from '@nestjs/common';
 import { RedisService } from '@interaedu/shared';
 import * as crypto from 'crypto';
 
@@ -21,7 +21,7 @@ export class OtpService {
       await this.redis.expire(requestKey, 3600);
     }
     if (requestCount > OTP_MAX_REQUESTS_PER_HOUR) {
-      throw new TooManyRequestsException('Too many OTP requests. Try again later.');
+      throw new HttpException('Too many OTP requests. Try again later.', HttpStatus.TOO_MANY_REQUESTS);
     }
 
     // Generate 6-digit OTP
@@ -46,7 +46,7 @@ export class OtpService {
     const cooldownKey = `otp:cooldown:${email}`;
     const cooldown = await this.redis.get(cooldownKey);
     if (cooldown) {
-      throw new TooManyRequestsException('Too many attempts. Try again in 15 minutes.');
+      throw new HttpException('Too many attempts. Try again in 15 minutes.', HttpStatus.TOO_MANY_REQUESTS);
     }
 
     const otpKey = `otp:${purpose}:${email}`;
@@ -65,7 +65,7 @@ export class OtpService {
       // Lock out for 15 minutes
       await this.redis.set(cooldownKey, '1', OTP_COOLDOWN_SECONDS);
       await this.redis.del(otpKey);
-      throw new TooManyRequestsException('Too many attempts. Try again in 15 minutes.');
+      throw new HttpException('Too many attempts. Try again in 15 minutes.', HttpStatus.TOO_MANY_REQUESTS);
     }
 
     if (otpData.code !== code) {

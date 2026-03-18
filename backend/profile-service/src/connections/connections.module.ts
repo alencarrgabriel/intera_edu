@@ -1,13 +1,14 @@
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { ConnectionsController } from './connections.controller';
+import { ConnectionsService } from './connections.service';
+import { Connection } from '../database/entities/connection.entity';
+import { UserProfile } from '../database/entities/user-profile.entity';
 
 @Module({
-  controllers: [],
-  providers: [],
+  imports: [TypeOrmModule.forFeature([Connection, UserProfile])],
+  controllers: [ConnectionsController],
+  providers: [ConnectionsService],
 })
 export class ConnectionsModule {}
-// TODO: Implement connection management
-// - POST /connections (send request)
-// - PATCH /connections/:id (accept/reject)
-// - DELETE /connections/:id (remove)
-// - GET /connections (list with status filter)
-// Events: connection.requested, connection.accepted, connection.removed
+

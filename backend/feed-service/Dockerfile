@@ -1,16 +1,43 @@
+# ─────────────────────────────────────────
+# Build stage
+# Context: backend/ (workspace root)
+# ─────────────────────────────────────────
 FROM node:20-alpine AS builder
 WORKDIR /app
-COPY package*.json ./
-RUN npm ci
-COPY . .
-RUN npm run build
 
+# 1. Copy workspace manifests first (for layer caching of npm ci)
+COPY package*.json tsconfig.base.json ./
+COPY shared/package.json             ./shared/
+COPY auth-service/package.json       ./auth-service/
+COPY profile-service/package.json    ./profile-service/
+COPY feed-service/package.json       ./feed-service/
+COPY messaging-service/package.json  ./messaging-service/
+COPY gateway/package.json            ./gateway/
+
+# 2. Install all workspace dependencies (uses root package-lock.json)
+RUN npm ci
+
+# 3. Build @interaedu/shared first (other services depend on it)
+COPY shared/ ./shared/
+RUN npm run build -w @interaedu/shared
+
+# 4. Build feed-service
+COPY feed-service/ ./feed-service/
+RUN cd feed-service && npx nest build
+
+# ─────────────────────────────────────────
+# Runtime stage
+# ─────────────────────────────────────────
 FROM node:20-alpine AS runtime
 WORKDIR /app
+
 RUN addgroup -g 1001 -S appgroup && adduser -S appuser -u 1001 -G appgroup
-COPY --from=builder --chown=appuser:appgroup /app/dist ./dist
+
+COPY --from=builder --chown=appuser:appgroup /app/feed-service/dist ./dist
 COPY --from=builder --chown=appuser:appgroup /app/node_modules ./node_modules
-COPY --from=builder --chown=appuser:appgroup /app/package.json ./
+COPY --from=builder --chown=appuser:appgroup /app/shared ./shared
+COPY --from=builder --chown=appuser:appgroup /app/feed-service/package.json ./
+
 USER appuser
 EXPOSE 3003
 HEALTHCHECK --interval=30s --timeout=3s CMD wget -qO- http://localhost:3003/health || exit 1

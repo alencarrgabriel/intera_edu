@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../../core/utils/validators.dart';
+import '../../../data/repositories/auth_repository_impl.dart';
+import '../../../domain/repositories/auth_repository.dart';
+import '../../feed/screens/feed_screen.dart';
 
 class ProfileSetupScreen extends StatefulWidget {
   final String temporaryToken;
@@ -24,6 +27,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
   bool _isLoading = false;
   bool _obscurePassword = true;
   bool _acceptedTerms = false;
+  final AuthRepository _authRepo = AuthRepositoryImpl();
 
   @override
   void dispose() {
@@ -44,10 +48,27 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
 
     setState(() => _isLoading = true);
 
-    // TODO: Call AuthRepository.completeRegistration
-    await Future.delayed(const Duration(seconds: 1));
-
-    setState(() => _isLoading = false);
+    try {
+      await _authRepo.completeRegistration(
+        temporaryToken: widget.temporaryToken,
+        password: _passwordController.text,
+        fullName: _nameController.text.trim(),
+        course: _courseController.text.trim().isEmpty ? null : _courseController.text.trim(),
+        period: _selectedPeriod,
+        skillIds: null,
+      );
+      if (!mounted) return;
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (_) => const FeedScreen()),
+        (route) => false,
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
   }
 
   @override

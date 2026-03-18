@@ -1,0 +1,12 @@
+# Exclude host node_modules from Docker build context (each service has its own)
+**/node_modules
+**/.git
+**/*.tsbuildinfo
+**/dist
+
+# Exclude OS and editor noise
+.DS_Store
+*.log
+.env
+.env.*
+!.env.example

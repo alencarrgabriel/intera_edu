@@ -8,7 +8,7 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, IsNull } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { UserCredential } from '../database/entities/user-credential.entity';
 import { RefreshToken } from '../database/entities/refresh-token.entity';
@@ -20,9 +20,10 @@ import { VerifyOtpDto } from './dto/verify-otp.dto';
 import { CompleteRegistrationDto } from './dto/complete-registration.dto';
 import { LoginDto } from './dto/login.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
-import { JwtPayload } from '@interaedu/shared';
+import { JwtPayload, RedisService } from '@interaedu/shared';
 
 const BCRYPT_ROUNDS = 12;
+const EVENTS_CHANNEL = 'interaedu.events';
 
 @Injectable()
 export class AuthService {
@@ -39,6 +40,7 @@ export class AuthService {
     private readonly configService: ConfigService,
     private readonly otpService: OtpService,
     private readonly institutionService: InstitutionService,
+    private readonly redis: RedisService,
   ) {}
 
   async register(dto: RegisterDto) {
@@ -130,7 +132,18 @@ export class AuthService {
 
     this.logger.log(`User registered: ${user.id} (${user.email})`);
 
-    // TODO: Emit 'user.registered' event for Profile Service
+    await this.redis.publish(
+      EVENTS_CHANNEL,
+      JSON.stringify({
+        type: 'user.registered',
+        payload: {
+          userId: user.id,
+          email: user.email,
+          institutionId: institution.id,
+        },
+        occurredAt: new Date().toISOString(),
+      }),
+    );
 
     return {
       user: {
@@ -179,23 +192,23 @@ export class AuthService {
       throw new UnauthorizedException('Invalid or expired refresh token.');
     }
 
-    // 2. Check if token is in the database and not revoked
-    const storedToken = await this.refreshTokenRepo.findOne({
-      where: { userId: payload.sub },
+    // 2. Check if this refresh token matches any active stored token for the user
+    const activeTokens = await this.refreshTokenRepo.find({
+      where: { userId: payload.sub, revokedAt: IsNull() },
+      order: { createdAt: 'DESC' },
+      take: 20,
     });
 
-    if (!storedToken || storedToken.revokedAt) {
-      // Potential replay attack — revoke all tokens for this user
-      await this.refreshTokenRepo.update(
-        { userId: payload.sub },
-        { revokedAt: new Date() },
-      );
+    const matched = await this.findMatchingRefreshToken(activeTokens, dto.refresh_token);
+    if (!matched) {
+      // Potential replay/forgery — revoke the whole token family for the user
+      await this.refreshTokenRepo.update({ userId: payload.sub }, { revokedAt: new Date() });
       throw new UnauthorizedException('Refresh token has been revoked.');
     }
 
-    // 3. Revoke old refresh token
-    storedToken.revokedAt = new Date();
-    await this.refreshTokenRepo.save(storedToken);
+    // 3. Revoke the matched refresh token (rotation)
+    matched.revokedAt = new Date();
+    await this.refreshTokenRepo.save(matched);
 
     // 4. Find user and issue new tokens
     const user = await this.userRepo.findOneOrFail({ where: { id: payload.sub } });
@@ -232,7 +245,7 @@ export class AuthService {
       expiresIn: this.configService.get<string>('JWT_REFRESH_EXPIRATION', '7d'),
     });
 
-    // Store refresh token
+    // Store refresh token as a hash (never store the raw token)
     const tokenHash = await bcrypt.hash(refreshToken, 10);
     await this.refreshTokenRepo.save({
       userId: user.id,
@@ -245,5 +258,17 @@ export class AuthService {
       refresh_token: refreshToken,
       expires_in: 900, // 15 minutes in seconds
     };
+  }
+
+  private async findMatchingRefreshToken(tokens: RefreshToken[], rawToken: string) {
+    for (const token of tokens) {
+      try {
+        const ok = await bcrypt.compare(rawToken, token.tokenHash);
+        if (ok) return token;
+      } catch {
+        // ignore malformed hashes
+      }
+    }
+    return null;
   }
 }

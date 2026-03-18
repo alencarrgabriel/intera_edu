@@ -1,6 +1,7 @@
 import { Controller, Get, Post, Delete, Body, Param, Query } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { CurrentUser, JwtPayload } from '@interaedu/shared';
+import { CreatePostDto } from './dto/create-post.dto';
 
 @Controller('posts')
 export class PostsController {
@@ -17,7 +18,7 @@ export class PostsController {
   }
 
   @Post()
-  async createPost(@Body() dto: any, @CurrentUser() user: JwtPayload) {
+  async createPost(@Body() dto: CreatePostDto, @CurrentUser() user: JwtPayload) {
     return this.postsService.create(dto, user);
   }
 

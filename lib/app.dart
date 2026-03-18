@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'core/theme/app_theme.dart';
 import 'presentation/auth/screens/login_screen.dart';
+import 'presentation/onboarding/screens/welcome_screen.dart';
 
 class InteraEduApp extends StatelessWidget {
   const InteraEduApp({super.key});
@@ -13,7 +14,7 @@ class InteraEduApp extends StatelessWidget {
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: ThemeMode.system,
-      home: const LoginScreen(),
+      home: const WelcomeScreen(),
     );
   }
 }

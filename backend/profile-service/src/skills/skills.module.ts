@@ -1,11 +1,13 @@
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { SkillsController } from './skills.controller';
+import { SkillsService } from './skills.service';
+import { Skill } from '../database/entities/skill.entity';
 
 @Module({
-  controllers: [],
-  providers: [],
+  imports: [TypeOrmModule.forFeature([Skill])],
+  controllers: [SkillsController],
+  providers: [SkillsService],
 })
 export class SkillsModule {}
-// TODO: Implement skill taxonomy CRUD
-// - GET /skills (list all, by category)
-// - GET /skills/search?q=<query>
-// - Admin: POST/PATCH/DELETE /skills
+
