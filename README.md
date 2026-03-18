@@ -1,56 +1,59 @@
 # InteraEdu
 
-> **Rede social acadêmica** restrita e validada em ambiente virtual que conecta universitários de forma exclusiva, funcional e segura.
+> **Rede social acadêmica** exclusiva para universitários, com identidade verificada por e-mail institucional.
 
 ---
 
-## 📑 A Documentação Principal Desse Projeto
+## 📑 Documentação do Projeto
 
-Diferente de muitos repositórios, este aplicativo e seu ecossistema **possuem uma documentação exaustiva, profissional e 100% em português brasileiro** localizada na nossa pasta central `/docs`.
+Este projeto possui documentação técnica completa, organizada e 100% em Português do Brasil na pasta `/docs`.
 
-Antes de você mexer em qualquer linha de código (Flutter ou Node/NestJs), é mandatório o entendimento da nossa Arquitetura Mestra e Padrões Base Apoiadores.
+**Antes de modificar qualquer código (Flutter ou NestJS), leia a documentação.**
 
-👉 **Vá direto para: [Índice Mestre de Engenharia, Guias e MVP](./docs/README.md).** 👈
+👉 **[Acesse o Índice Central de Documentação](./docs/README.md)** 👈
 
-**(Ou acesse algumas ramificações isoladas diretas caso tenha pressa):**
-* 📕 [Padrões Rígidos de Desenvolvimento e Estruturas](./docs/guias/padroes-desenvolvimento.md)
-* 💡 [Visão Macro e Justificativa de Arquitetura Limpa](./docs/arquitetura/sistema.md)
-* 📊 [O Status de Produção e MVP — O que já está vivo?](./docs/mvp/status-implementacao.md)
+Atalhos rápidos:
+- 📐 [Padrões e Convenções de Desenvolvimento](./docs/guias/padroes-desenvolvimento.md)
+- 🏗️ [Arquitetura do Sistema](./docs/arquitetura/sistema.md)
+- 📊 [Status de Implementação do MVP](./docs/mvp/status-implementacao.md)
 
 ---
 
-## ⚡ Setup Dev Básico: Rodando o Projeto Completo
+## ⚡ Como Rodar o Projeto Localmente
 
-Abaixo os passos básicos e sujos para colocar o chassi do backend/mobile vivo localmente. *(Os detalhes e armações profundas estão na documentação da sub-pasta `/docs` e nos seus guias de uso)*.
-
-### 1. Backend e Microsserviços (Em Containers)
+### 1. Backend (Microsserviços em Docker)
 
 ```bash
 cd backend
-cp .env.example .env  # configure as variáveis de ambiente locais do desenvolvedor (ou use o mock falso base)
+cp .env.example .env  # preencha as variáveis de ambiente
 docker-compose up --build
 ```
-> Após as máquinas subirem, o serviço primário Gateway estará atendendo requisições HTTP na fronteira em: `http://localhost:3000/api/v1`
 
-### 2. Frontend Mobile View (Flutter / Dart)
+> O API Gateway ficará disponível em: `http://localhost:3000/api/v1`
+
+### 2. App Mobile (Flutter)
 
 ```bash
-# Na raiz do projeto / mobile:
+# Na raiz do projeto:
 flutter pub get
 
-# Configure a URL da API em lib/core/config/app_config.dart
-# ex: apiBaseUrl = 'http://10.0.2.2:3000/api/v1' (No uso emulador Android Local)
-# ex: apiBaseUrl = 'http://localhost:3000/api/v1' (Para Chrome Web Dev Tester Local)
+# Configure a URL da API em lib/core/config/app_config.dart:
+# - Emulador Android: apiBaseUrl = 'http://10.0.2.2:3000/api/v1'
+# - Chrome (web dev): apiBaseUrl = 'http://localhost:3000/api/v1'
 
 flutter run
 ```
 
 ---
 
-## ⚙️ Tecnologias Fatais Empregadas
+## ⚙️ Tecnologias
 
-- **Back-end Core:** Microsserviços baseados em Node.js (20+) + Framework NestJS Frio (10+) rodando sob Linguagem TypeScript Fortemente Tipada. Banco Central TypeORM batendo num Relacional Poderoso PostgreSQL (16). E Cache de Filas Ocultas usando Redis (7). Armazém de Fotos Temporário Falso Cloud MinIO em Docker.
-- **Mobile C:** Flutter Clean Architecture Brutal (Camadas cegas UI x Repositories) batendo pacotes base de request nativo e lib dart de base HTTP.
+| Camada | Stack |
+|---|---|
+| **Backend** | Node.js 20 + NestJS 10 + TypeScript, TypeORM, PostgreSQL 16, Redis 7, MinIO |
+| **Mobile** | Flutter 3.11+ (Dart), Clean Architecture |
+| **Infraestrutura** | Docker + Docker Compose |
 
 ---
-*Para um entendimento amplo de toda Base de Código com Diagramas, leia as pastas mapeadas em [`/docs/README.md`](./docs/README.md).*
+
+*Para diagramas, decisões arquiteturais e guias de desenvolvimento, consulte [`/docs/README.md`](./docs/README.md).*
