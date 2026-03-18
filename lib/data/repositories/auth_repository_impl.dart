@@ -1,7 +1,7 @@
-import '../../core/network/api_client.dart';
-import '../../core/network/api_endpoints.dart';
-import '../../core/storage/secure_storage.dart';
-import '../../domain/repositories/auth_repository.dart';
+import '../../../core/network/api_client.dart';
+import '../../../core/network/api_endpoints.dart';
+import '../../../domain/repositories/auth_repository.dart';
+import '../../../core/storage/secure_storage.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
   final ApiClient _api;
@@ -46,7 +46,7 @@ class AuthRepositoryImpl implements AuthRepository {
         'privacy_version': 'v1.0',
       },
     });
-    await _saveTokens(response['tokens']);
+    await _saveTokens(response['tokens'] as Map<String, dynamic>);
   }
 
   @override
@@ -55,18 +55,18 @@ class AuthRepositoryImpl implements AuthRepository {
       'email': email,
       'password': password,
     });
-    await _saveTokens(response['tokens']);
+    await _saveTokens(response['tokens'] as Map<String, dynamic>);
   }
 
   @override
   Future<void> refreshToken() async {
     final refreshToken = await _storage.getRefreshToken();
-    if (refreshToken == null) throw Exception('No refresh token');
+    if (refreshToken == null) throw Exception('Sem refresh token');
 
     final response = await _api.post(ApiEndpoints.refresh, body: {
       'refresh_token': refreshToken,
     });
-    await _saveTokens(response['tokens']);
+    await _saveTokens(response['tokens'] as Map<String, dynamic>);
   }
 
   @override
@@ -76,7 +76,7 @@ class AuthRepositoryImpl implements AuthRepository {
       try {
         await _api.post(ApiEndpoints.logout, body: {'refresh_token': refreshToken});
       } catch (_) {
-        // Logout should always succeed locally even if API fails
+        // Logout local deve sempre ter sucesso mesmo que a API falhe
       }
     }
     await _storage.clearTokens();

@@ -1,30 +1,50 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-/// Secure storage service for tokens.
-/// In production, use flutter_secure_storage package.
-/// This is a simplified in-memory implementation for development.
+/// Serviço de armazenamento seguro de tokens usando flutter_secure_storage.
+/// Persiste os tokens entre sessões do app (armazenamento nativo seguro por plataforma).
 class SecureStorageService {
   static final SecureStorageService _instance = SecureStorageService._internal();
   factory SecureStorageService() => _instance;
   SecureStorageService._internal();
 
-  String? _accessToken;
-  String? _refreshToken;
+  static const _storage = FlutterSecureStorage(
+    aOptions: AndroidOptions(encryptedSharedPreferences: true),
+  );
 
-  Future<void> saveTokens({required String accessToken, required String refreshToken}) async {
-    _accessToken = accessToken;
-    _refreshToken = refreshToken;
-    debugPrint('[SecureStorage] Tokens saved');
+  static const _keyAccessToken = 'access_token';
+  static const _keyRefreshToken = 'refresh_token';
+
+  Future<void> saveTokens({
+    required String accessToken,
+    required String refreshToken,
+  }) async {
+    await Future.wait([
+      _storage.write(key: _keyAccessToken, value: accessToken),
+      _storage.write(key: _keyRefreshToken, value: refreshToken),
+    ]);
+    debugPrint('[SecureStorage] Tokens salvos');
   }
 
-  Future<String?> getAccessToken() async => _accessToken;
-  Future<String?> getRefreshToken() async => _refreshToken;
+  Future<String?> getAccessToken() async =>
+      _storage.read(key: _keyAccessToken);
+
+  Future<String?> getRefreshToken() async =>
+      _storage.read(key: _keyRefreshToken);
 
   Future<void> clearTokens() async {
-    _accessToken = null;
-    _refreshToken = null;
-    debugPrint('[SecureStorage] Tokens cleared');
+    await Future.wait([
+      _storage.delete(key: _keyAccessToken),
+      _storage.delete(key: _keyRefreshToken),
+    ]);
+    debugPrint('[SecureStorage] Tokens removidos');
   }
 
-  bool get isAuthenticated => _accessToken != null;
+  Future<bool> get isAuthenticatedAsync async {
+    final token = await getAccessToken();
+    return token != null;
+  }
+
+  /// Compatibilidade com código legado — preferir isAuthenticatedAsync
+  bool get isAuthenticated => false;
 }

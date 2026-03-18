@@ -22,7 +22,7 @@ class WelcomeScreen extends StatelessWidget {
               ),
               const SizedBox(height: 32),
               Text(
-                'Welcome to\nInteraEdu',
+                'Bem-vindo ao\nInteraEdu',
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.headlineLarge?.copyWith(
                       fontWeight: FontWeight.bold,
@@ -30,7 +30,7 @@ class WelcomeScreen extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               Text(
-                'Break institutional barriers.\nCollaborate across universities.\nGrow together.',
+                'Quebre as barreiras institucionais.\nColabore entre universidades.\nCresça junto.',
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                       color: Theme.of(context).textTheme.bodySmall?.color,
@@ -48,7 +48,7 @@ class WelcomeScreen extends StatelessWidget {
                       MaterialPageRoute(builder: (_) => const RegisterScreen()),
                     );
                   },
-                  child: const Text('Get Started', style: TextStyle(fontSize: 16)),
+                  child: const Text('Começar', style: TextStyle(fontSize: 16)),
                 ),
               ),
               const SizedBox(height: 12),
@@ -62,7 +62,7 @@ class WelcomeScreen extends StatelessWidget {
                       MaterialPageRoute(builder: (_) => const LoginScreen()),
                     );
                   },
-                  child: const Text('I already have an account', style: TextStyle(fontSize: 16)),
+                  child: const Text('Já tenho uma conta', style: TextStyle(fontSize: 16)),
                 ),
               ),
               const SizedBox(height: 32),

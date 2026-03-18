@@ -46,7 +46,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Create Account')),
+      appBar: AppBar(title: const Text('Criar Conta')),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(24),
@@ -57,20 +57,20 @@ class _RegisterScreenState extends State<RegisterScreen> {
               children: [
                 const SizedBox(height: 24),
                 Text(
-                  'Enter your institutional email',
+                  'Informe seu e-mail institucional',
                   style: Theme.of(context).textTheme.headlineSmall,
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'We\'ll send a verification code to confirm your university affiliation.',
+                  'Enviaremos um código de verificação para confirmar seu vínculo com a universidade.',
                   style: Theme.of(context).textTheme.bodyMedium,
                 ),
                 const SizedBox(height: 32),
                 TextFormField(
                   controller: _emailController,
                   decoration: const InputDecoration(
-                    labelText: 'Institutional Email',
-                    hintText: 'you@university.edu.br',
+                    labelText: 'E-mail Institucional',
+                    hintText: 'voce@universidade.edu.br',
                     prefixIcon: Icon(Icons.email_outlined),
                   ),
                   keyboardType: TextInputType.emailAddress,
@@ -89,7 +89,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             width: 20,
                             child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
                           )
-                        : const Text('Send Verification Code', style: TextStyle(fontSize: 16)),
+                        : const Text('Enviar Código de Verificação', style: TextStyle(fontSize: 16)),
                   ),
                 ),
               ],

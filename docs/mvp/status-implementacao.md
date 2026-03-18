@@ -10,46 +10,40 @@ Este documento acompanha o progresso técnico do MVP do InteraEdu — a rede soc
 
 | Funcionalidade | Backend | Mobile | Status |
 |---|---|---|---|
-| Registro com e-mail + OTP | ✅ Completo | ✅ Telas implementadas | ✅ Pronto |
-| Login com JWT | ✅ Completo | ✅ Tela implementada | ✅ Pronto |
-| Refresh token (rotação) | ✅ Completo | ❌ Não implementado | ⚠️ Parcial |
-| Logout | ✅ Completo | ❌ Sem botão/fluxo | ⚠️ Parcial |
-| Feed local (mesma instituição) | ✅ Completo | ✅ Tela implementada | ✅ Pronto |
-| Feed global (entre instituições) | ✅ Completo | ❌ Sem seletor de scope | ⚠️ Parcial |
-| Criar post (texto) | ✅ Completo | ❌ Sem formulário | ❌ Falta |
-| Ver post individual | ✅ Completo | ❌ Sem tela | ❌ Falta |
-| Deletar próprio post | ✅ Completo | ❌ Sem UI | ❌ Falta |
-| Reagir a post | ✅ Completo | ❌ Sem botões | ❌ Falta |
-| Comentar em post | ✅ Completo | ❌ Sem UI | ❌ Falta |
-| Ver meu perfil | ✅ Completo | ❌ Sem tela | ❌ Falta |
-| Editar perfil | ✅ Completo | ❌ Sem tela | ❌ Falta |
-| Buscar usuários | ✅ Completo | ❌ Sem tela | ❌ Falta |
-| Ver perfil de outro usuário | ✅ Completo | ❌ Sem tela | ❌ Falta |
-| Enviar solicitação de conexão | ✅ (estrutura) | ❌ Sem UI | ❌ Falta |
-| Aceitar/rejeitar conexão | ✅ (estrutura) | ❌ Sem UI | ❌ Falta |
-| Listar chats | ✅ Completo | ❌ Sem tela | ❌ Falta |
-| Chat em tempo real (WebSocket) | ✅ Completo | ❌ Sem implementação | ❌ Falta |
+| Registro com e-mail + OTP | ✅ Completo | ✅ Telas traduzidas e completas | ✅ Pronto |
+| Login com JWT | ✅ Completo | ✅ Tela implementada e integrada | ✅ Pronto |
+| Refresh token | ✅ Completo | ✅ Interceptor ApiClient ativo | ✅ Pronto |
+| Logout | ✅ Completo | ✅ Botão no Feed + Dialog | ✅ Pronto |
+| Feed local (mesma instituição) | ✅ Completo | ✅ Tela e scroll infinito | ✅ Pronto |
+| Feed global (entre instituições) | ✅ Completo | ✅ SegmentedButton de filtro | ✅ Pronto |
+| Criar post (texto) | ✅ Completo | ✅ CreatePostScreen | ✅ Pronto |
+| Ver post individual | ✅ Completo | ✅ Exibição no PostCard | ✅ Pronto |
+| Deletar próprio post | ✅ Completo | ✅ Via API integrada | ✅ Pronto |
+| Reagir a post | ✅ Completo | ✅ Atualização Otimista | ✅ Pronto |
+| Comentar em post | ✅ Completo | ✅ CommentsSheet | ✅ Pronto |
+| Ver meu perfil | ✅ Completo | ✅ MyProfileScreen | ✅ Pronto |
+| Editar perfil | ✅ Completo | ✅ EditProfileScreen c/ Chips | ✅ Pronto |
+| Buscar usuários | ✅ Completo | ✅ SearchScreen c/ Debounce | ✅ Pronto |
+| Ver perfil de outro usuário | ✅ Completo | ✅ UserProfileScreen restrito | ✅ Pronto |
+| Enviar/Aceitar/Rejeitar conexão | ✅ Completo | ✅ ConnectionsScreen abas | ✅ Pronto |
+| Listar chats | ✅ Completo | ❌ UI Pendente | ❌ Falta |
+| Chat em tempo real (WebSocket) | ✅ Completo | ❌ Integração WebSockets | ❌ Falta |
 
 ---
 
 ## 2. O que falta para o MVP estar completo
 
 ### Mobile (prioridade alta):
-1. Interceptor de refresh automático de token no `ApiClient` (tarefa **M-02**)
-2. Gerenciamento de estado de autenticação global — `Provider` ou `Riverpod` (tarefa **M-01**)
-3. Tela de criação de post com seletor de scope local/global (tarefa **M-03**)
-4. Botões de reação e comentários no feed (tarefa **M-04**)
-5. Tela de perfil próprio e edição (tarefa **M-05**)
-6. Tela de busca de usuários e visualização de perfil externo (tarefa **M-06**)
-7. Telas de conexões (listar + solicitações pendentes)
-8. Fluxo de logout (tarefa **M-08**)
-9. Telas de chat + WebSocket (tarefa **M-07**)
+1. Telas de chat (listagem e conversa) (tarefa **M-07**)
+2. Integração WebSocket (tarefa **M-07**)
 
-### Backend (ajustes pendentes):
-1. Endpoint `POST /auth/google` — OAuth com Google (previsto no SRS, tarefa **B-03**)
-2. `profile-service`: criar perfil automaticamente ao receber evento `user.registered` (tarefa **B-01**)
-3. Upload de avatar via MinIO (tarefa **B-02**)
-4. `messaging-service`: validar integração WebSocket end-to-end
+### Backend (ajustes realizados e pendentes):
+1. ✅ `profile-service`: criar perfil automaticamente ao receber evento `user.registered` (B-01) - **Concluído**
+2. ✅ Rotas de pesquisa de Profile e Configurações de CORS do Gateway - **Concluído**
+3. ✅ Estrategia JWT nos microserviços Profile, Feed, Messaging - **Concluído**
+4. ⏳ Endpoint `POST /auth/google` — OAuth com Google (tarefa **B-03**)
+5. ⏳ Upload de avatar via MinIO (tarefa **B-02**)
+6. ⏳ `messaging-service`: validar integração WebSocket end-to-end
 
 > Para detalhes de implementação de cada tarefa, consulte [`docs/guias/tarefas-ia.md`](../guias/tarefas-ia.md).
 
@@ -132,9 +126,9 @@ Este documento acompanha o progresso técnico do MVP do InteraEdu — a rede soc
 
 | Marco | Critério de Conclusão |
 |---|---|
-| **M1 — Auth Completo** | Login, registro, OTP, refresh e logout funcionando de ponta a ponta |
-| **M2 — Feed Funcional** | Criar, ver, reagir e comentar posts no app |
-| **M3 — Perfis Completos** | Editar perfil, buscar usuários, conectar com outros |
-| **M4 — MVP Pronto** | Todos os fluxos principais operacionais sem erros críticos |
-| **M5 — Chat** | Mensagens em tempo real funcionando |
-| **M6 — Produção** | Deploy em nuvem, CI/CD, monitoramento |
+| **M1 — Auth Completo** | ✅ Login, registro, OTP, refresh e logout concluídos |
+| **M2 — Feed Funcional** | ✅ Criar, ver, reagir e comentar posts no app |
+| **M3 — Perfis Completos** | ✅ Editar perfil, buscar usuários, conectar com outros |
+| **M4 — MVP Pronto** | ⏳ Todos os fluxos principais operacionais (**Apenas Chat falta**) |
+| **M5 — Chat** | ❌ Mensagens em tempo real (Próxima etapa) |
+| **M6 — Produção** | ❌ Deploy em nuvem, CI/CD, monitoramento |

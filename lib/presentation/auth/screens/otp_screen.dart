@@ -54,7 +54,7 @@ class _OtpScreenState extends State<OtpScreen> {
       await _authRepo.register(widget.email);
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Verification code resent!')),
+        const SnackBar(content: Text('Código reenviado!')),
       );
     } catch (e) {
       if (!mounted) return;
@@ -65,7 +65,7 @@ class _OtpScreenState extends State<OtpScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Verify Email')),
+      appBar: AppBar(title: const Text('Verificar E-mail')),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(24),
@@ -79,13 +79,13 @@ class _OtpScreenState extends State<OtpScreen> {
                     size: 64, color: Theme.of(context).colorScheme.primary),
                 const SizedBox(height: 24),
                 Text(
-                  'Check your email',
+                  'Verifique seu e-mail',
                   style: Theme.of(context).textTheme.headlineSmall,
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'We sent a 6-digit code to\n${widget.email}',
+                  'Enviamos um código de 6 dígitos para\n${widget.email}',
                   style: Theme.of(context).textTheme.bodyMedium,
                   textAlign: TextAlign.center,
                 ),
@@ -93,7 +93,7 @@ class _OtpScreenState extends State<OtpScreen> {
                 TextFormField(
                   controller: _otpController,
                   decoration: const InputDecoration(
-                    labelText: 'Verification Code',
+                    labelText: 'Código de Verificação',
                     hintText: '000000',
                     prefixIcon: Icon(Icons.pin_outlined),
                   ),
@@ -117,13 +117,13 @@ class _OtpScreenState extends State<OtpScreen> {
                             width: 20,
                             child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
                           )
-                        : const Text('Verify', style: TextStyle(fontSize: 16)),
+                        : const Text('Verificar', style: TextStyle(fontSize: 16)),
                   ),
                 ),
                 const SizedBox(height: 16),
                 TextButton(
                   onPressed: _handleResend,
-                  child: const Text("Didn't receive the code? Resend"),
+                  child: const Text('Não recebeu o código? Reenviar'),
                 ),
               ],
             ),

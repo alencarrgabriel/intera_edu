@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../../core/auth/auth_notifier.dart';
 import '../../../core/utils/validators.dart';
-import '../../../data/repositories/auth_repository_impl.dart';
-import '../../../domain/repositories/auth_repository.dart';
-import '../../feed/screens/feed_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -17,7 +16,6 @@ class _LoginScreenState extends State<LoginScreen> {
   final _passwordController = TextEditingController();
   bool _isLoading = false;
   bool _obscurePassword = true;
-  final AuthRepository _authRepo = AuthRepositoryImpl();
 
   @override
   void dispose() {
@@ -31,12 +29,10 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() => _isLoading = true);
 
     try {
-      await _authRepo.login(_emailController.text.trim(), _passwordController.text);
-      if (!mounted) return;
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(builder: (_) => const FeedScreen()),
-        (route) => false,
+      // O redirecionamento ocorre automaticamente via AuthWrapper após o login
+      await context.read<AuthNotifier>().login(
+        _emailController.text.trim(),
+        _passwordController.text,
       );
     } catch (e) {
       if (!mounted) return;
@@ -59,7 +55,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  // Logo and title
+                  // Logo e título
                   Icon(
                     Icons.school_rounded,
                     size: 80,
@@ -84,12 +80,12 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   const SizedBox(height: 48),
 
-                  // Email field
+                  // Campo de e-mail
                   TextFormField(
                     controller: _emailController,
                     decoration: const InputDecoration(
-                      labelText: 'Institutional Email',
-                      hintText: 'you@university.edu.br',
+                      labelText: 'E-mail Institucional',
+                      hintText: 'voce@universidade.edu.br',
                       prefixIcon: Icon(Icons.email_outlined),
                     ),
                     keyboardType: TextInputType.emailAddress,
@@ -98,11 +94,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   const SizedBox(height: 16),
 
-                  // Password field
+                  // Campo de senha
                   TextFormField(
                     controller: _passwordController,
                     decoration: InputDecoration(
-                      labelText: 'Password',
+                      labelText: 'Senha',
                       prefixIcon: const Icon(Icons.lock_outlined),
                       suffixIcon: IconButton(
                         icon: Icon(_obscurePassword ? Icons.visibility_off : Icons.visibility),
@@ -110,25 +106,25 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                     obscureText: _obscurePassword,
-                    validator: (v) => v?.isEmpty == true ? 'Password is required' : null,
+                    validator: (v) => v?.isEmpty == true ? 'Senha obrigatória' : null,
                     textInputAction: TextInputAction.done,
                     onFieldSubmitted: (_) => _handleLogin(),
                   ),
                   const SizedBox(height: 8),
 
-                  // Forgot password
+                  // Esqueci minha senha
                   Align(
                     alignment: Alignment.centerRight,
                     child: TextButton(
                       onPressed: () {
-                        // TODO: Navigate to forgot password
+                        // TODO: Navegar para recuperação de senha
                       },
-                      child: const Text('Forgot password?'),
+                      child: const Text('Esqueci minha senha'),
                     ),
                   ),
                   const SizedBox(height: 16),
 
-                  // Login button
+                  // Botão de entrar
                   SizedBox(
                     height: 52,
                     child: ElevatedButton(
@@ -142,22 +138,21 @@ class _LoginScreenState extends State<LoginScreen> {
                                 color: Colors.white,
                               ),
                             )
-                          : const Text('Log In', style: TextStyle(fontSize: 16)),
+                          : const Text('Entrar', style: TextStyle(fontSize: 16)),
                     ),
                   ),
                   const SizedBox(height: 24),
 
-                  // Register link
+                  // Link para cadastro
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Text("Don't have an account? "),
+                      const Text('Não tem uma conta? '),
                       TextButton(
                         onPressed: () {
-                          // Keep MVP simple: go back to Welcome and choose register
                           Navigator.pop(context);
                         },
-                        child: const Text('Create Account'),
+                        child: const Text('Criar conta'),
                       ),
                     ],
                   ),

@@ -27,13 +27,13 @@ export class ProfileController {
     return this.profileService.requestDataExport(user.sub);
   }
 
-  @Get(':id')
-  async getProfile(@Param('id') id: string, @CurrentUser() user: JwtPayload) {
-    return this.profileService.findByIdWithPrivacy(id, user);
-  }
-
   @Get('search')
   async searchUsers(@Query() query: any, @CurrentUser() user: JwtPayload) {
     return this.profileService.search(query, user);
+  }
+
+  @Get(':id')
+  async getProfile(@Param('id') id: string, @CurrentUser() user: JwtPayload) {
+    return this.profileService.findByIdWithPrivacy(id, user);
   }
 }

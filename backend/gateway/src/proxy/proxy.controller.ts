@@ -34,11 +34,20 @@ export class ProxyController {
 
   @All('*')
   async proxy(@Req() req: Request, @Res() res: Response) {
-    // Strip the /api/v1 prefix (already handled by global prefix)
-    const path = req.path;
+    // Strip the /api/v1 prefix explicitly just in case Express preserves it
+    let path = req.path;
+    if (path.startsWith('/api/v1')) {
+      path = path.replace('/api/v1', '');
+    }
 
     const resolved = this.resolveService(path);
     if (!resolved) {
+      const origin = req.headers.origin;
+      if (origin) {
+        res.setHeader('Access-Control-Allow-Origin', origin);
+        res.setHeader('Access-Control-Allow-Credentials', 'true');
+      }
+      
       return res.status(404).json({
         error: {
           code: 'NOT_FOUND',
@@ -59,8 +68,22 @@ export class ProxyController {
         req.query as Record<string, string>,
       );
 
+      // Force CORS headers on proxy responses 
+      // since raw Express @Res() sometimes bypasses global interceptors
+      const origin = req.headers.origin;
+      if (origin) {
+        res.setHeader('Access-Control-Allow-Origin', origin);
+        res.setHeader('Access-Control-Allow-Credentials', 'true');
+      }
+
       return res.status(response.status).json(response.data);
     } catch (error: any) {
+      const origin = req.headers.origin;
+      if (origin) {
+        res.setHeader('Access-Control-Allow-Origin', origin);
+        res.setHeader('Access-Control-Allow-Credentials', 'true');
+      }
+      
       if (error.response) {
         return res.status(error.response.status).json(error.response.data);
       }

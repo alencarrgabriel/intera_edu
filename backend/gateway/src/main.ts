@@ -5,16 +5,10 @@ import { AppModule } from './app.module';
 
 async function bootstrap() {
   const logger = new Logger('Gateway');
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, { cors: true });
 
   // Security
   app.use(helmet());
-  app.enableCors({
-    origin: process.env.CORS_ORIGINS?.split(',') || ['http://localhost:3000'],
-    methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Authorization', 'Content-Type', 'X-Request-ID', 'X-Idempotency-Key'],
-    credentials: true,
-  });
 
   // Validation
   app.useGlobalPipes(
