@@ -8,6 +8,13 @@ class AppConfig {
     'API_BASE_URL',
     defaultValue: 'http://localhost:3000/api/v1',
   );
+
+  /// WebSocket base URL for the messaging gateway (port 3004 = messaging-service).
+  /// Override with: --dart-define=WS_BASE_URL=http://10.0.2.2:3004
+  static const String wsBaseUrl = String.fromEnvironment(
+    'WS_BASE_URL',
+    defaultValue: 'http://localhost:3004',
+  );
   static const bool devMode = true;
 
   // Timeouts

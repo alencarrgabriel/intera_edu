@@ -16,6 +16,9 @@ export class UserProfile {
   @Column({ name: 'institution_id', type: 'uuid' })
   institutionId: string;
 
+  @Column({ name: 'email', type: 'varchar', length: 255, nullable: true })
+  email?: string | null;
+
   @Column({ name: 'full_name', type: 'varchar', length: 255 })
   fullName: string;
 

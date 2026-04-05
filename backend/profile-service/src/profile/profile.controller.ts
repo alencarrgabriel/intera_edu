@@ -32,6 +32,13 @@ export class ProfileController {
     return this.profileService.search(query, user);
   }
 
+  /** Internal batch endpoint — used by feed-service to enrich author data. */
+  @Get('batch')
+  async batchGet(@Query('ids') ids: string) {
+    const idList = (ids ?? '').split(',').filter(Boolean).slice(0, 50);
+    return this.profileService.findManyByIds(idList);
+  }
+
   @Get(':id')
   async getProfile(@Param('id') id: string, @CurrentUser() user: JwtPayload) {
     return this.profileService.findByIdWithPrivacy(id, user);

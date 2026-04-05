@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Delete, Body, Param, Query } from '@nestjs/common';
+import { Controller, Get, Post, Delete, Body, Param, Query, Headers } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { CurrentUser, JwtPayload } from '@interaedu/shared';
 import { CreatePostDto } from './dto/create-post.dto';
@@ -13,8 +13,9 @@ export class PostsController {
     @Query('cursor') cursor: string,
     @Query('limit') limit: number,
     @CurrentUser() user: JwtPayload,
+    @Headers('authorization') authToken: string,
   ) {
-    return this.postsService.getFeed(scope || 'local', cursor, limit || 20, user);
+    return this.postsService.getFeed(scope || 'local', cursor, limit || 20, user, authToken ?? '');
   }
 
   @Post()
@@ -37,9 +38,18 @@ export class PostsController {
     return this.postsService.addReaction(id, dto.type, user.sub);
   }
 
+  @Delete(':id/reactions')
+  async removeReaction(@Param('id') id: string, @CurrentUser() user: JwtPayload) {
+    return this.postsService.removeReaction(id, user.sub);
+  }
+
   @Get(':id/comments')
-  async getComments(@Param('id') id: string, @Query('cursor') cursor: string) {
-    return this.postsService.getComments(id, cursor);
+  async getComments(
+    @Param('id') id: string,
+    @Query('cursor') cursor: string,
+    @Headers('authorization') authToken: string,
+  ) {
+    return this.postsService.getComments(id, cursor, authToken ?? '');
   }
 
   @Post(':id/comments')

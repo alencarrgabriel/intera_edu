@@ -55,13 +55,15 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                 ),
             ],
           ),
-          body: (notifier.loading || notifier.profile == null)
+          body: notifier.loading
               ? const ProfileHeaderSkeleton()
               : notifier.error != null
                   ? ErrorRetryWidget(
                       message: notifier.error!,
                       onRetry: () => notifier.load(force: true))
-                  : _buildProfile(context, notifier.profile!),
+                  : notifier.profile == null
+                      ? const ProfileHeaderSkeleton()
+                      : _buildProfile(context, notifier.profile!),
         );
       },
     );

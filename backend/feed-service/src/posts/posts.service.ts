@@ -7,6 +7,16 @@ import { ReactionEntity, ReactionType } from '../database/entities/reaction.enti
 import { CommentEntity } from '../database/entities/comment.entity';
 import { CreatePostDto } from './dto/create-post.dto';
 
+const PROFILE_SERVICE_URL = process.env.PROFILE_SERVICE_URL ?? 'http://profile-service:3002';
+
+interface ProfileSummary {
+  id: string;
+  full_name: string;
+  avatar_url: string | null;
+  course: string | null;
+  institution_id: string;
+}
+
 @Injectable()
 export class PostsService {
   private readonly logger = new Logger(PostsService.name);
@@ -21,7 +31,28 @@ export class PostsService {
     private readonly redis: RedisService,
   ) {}
 
-  async getFeed(scope: string, cursor: string, limit: number, user: JwtPayload) {
+  /** Batch-fetch author profiles from profile-service. Returns id→profile map. */
+  private async enrichWithProfiles(
+    authorIds: string[],
+    authToken: string,
+  ): Promise<Map<string, ProfileSummary>> {
+    const unique = [...new Set(authorIds)];
+    if (!unique.length) return new Map();
+    try {
+      const resp = await fetch(
+        `${PROFILE_SERVICE_URL}/users/batch?ids=${unique.join(',')}`,
+        { headers: { Authorization: authToken } },
+      );
+      if (!resp.ok) return new Map();
+      const body = (await resp.json()) as { data: ProfileSummary[] };
+      return new Map((body?.data ?? []).map((p) => [p.id, p]));
+    } catch (err) {
+      this.logger.warn(`Profile enrichment failed: ${(err as Error).message}`);
+      return new Map();
+    }
+  }
+
+  async getFeed(scope: string, cursor: string, limit: number, user: JwtPayload, authToken: string) {
     const normalizedScope = scope === 'global' ? 'global' : 'local';
     const take = Math.min(Math.max(limit || 20, 1), 50);
     const cursorDate = this.decodeCursor(cursor);
@@ -32,8 +63,8 @@ export class PostsService {
 
     const response =
       normalizedScope === 'local'
-        ? await this.getLocalFeed(user, cursorDate, take)
-        : await this.getGlobalFeed(user, cursorDate, take);
+        ? await this.getLocalFeed(user, cursorDate, take, authToken)
+        : await this.getGlobalFeed(user, cursorDate, take, authToken);
 
     await this.redis.set(cacheKey, JSON.stringify(response), 60);
     return response;
@@ -57,7 +88,7 @@ export class PostsService {
   async findById(id: string) {
     const post = await this.postRepo.findOne({ where: { id, deletedAt: IsNull() } });
     if (!post) throw new NotFoundException('Post not found');
-    return this.toPostResponse(post, undefined);
+    return this.toPostResponse(post, null);
   }
 
   async softDelete(id: string, userId: string) {
@@ -90,7 +121,22 @@ export class PostsService {
     return { message: 'Reaction added' };
   }
 
-  async getComments(postId: string, cursor: string) {
+  async removeReaction(postId: string, userId: string) {
+    const post = await this.postRepo.findOne({ where: { id: postId, deletedAt: IsNull() } });
+    if (!post) throw new NotFoundException('Post not found');
+
+    const existing = await this.reactionRepo.findOne({ where: { postId, userId } });
+    if (!existing) throw new NotFoundException('Reaction not found');
+
+    await this.reactionRepo.remove(existing);
+    post.reactionCount = Math.max(0, post.reactionCount - 1);
+    await this.postRepo.save(post);
+
+    await this.invalidateFeedCaches(post.institutionId);
+    return { message: 'Reaction removed' };
+  }
+
+  async getComments(postId: string, cursor: string, authToken: string) {
     const take = 50;
     const cursorDate = this.decodeCursor(cursor);
 
@@ -107,11 +153,18 @@ export class PostsService {
     const hasMore = rows.length > take;
     const page = rows.slice(0, take);
 
+    const profiles = await this.enrichWithProfiles(page.map((c) => c.userId), authToken);
+
     return {
       data: page.map((c) => ({
         id: c.id,
         post_id: c.postId,
         user_id: c.userId,
+        author: {
+          id: c.userId,
+          full_name: profiles.get(c.userId)?.full_name ?? null,
+          avatar_url: profiles.get(c.userId)?.avatar_url ?? null,
+        },
         parent_comment_id: c.parentCommentId ?? null,
         content: c.content,
         created_at: c.createdAt.toISOString(),
@@ -144,7 +197,7 @@ export class PostsService {
     return { id: comment.id };
   }
 
-  private async getLocalFeed(user: JwtPayload, cursorDate: Date | null, limit: number) {
+  private async getLocalFeed(user: JwtPayload, cursorDate: Date | null, limit: number, authToken: string) {
     const qb = this.postRepo
       .createQueryBuilder('p')
       .where('p.deleted_at IS NULL')
@@ -172,8 +225,12 @@ export class PostsService {
       finalPage = [...page, ...fill];
     }
 
+    const [viewerReactions, profiles] = await Promise.all([
+      this.fetchViewerReactions(finalPage.map((p) => p.id), user.sub),
+      this.enrichWithProfiles(finalPage.map((p) => p.authorId), authToken),
+    ]);
     return {
-      data: finalPage.map((p) => this.toPostResponse(p, user.sub)),
+      data: finalPage.map((p) => this.toPostResponse(p, viewerReactions.get(p.id), profiles.get(p.authorId))),
       pagination: {
         cursor: hasMore ? this.encodeCursor(page[page.length - 1]?.createdAt) : null,
         has_more: hasMore,
@@ -181,7 +238,7 @@ export class PostsService {
     };
   }
 
-  private async getGlobalFeed(user: JwtPayload, cursorDate: Date | null, limit: number) {
+  private async getGlobalFeed(user: JwtPayload, cursorDate: Date | null, limit: number, authToken: string) {
     const externalCount = Math.max(1, Math.ceil(limit * 0.2));
     const localCount = Math.max(0, limit - externalCount);
 
@@ -210,8 +267,12 @@ export class PostsService {
     const merged = [...local, ...external].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
 
     const page = merged.slice(0, limit);
+    const [viewerReactions, profiles] = await Promise.all([
+      this.fetchViewerReactions(page.map((p) => p.id), user.sub),
+      this.enrichWithProfiles(page.map((p) => p.authorId), authToken),
+    ]);
     return {
-      data: page.map((p) => this.toPostResponse(p, user.sub)),
+      data: page.map((p) => this.toPostResponse(p, viewerReactions.get(p.id), profiles.get(p.authorId))),
       pagination: {
         cursor: page.length ? this.encodeCursor(page[page.length - 1].createdAt) : null,
         has_more: merged.length > limit,
@@ -219,19 +280,33 @@ export class PostsService {
     };
   }
 
-  private toPostResponse(p: PostEntity, viewerId?: string) {
+  private toPostResponse(p: PostEntity, viewerReaction?: string | null, profile?: ProfileSummary) {
     return {
       id: p.id,
-      author: { id: p.authorId, institution_id: p.institutionId },
+      author: {
+        id: p.authorId,
+        institution_id: p.institutionId,
+        full_name: profile?.full_name ?? null,
+        avatar_url: profile?.avatar_url ?? null,
+        course: profile?.course ?? null,
+      },
       content: p.content,
       scope: p.scope,
       media_urls: p.mediaUrls ?? [],
       reaction_count: p.reactionCount,
       comment_count: p.commentCount,
-      user_reaction: null,
+      user_reaction: viewerReaction ?? null,
       created_at: p.createdAt.toISOString(),
-      viewer_id: viewerId ?? null,
     };
+  }
+
+  /** Batch-fetch reactions for a set of post IDs by a specific viewer. */
+  private async fetchViewerReactions(postIds: string[], viewerId: string): Promise<Map<string, string>> {
+    if (!postIds.length || !viewerId) return new Map();
+    const reactions = await this.reactionRepo.find({
+      where: postIds.map((id) => ({ postId: id, userId: viewerId })),
+    });
+    return new Map(reactions.map((r) => [r.postId, r.reactionType]));
   }
 
   private encodeCursor(date?: Date) {

@@ -6,6 +6,7 @@ import '../../presentation/auth/screens/otp_screen.dart';
 import '../../presentation/auth/screens/register_screen.dart';
 import '../../presentation/feed/screens/create_post_screen.dart';
 import '../../presentation/main_screen.dart';
+import '../../presentation/messages/screens/chat_room_screen.dart';
 import '../../presentation/onboarding/screens/profile_setup_screen.dart';
 import '../../presentation/onboarding/screens/welcome_screen.dart';
 import '../../presentation/profile/screens/connections_screen.dart';
@@ -52,6 +53,7 @@ abstract class AppRoutes {
   static const connections = '/connections';
 
   static String userProfile(String userId) => '/user/$userId';
+  static String chatRoom(String chatId) => '/chat/$chatId';
 }
 
 /// Cria o GoRouter com auth guard baseado no `AuthNotifier`.
@@ -123,6 +125,20 @@ GoRouter createRouter(BuildContext context) {
                   state: state,
                   child:
                       UserProfileScreen(userId: userId, initialName: name));
+            },
+          ),
+          GoRoute(
+            path: 'chat/:chatId',
+            pageBuilder: (ctx, state) {
+              final chatId = state.pathParameters['chatId']!;
+              final extra = state.extra as Map<String, dynamic>?;
+              return _slideTransition(
+                  context: ctx,
+                  state: state,
+                  child: ChatRoomScreen(
+                    chatId: chatId,
+                    chatName: extra?['name'] as String?,
+                  ));
             },
           ),
         ],

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../core/design/app_tokens.dart';
 import '../core/widgets/glass_bottom_nav.dart';
 import 'feed/screens/feed_screen.dart';
+import 'messages/screens/chats_list_screen.dart';
 import 'profile/screens/my_profile_screen.dart';
 import 'profile/screens/search_screen.dart';
 
@@ -20,7 +20,7 @@ class _MainScreenState extends State<MainScreen> {
   final List<Widget> _screens = const [
     FeedScreen(),
     SearchScreen(),
-    _MessagesPlaceholder(),
+    ChatsListScreen(),
     MyProfileScreen(),
   ];
 
@@ -39,35 +39,3 @@ class _MainScreenState extends State<MainScreen> {
   }
 }
 
-/// Placeholder temporário enquanto a tela de mensagens não está implementada.
-class _MessagesPlaceholder extends StatelessWidget {
-  const _MessagesPlaceholder();
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Mensagens')),
-      body: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(Icons.chat_bubble_outline_rounded,
-                size: 80, color: AppTokens.outline),
-            const SizedBox(height: 16),
-            Text('Mensagens',
-                style: Theme.of(context).textTheme.titleLarge),
-            const SizedBox(height: 8),
-            Text(
-              'Em breve — chat em tempo real\nentre estudantes conectados.',
-              textAlign: TextAlign.center,
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyMedium
-                  ?.copyWith(color: AppTokens.onSurfaceVariant),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
