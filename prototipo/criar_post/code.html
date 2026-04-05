@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+
+<html class="light" lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Criar Post - InteraEdu</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .notion-focus:focus {
+            outline: none;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-secondary-fixed-variant": "#5a5b63",
+                        "surface-container-high": "#e9e7f0",
+                        "secondary-fixed": "#e3e1ec",
+                        "tertiary-fixed-dim": "#c3cfeb",
+                        "on-secondary-container": "#515159",
+                        "primary-fixed-dim": "#ccd2ff",
+                        "error": "#9e3f4e",
+                        "on-surface-variant": "#5e5e67",
+                        "surface-variant": "#e3e1ec",
+                        "outline": "#7a7a83",
+                        "on-surface": "#31323a",
+                        "surface-container-lowest": "#ffffff",
+                        "background": "#fbf8fc",
+                        "primary": "#4355b9",
+                        "on-secondary-fixed": "#3e3f47",
+                        "on-tertiary-container": "#434e66",
+                        "primary-dim": "#3649ac",
+                        "on-primary-fixed-variant": "#4052b6",
+                        "inverse-primary": "#8596ff",
+                        "on-tertiary-fixed": "#303c53",
+                        "surface-bright": "#fbf8fc",
+                        "secondary-dim": "#52525b",
+                        "secondary": "#5e5e67",
+                        "error-container": "#ff8b9a",
+                        "primary-fixed": "#dee0ff",
+                        "error-dim": "#4f0116",
+                        "surface-container-low": "#f5f2f8",
+                        "on-primary": "#f9f6ff",
+                        "tertiary-dim": "#47536b",
+                        "tertiary-fixed": "#d1ddfa",
+                        "on-primary-fixed": "#203498",
+                        "primary-container": "#dee0ff",
+                        "on-tertiary": "#f8f8ff",
+                        "on-error": "#fff7f7",
+                        "on-tertiary-fixed-variant": "#4c5870",
+                        "surface-container-highest": "#e3e1ec",
+                        "outline-variant": "#b2b1bb",
+                        "tertiary": "#535f78",
+                        "on-background": "#31323a",
+                        "on-primary-container": "#3648ac",
+                        "inverse-surface": "#0e0e11",
+                        "surface-container": "#efedf4",
+                        "on-error-container": "#782232",
+                        "inverse-on-surface": "#9e9ca0",
+                        "surface": "#fbf8fc",
+                        "surface-dim": "#dad9e5",
+                        "secondary-container": "#e3e1ec",
+                        "tertiary-container": "#d1ddfa",
+                        "on-secondary": "#faf8ff",
+                        "secondary-fixed-dim": "#d4d3dd",
+                        "surface-tint": "#4355b9"
+                    },
+                    fontFamily: {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background font-body text-on-surface min-h-screen flex flex-col">
+<!-- TopAppBar Navigation Shell Suppressed as per Task Logic (Focused Journey) -->
+<!-- Custom Editor Header -->
+<header class="fixed top-0 w-full z-50 bg-[#ffffffcc] backdrop-blur-xl h-16 flex items-center justify-between px-6 shadow-sm">
+<div class="flex items-center gap-4">
+<button class="flex items-center justify-center p-2 rounded-full hover:bg-surface-container-high transition-colors active:scale-95 duration-200">
+<span class="material-symbols-outlined text-on-surface-variant">close</span>
+</button>
+<h1 class="font-headline font-bold text-lg tracking-tight text-on-surface">Nova publicação</h1>
+</div>
+<button class="px-6 py-2 bg-primary-fixed-dim text-on-primary-fixed-variant font-semibold rounded-full opacity-60 cursor-not-allowed transition-all duration-200" disabled="">
+            Publicar
+        </button>
+</header>
+<main class="flex-1 mt-16 max-w-2xl mx-auto w-full px-6 py-8">
+<!-- User Metadata Section -->
+<div class="flex items-center gap-4 mb-10">
+<div class="w-12 h-12 rounded-full overflow-hidden bg-surface-container-high ring-2 ring-surface-container">
+<img alt="Avatar do usuário" class="w-full h-full object-cover" data-alt="Foto de perfil de um pesquisador sorridente" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA1vLImhc6eq2mVTfwN-Ubu-cadRLQyOWBZQzDTAlS09Ei1hpN0BmLi178VKoU4AFZsj06Q352ubrfw6WN4iC6f1qUPjmdw1wSSBzjLoe6UjmZcwEfxSxKTXWpO7g90iW_-wE9faBHECYkr1wG0MXqtLIoRsR2sxWcKp142q_pRs7pgd00yAmgYxouEnJNqtOFQ94F8VI6qbhbyoNZBFtQ2Y_1AAXgOXG5X_zB8-_NQpRsYJRDikTQpBAlnI8YlKaPZFD5E3CtnuxY"/>
+</div>
+<div>
+<p class="font-headline font-bold text-on-surface">Dr. Ricardo Menezes</p>
+<p class="text-xs text-secondary font-medium uppercase tracking-wider">Universidade Federal do Rio de Janeiro</p>
+</div>
+</div>
+<!-- Visibility Selector (Segmented Control) -->
+<div class="mb-10">
+<label class="text-xs font-semibold text-secondary mb-3 block uppercase tracking-widest">Visibilidade do Conteúdo</label>
+<div class="flex p-1 bg-surface-container-low rounded-xl gap-1">
+<button class="flex-1 flex items-center justify-center gap-2 py-2 px-4 rounded-lg bg-surface-container-lowest shadow-sm text-primary font-medium text-sm transition-all duration-200">
+<span class="material-symbols-outlined text-lg" style="font-variation-settings: 'FILL' 1;">home</span>
+                    Minha Universidade
+                </button>
+<button class="flex-1 flex items-center justify-center gap-2 py-2 px-4 rounded-lg text-secondary font-medium text-sm hover:bg-surface-container-high transition-all duration-200">
+<span class="material-symbols-outlined text-lg">public</span>
+                    Todas as Universidades
+                </button>
+</div>
+</div>
+<!-- Content Editor -->
+<div class="space-y-6">
+<textarea class="w-full bg-transparent border-none notion-focus resize-none text-xl leading-relaxed placeholder:text-outline-variant text-on-surface min-h-[200px]" placeholder="No que você está trabalhando hoje?"></textarea>
+<div class="h-[1px] bg-surface-container-high w-full"></div>
+<!-- Media Attachments Actions -->
+<div class="flex flex-wrap gap-4 items-center">
+<button class="flex items-center gap-2 px-4 py-3 rounded-xl bg-surface-container-low text-secondary hover:bg-surface-container-high hover:text-on-surface transition-all duration-200 group">
+<span class="material-symbols-outlined text-primary">image</span>
+<span class="text-sm font-medium">Adicionar imagem</span>
+</button>
+<button class="flex items-center gap-2 px-4 py-3 rounded-xl bg-surface-container-low text-secondary hover:bg-surface-container-high hover:text-on-surface transition-all duration-200">
+<span class="material-symbols-outlined text-primary">attach_file</span>
+<span class="text-sm font-medium">Anexar arquivo</span>
+</button>
+<button class="flex items-center gap-2 px-4 py-3 rounded-xl bg-surface-container-low text-secondary hover:bg-surface-container-high hover:text-on-surface transition-all duration-200">
+<span class="material-symbols-outlined text-primary">link</span>
+<span class="text-sm font-medium">Link externo</span>
+</button>
+</div>
+</div>
+<!-- LGPD Data Protection Hint -->
+<div class="mt-12 pt-8 flex items-start gap-3 opacity-60">
+<span class="material-symbols-outlined text-outline text-sm">shield</span>
+<p class="text-xs text-secondary leading-relaxed">
+                Suas publicações acadêmicas e dados estão protegidos sob a LGPD. 
+                Ao publicar, você concorda com os termos de integridade científica da comunidade.
+            </p>
+</div>
+</main>
+<!-- Contextual FAB Suppressed as per Task Logic (Focused Screen) -->
+<!-- Mobile Navigation Shell Suppressed as per Task Logic (Transactional Journey) -->
+</body></html>

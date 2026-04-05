@@ -1,0 +1,206 @@
+<!DOCTYPE html><html class="light" lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-secondary-fixed-variant": "#5a5b63",
+              "surface-container-high": "#e9e7f0",
+              "secondary-fixed": "#e3e1ec",
+              "tertiary-fixed-dim": "#c3cfeb",
+              "on-secondary-container": "#515159",
+              "primary-fixed-dim": "#ccd2ff",
+              "error": "#9e3f4e",
+              "on-surface-variant": "#5e5e67",
+              "surface-variant": "#e3e1ec",
+              "outline": "#7a7a83",
+              "on-surface": "#31323a",
+              "surface-container-lowest": "#ffffff",
+              "background": "#fbf8fc",
+              "primary": "#4355b9",
+              "on-secondary-fixed": "#3e3f47",
+              "on-tertiary-container": "#434e66",
+              "primary-dim": "#3649ac",
+              "on-primary-fixed-variant": "#4052b6",
+              "inverse-primary": "#8596ff",
+              "on-tertiary-fixed": "#303c53",
+              "surface-bright": "#fbf8fc",
+              "secondary-dim": "#52525b",
+              "secondary": "#5e5e67",
+              "error-container": "#ff8b9a",
+              "primary-fixed": "#dee0ff",
+              "error-dim": "#4f0116",
+              "surface-container-low": "#f5f2f8",
+              "on-primary": "#f9f6ff",
+              "tertiary-dim": "#47536b",
+              "tertiary-fixed": "#d1ddfa",
+              "on-primary-fixed": "#203498",
+              "primary-container": "#dee0ff",
+              "on-tertiary": "#f8f8ff",
+              "on-error": "#fff7f7",
+              "on-tertiary-fixed-variant": "#4c5870",
+              "surface-container-highest": "#e3e1ec",
+              "outline-variant": "#b2b1bb",
+              "tertiary": "#535f78",
+              "on-background": "#31323a",
+              "on-primary-container": "#3648ac",
+              "inverse-surface": "#0e0e11",
+              "surface-container": "#efedf4",
+              "on-error-container": "#782232",
+              "inverse-on-surface": "#9e9ca0",
+              "surface": "#fbf8fc",
+              "surface-dim": "#dad9e5",
+              "secondary-container": "#e3e1ec",
+              "tertiary-container": "#d1ddfa",
+              "on-secondary": "#faf8ff",
+              "secondary-fixed-dim": "#d4d3dd",
+              "surface-tint": "#4355b9"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+      body { font-family: 'Inter', sans-serif; }
+      h1, h2, h3 { font-family: 'Manrope', sans-serif; }
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface min-h-screen pb-32">
+<header class="fixed top-0 w-full z-50 bg-[#ffffffcc] dark:bg-[#0e0e11cc] backdrop-blur-xl shadow-sm dark:shadow-none flex justify-between items-center px-6 h-16 w-full">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[#3F51B5] dark:text-[#7986cb] active:scale-95 transition-transform duration-200 cursor-pointer" style="">menu</span>
+<span class="text-xl font-extrabold tracking-tighter text-[#3F51B5] dark:text-[#7986cb] font-['Manrope']" style="">InteraEdu</span>
+</div>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-[#3F51B5] dark:text-[#7986cb] active:scale-95 transition-transform duration-200 cursor-pointer" style="">settings</span>
+<span class="material-symbols-outlined text-[#3F51B5] dark:text-[#7986cb] active:scale-95 transition-transform duration-200 cursor-pointer" style="">notifications</span>
+</div>
+</header>
+<main class="pt-24 px-6 max-w-2xl mx-auto space-y-10">
+<section class="flex flex-col md:flex-row items-center md:items-start gap-6">
+<div class="relative group">
+<div class="w-32 h-32 rounded-full overflow-hidden ring-4 ring-surface-container-high transition-all group-hover:ring-primary/20">
+<img alt="Foto de perfil de usuário" class="w-full h-full object-cover" data-alt="Close-up portrait of a professional male student" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSD851iZdoGilv4W9cupKTa8y6185uB-D1IuA&amp;s" style="">
+</div>
+<button class="absolute bottom-0 right-0 bg-primary text-on-primary p-2 rounded-full shadow-lg active:scale-90 transition-transform" style="">
+<span class="material-symbols-outlined text-sm" style="">edit</span>
+</button>
+</div>
+<div class="text-center md:text-left space-y-2 flex-1">
+<h1 class="text-3xl font-bold tracking-tight text-on-surface" style="">Ricardo Mendonça</h1>
+<div class="space-y-1">
+<p class="text-primary font-medium" style="">Mestrado em Inteligência Artificial</p>
+<p class="text-on-surface-variant text-sm font-medium" style="">Universidade Federal de Minas Gerais</p>
+</div>
+<div class="pt-2">
+<span class="inline-flex items-center gap-1.5 px-3 py-1 bg-surface-container-low text-on-secondary-container text-xs font-semibold rounded-full" style="">
+<span class="material-symbols-outlined text-xs" style="">group</span>
+                    32 Conexões
+                  </span>
+</div>
+</div>
+</section>
+<section class="space-y-4">
+<div class="flex justify-between items-end">
+<h2 class="text-xl font-bold tracking-tight" style="">Minhas Habilidades</h2>
+<button class="text-sm font-semibold text-primary-dim hover:underline px-2 py-1 transition-colors" style="">Editar</button>
+</div>
+<div class="flex flex-wrap gap-2">
+<span class="px-4 py-2 bg-surface-container-high text-on-surface-variant text-sm font-medium rounded-full" style="">Machine Learning</span>
+<span class="px-4 py-2 bg-surface-container-high text-on-surface-variant text-sm font-medium rounded-full" style="">Python</span>
+<span class="px-4 py-2 bg-surface-container-high text-on-surface-variant text-sm font-medium rounded-full" style="">Análise de Dados</span>
+<span class="px-4 py-2 bg-surface-container-high text-on-surface-variant text-sm font-medium rounded-full" style="">TensorFlow</span>
+<span class="px-4 py-2 bg-surface-container-high text-on-surface-variant text-sm font-medium rounded-full" style="">Visão Computacional</span>
+<button class="px-3 py-2 border border-dashed border-outline-variant text-outline-variant text-sm font-medium rounded-full hover:border-primary hover:text-primary transition-all" style="">
+                    + Adicionar
+                </button>
+</div>
+</section>
+<section class="space-y-6">
+<div class="flex justify-between items-end">
+<h2 class="text-xl font-bold tracking-tight" style="">Minhas Publicações</h2>
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer" style="">add_circle</span>
+</div>
+<div class="space-y-4">
+<article class="p-5 bg-surface-container-lowest rounded-xl shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-md transition-shadow group cursor-pointer">
+<div class="flex justify-between items-start mb-2">
+<span class="text-[10px] uppercase tracking-widest font-bold text-primary opacity-80" style="">Artigo Científico</span>
+<span class="material-symbols-outlined text-outline-variant text-lg" style="">more_vert</span>
+</div>
+<h3 class="font-bold text-lg leading-snug group-hover:text-primary transition-colors" style="">Otimização de Redes Neurais em Ambientes de Baixa Latência</h3>
+<p class="mt-2 text-sm text-on-surface-variant leading-relaxed line-clamp-2" style="">Uma análise detalhada sobre como reduzir o consumo de memória sem comprometer a acurácia em dispositivos de borda...</p>
+<div class="mt-4 flex items-center gap-4 text-[11px] font-medium text-outline">
+<span class="flex items-center gap-1" style=""><span class="material-symbols-outlined text-xs" style="">calendar_today</span> Mar 2024</span>
+<span class="flex items-center gap-1" style=""><span class="material-symbols-outlined text-xs" style="">visibility</span> 128 leituras</span>
+</div>
+</article>
+<article class="p-5 bg-surface-container-low rounded-xl hover:bg-surface-container-high transition-colors group cursor-pointer">
+<div class="flex justify-between items-start mb-2">
+<span class="text-[10px] uppercase tracking-widest font-bold text-tertiary opacity-80" style="">Resumo de Palestra</span>
+<span class="material-symbols-outlined text-outline-variant text-lg" style="">more_vert</span>
+</div>
+<h3 class="font-bold text-lg leading-snug group-hover:text-primary transition-colors" style="">Futuro da IA na Educação Brasileira</h3>
+<div class="mt-4 flex items-center gap-4 text-[11px] font-medium text-outline">
+<span class="flex items-center gap-1" style=""><span class="material-symbols-outlined text-xs" style="">calendar_today</span> Jan 2024</span>
+<span class="flex items-center gap-1" style=""><span class="material-symbols-outlined text-xs" style="">visibility</span> 45 leituras</span>
+</div>
+</article>
+</div>
+</section>
+<section class="pt-6 border-t border-surface-container-high">
+<a class="flex items-center justify-between p-4 bg-surface-container-low rounded-xl group active:scale-[0.98] transition-all" href="#" style="">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary-dim" style="">account_circle</span>
+<span class="font-semibold text-on-surface" style="">Editar dados do perfil</span>
+</div>
+<span class="material-symbols-outlined text-outline-variant group-hover:translate-x-1 transition-transform" style="">chevron_right</span>
+</a>
+<p class="mt-6 text-center text-xs text-outline-variant italic" style="">
+                Seus dados estão protegidos sob a LGPD.
+            </p>
+</section>
+</main>
+<nav class="fixed bottom-0 left-0 w-full h-20 bg-[#ffffffcc] dark:bg-[#0e0e11cc] backdrop-blur-xl shadow-[0_-8px_24px_rgba(49,50,58,0.04)] flex justify-around items-center px-4 pb-safe rounded-t-2xl z-50">
+<a class="flex flex-col items-center justify-center text-[#5e5e67] dark:text-[#b2b1bb] px-3 py-1 hover:text-[#3F51B5] dark:hover:text-white transition-all active:scale-90" href="#" style="">
+<span class="material-symbols-outlined" style="">home</span>
+<span class="font-['Inter'] font-medium text-[11px] leading-relaxed" style="">Início</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#5e5e67] dark:text-[#b2b1bb] px-3 py-1 hover:text-[#3F51B5] dark:hover:text-white transition-all active:scale-90" href="#" style="">
+<span class="material-symbols-outlined" style="">search</span>
+<span class="font-['Inter'] font-medium text-[11px] leading-relaxed" style="">Explorar</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#5e5e67] dark:text-[#b2b1bb] px-3 py-1 hover:text-[#3F51B5] dark:hover:text-white transition-all active:scale-90" href="#" style="">
+<span class="material-symbols-outlined" style="">group</span>
+<span class="font-['Inter'] font-medium text-[11px] leading-relaxed" style="">Conexões</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#5e5e67] dark:text-[#b2b1bb] px-3 py-1 hover:text-[#3F51B5] dark:hover:text-white transition-all active:scale-90" href="#" style="">
+<span class="material-symbols-outlined" style="">chat_bubble</span>
+<span class="font-['Inter'] font-medium text-[11px] leading-relaxed" style="">Mensagens</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-[#e3e1ec] dark:bg-[#3649ac33] text-[#3F51B5] dark:text-[#7986cb] rounded-xl px-3 py-1 transition-all active:scale-90" href="#" style="">
+<span class="material-symbols-outlined" style="font-variation-settings: &quot;FILL&quot; 1;">person</span>
+<span class="font-['Inter'] font-medium text-[11px] leading-relaxed" style="">Perfil</span>
+</a>
+</nav>
+</body></html>

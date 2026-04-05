@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../../../core/design/app_tokens.dart';
 import '../../../core/di/service_locator.dart';
 import '../../../domain/repositories/feed_repository.dart';
 
@@ -100,7 +101,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
               ),
             ),
 
-            const Divider(height: 24),
+            const SizedBox(height: 16),
 
             // Campo de texto
             Expanded(
@@ -132,15 +133,15 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                     '$remaining',
                     style: TextStyle(
                       color: remaining < 100
-                          ? Theme.of(context).colorScheme.error
-                          : Theme.of(context).colorScheme.outline,
+                          ? AppTokens.error
+                          : AppTokens.outline,
                       fontSize: 12,
                     ),
                   ),
                   Text(
                     ' / $_maxChars',
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.outline,
+                    style: const TextStyle(
+                      color: AppTokens.outline,
                       fontSize: 12,
                     ),
                   ),

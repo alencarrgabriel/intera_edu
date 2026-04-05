@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+
+<html class="light" lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-secondary-fixed-variant": "#5a5b63",
+              "surface-container-high": "#e9e7f0",
+              "secondary-fixed": "#e3e1ec",
+              "tertiary-fixed-dim": "#c3cfeb",
+              "on-secondary-container": "#515159",
+              "primary-fixed-dim": "#ccd2ff",
+              "error": "#9e3f4e",
+              "on-surface-variant": "#5e5e67",
+              "surface-variant": "#e3e1ec",
+              "outline": "#7a7a83",
+              "on-surface": "#31323a",
+              "surface-container-lowest": "#ffffff",
+              "background": "#fbf8fc",
+              "primary": "#4355b9",
+              "on-secondary-fixed": "#3e3f47",
+              "on-tertiary-container": "#434e66",
+              "primary-dim": "#3649ac",
+              "on-primary-fixed-variant": "#4052b6",
+              "inverse-primary": "#8596ff",
+              "on-tertiary-fixed": "#303c53",
+              "surface-bright": "#fbf8fc",
+              "secondary-dim": "#52525b",
+              "secondary": "#5e5e67",
+              "error-container": "#ff8b9a",
+              "primary-fixed": "#dee0ff",
+              "error-dim": "#4f0116",
+              "surface-container-low": "#f5f2f8",
+              "on-primary": "#f9f6ff",
+              "tertiary-dim": "#47536b",
+              "tertiary-fixed": "#d1ddfa",
+              "on-primary-fixed": "#203498",
+              "primary-container": "#dee0ff",
+              "on-tertiary": "#f8f8ff",
+              "on-error": "#fff7f7",
+              "on-tertiary-fixed-variant": "#4c5870",
+              "surface-container-highest": "#e3e1ec",
+              "outline-variant": "#b2b1bb",
+              "tertiary": "#535f78",
+              "on-background": "#31323a",
+              "on-primary-container": "#3648ac",
+              "inverse-surface": "#0e0e11",
+              "surface-container": "#efedf4",
+              "on-error-container": "#782232",
+              "inverse-on-surface": "#9e9ca0",
+              "surface": "#fbf8fc",
+              "surface-dim": "#dad9e5",
+              "secondary-container": "#e3e1ec",
+              "tertiary-container": "#d1ddfa",
+              "on-secondary": "#faf8ff",
+              "secondary-fixed-dim": "#d4d3dd",
+              "surface-tint": "#4355b9"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #fbf8fc; color: #31323a; }
+        .font-headline { font-family: 'Manrope', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background min-h-screen pb-24">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-[#ffffffcc] dark:bg-[#0e0e11cc] backdrop-blur-xl shadow-sm dark:shadow-none flex justify-between items-center px-6 h-16 w-full">
+<div class="flex items-center gap-4">
+<button class="text-[#3F51B5] dark:text-[#7986cb] active:scale-95 transition-transform duration-200">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+<h1 class="font-['Manrope'] font-bold text-lg tracking-tight text-[#3F51B5] dark:text-[#7986cb]">InteraEdu</h1>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-[#3F51B5] dark:text-[#7986cb] active:scale-95 transition-transform duration-200">
+<span class="material-symbols-outlined" data-icon="notifications" style="font-variation-settings: 'FILL' 1;">notifications</span>
+</button>
+</div>
+</header>
+<!-- Content Canvas -->
+<main class="pt-24 px-6 max-w-2xl mx-auto">
+<!-- Header Section -->
+<div class="flex justify-between items-end mb-8">
+<h2 class="font-headline font-extrabold text-3xl tracking-tight text-on-surface">Notificações</h2>
+<button class="text-sm font-medium text-primary hover:underline transition-all">
+                Marcar todas como lidas
+            </button>
+</div>
+<!-- Activity Feed (Notion-like) -->
+<div class="space-y-1">
+<!-- Day Grouping -->
+<div class="py-2 mb-2">
+<span class="text-xs font-bold uppercase tracking-widest text-on-surface-variant opacity-60">Hoje</span>
+</div>
+<!-- Notification Item: Connection Request -->
+<div class="group flex items-start gap-4 p-4 rounded-xl hover:bg-surface-container-low transition-colors cursor-pointer">
+<div class="mt-1 w-10 h-10 rounded-full bg-primary-container flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-on-primary-container" data-icon="person_add">person_add</span>
+</div>
+<div class="flex-1 min-w-0">
+<p class="text-on-surface text-sm leading-relaxed">
+<span class="font-semibold">Ana Silva</span> solicitou uma conexão acadêmica para colaborar em <span class="italic text-on-surface-variant">Bioinformática</span>.
+                    </p>
+<div class="mt-2 flex gap-2">
+<button class="px-4 py-1.5 bg-primary text-white text-xs font-semibold rounded-lg hover:bg-primary-dim transition-colors">Aceitar</button>
+<button class="px-4 py-1.5 bg-surface-container-high text-on-surface text-xs font-semibold rounded-lg hover:bg-surface-variant transition-colors">Recusar</button>
+</div>
+</div>
+<div class="flex flex-col items-end gap-2">
+<span class="text-[10px] text-on-surface-variant whitespace-nowrap">2 min atrás</span>
+<div class="w-2 h-2 rounded-full bg-primary"></div>
+</div>
+</div>
+<!-- Notification Item: New Post -->
+<div class="group flex items-start gap-4 p-4 rounded-xl hover:bg-surface-container-low transition-colors cursor-pointer">
+<div class="mt-1 w-10 h-10 rounded-full bg-tertiary-container flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-on-tertiary-container" data-icon="groups">groups</span>
+</div>
+<div class="flex-1 min-w-0">
+<p class="text-on-surface text-sm leading-relaxed">
+<span class="font-semibold">Lucas Martins</span> postou uma nova pesquisa sobre <span class="font-medium text-primary-dim">Inteligência Artificial na Educação</span> no grupo de Mestrado.
+                    </p>
+</div>
+<div class="flex flex-col items-end gap-2">
+<span class="text-[10px] text-on-surface-variant whitespace-nowrap">45 min atrás</span>
+<div class="w-2 h-2 rounded-full bg-primary"></div>
+</div>
+</div>
+<!-- Day Grouping -->
+<div class="py-2 mt-6 mb-2">
+<span class="text-xs font-bold uppercase tracking-widest text-on-surface-variant opacity-60">Ontem</span>
+</div>
+<!-- Notification Item: Mention -->
+<div class="group flex items-start gap-4 p-4 rounded-xl hover:bg-surface-container-low transition-colors cursor-pointer opacity-80">
+<div class="mt-1 w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-on-secondary-container" data-icon="alternate_email">alternate_email</span>
+</div>
+<div class="flex-1 min-w-0">
+<p class="text-on-surface text-sm leading-relaxed">
+<span class="font-semibold">Prof. Roberto</span> mencionou você em um comentário: <span class="italic">"Acredito que os dados da @Marina seriam fundamentais aqui."</span>
+</p>
+</div>
+<div class="flex flex-col items-end gap-2">
+<span class="text-[10px] text-on-surface-variant whitespace-nowrap">Ontem, 14:20</span>
+</div>
+</div>
+<!-- Notification Item: Recommendation -->
+<div class="group flex items-start gap-4 p-4 rounded-xl hover:bg-surface-container-low transition-colors cursor-pointer opacity-80">
+<div class="mt-1 w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="lightbulb">lightbulb</span>
+</div>
+<div class="flex-1 min-w-0">
+<p class="text-on-surface text-sm leading-relaxed">
+                        Sugestão de leitura baseada no seu interesse em <span class="font-medium">Design System</span>: "A semântica da cor na interface moderna".
+                    </p>
+</div>
+<div class="flex flex-col items-end gap-2">
+<span class="text-[10px] text-on-surface-variant whitespace-nowrap">Ontem, 09:15</span>
+</div>
+</div>
+</div>
+<!-- Empty State (Hidden by default, shown here for reference if list was empty) -->
+<div class="hidden flex flex-col items-center justify-center py-20 text-center px-10">
+<div class="w-24 h-24 bg-surface-container-low rounded-full flex items-center justify-center mb-6">
+<span class="material-symbols-outlined text-outline-variant text-5xl" data-icon="notifications_off">notifications_off</span>
+</div>
+<h3 class="font-headline font-bold text-xl text-on-surface mb-2">Tudo limpo por aqui.</h3>
+<p class="text-on-surface-variant text-sm leading-relaxed">
+                Você não tem novas notificações no momento. Aproveite para explorar novos grupos de pesquisa.
+            </p>
+<button class="mt-8 px-6 py-2 bg-primary text-white rounded-full font-semibold text-sm hover:bg-primary-dim transition-all active:scale-95">
+                Explorar Conexões
+            </button>
+</div>
+<!-- LGPD Data Protection Hint -->
+<div class="mt-12 text-center pb-8">
+<p class="text-[10px] font-label text-on-surface-variant uppercase tracking-tighter opacity-50">
+                Seus dados de atividade estão protegidos sob a LGPD.
+            </p>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full h-20 bg-[#ffffffcc] dark:bg-[#0e0e11cc] backdrop-blur-xl flex justify-around items-center px-4 pb-safe shadow-[0_-8px_24px_rgba(49,50,58,0.04)] z-50 rounded-t-2xl">
+<div class="flex flex-col items-center justify-center text-[#5e5e67] dark:text-[#b2b1bb] px-3 py-1 hover:text-[#3F51B5] dark:hover:text-white active:scale-90 transition-all duration-200">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="font-['Inter'] font-medium text-[11px] leading-relaxed">Início</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#5e5e67] dark:text-[#b2b1bb] px-3 py-1 hover:text-[#3F51B5] dark:hover:text-white active:scale-90 transition-all duration-200">
+<span class="material-symbols-outlined" data-icon="search">search</span>
+<span class="font-['Inter'] font-medium text-[11px] leading-relaxed">Explorar</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#5e5e67] dark:text-[#b2b1bb] px-3 py-1 hover:text-[#3F51B5] dark:hover:text-white active:scale-90 transition-all duration-200">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span class="font-['Inter'] font-medium text-[11px] leading-relaxed">Conexões</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#5e5e67] dark:text-[#b2b1bb] px-3 py-1 hover:text-[#3F51B5] dark:hover:text-white active:scale-90 transition-all duration-200">
+<span class="material-symbols-outlined" data-icon="chat_bubble">chat_bubble</span>
+<span class="font-['Inter'] font-medium text-[11px] leading-relaxed">Mensagens</span>
+</div>
+<!-- Active Tab: Notifications is conceptually close to Profile/Alerts for this view -->
+<div class="flex flex-col items-center justify-center bg-[#e3e1ec] dark:bg-[#3649ac33] text-[#3F51B5] dark:text-[#7986cb] rounded-xl px-3 py-1 active:scale-90 transition-all duration-200">
+<span class="material-symbols-outlined" data-icon="person" style="font-variation-settings: 'FILL' 1;">person</span>
+<span class="font-['Inter'] font-medium text-[11px] leading-relaxed">Perfil</span>
+</div>
+</nav>
+</body></html>

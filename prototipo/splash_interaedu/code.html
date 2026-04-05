@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&amp;family=Inter:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-secondary-fixed-variant": "#5a5b63",
+              "surface-container-high": "#e9e7f0",
+              "secondary-fixed": "#e3e1ec",
+              "tertiary-fixed-dim": "#c3cfeb",
+              "on-secondary-container": "#515159",
+              "primary-fixed-dim": "#ccd2ff",
+              "error": "#9e3f4e",
+              "on-surface-variant": "#5e5e67",
+              "surface-variant": "#e3e1ec",
+              "outline": "#7a7a83",
+              "on-surface": "#31323a",
+              "surface-container-lowest": "#ffffff",
+              "background": "#fbf8fc",
+              "primary": "#4355b9",
+              "on-secondary-fixed": "#3e3f47",
+              "on-tertiary-container": "#434e66",
+              "primary-dim": "#3649ac",
+              "on-primary-fixed-variant": "#4052b6",
+              "inverse-primary": "#8596ff",
+              "on-tertiary-fixed": "#303c53",
+              "surface-bright": "#fbf8fc",
+              "secondary-dim": "#52525b",
+              "secondary": "#5e5e67",
+              "error-container": "#ff8b9a",
+              "primary-fixed": "#dee0ff",
+              "error-dim": "#4f0116",
+              "surface-container-low": "#f5f2f8",
+              "on-primary": "#f9f6ff",
+              "tertiary-dim": "#47536b",
+              "tertiary-fixed": "#d1ddfa",
+              "on-primary-fixed": "#203498",
+              "primary-container": "#dee0ff",
+              "on-tertiary": "#f8f8ff",
+              "on-error": "#fff7f7",
+              "on-tertiary-fixed-variant": "#4c5870",
+              "surface-container-highest": "#e3e1ec",
+              "outline-variant": "#b2b1bb",
+              "tertiary": "#535f78",
+              "on-background": "#31323a",
+              "on-primary-container": "#3648ac",
+              "inverse-surface": "#0e0e11",
+              "surface-container": "#efedf4",
+              "on-error-container": "#782232",
+              "inverse-on-surface": "#9e9ca0",
+              "surface": "#fbf8fc",
+              "surface-dim": "#dad9e5",
+              "secondary-container": "#e3e1ec",
+              "tertiary-container": "#d1ddfa",
+              "on-secondary": "#faf8ff",
+              "secondary-fixed-dim": "#d4d3dd",
+              "surface-tint": "#4355b9"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      @keyframes pulse-soft {
+        0%, 100% { opacity: 0.3; transform: scaleX(0.95); }
+        50% { opacity: 0.7; transform: scaleX(1.05); }
+      }
+      .loading-bar-segment {
+        animation: pulse-soft 2s ease-in-out infinite;
+      }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background font-body text-on-background min-h-screen flex flex-col items-center justify-center overflow-hidden">
+<!-- Splash Screen Container -->
+<main class="relative w-full h-full flex flex-col items-center justify-center p-8 max-w-md mx-auto">
+<!-- Logo Section: Book/Connection Concept -->
+<div class="flex flex-col items-center space-y-8 mb-32">
+<!-- Icon Symbol -->
+<div class="relative flex items-center justify-center">
+<!-- Decorative Glow Layer -->
+<div class="absolute inset-0 bg-primary-container blur-3xl opacity-20 rounded-full"></div>
+<div class="relative flex items-center justify-center w-24 h-24 bg-surface-container-lowest rounded-3xl shadow-[0_8px_32px_rgba(49,50,58,0.06)] border border-outline-variant/10">
+<span class="material-symbols-outlined text-primary text-5xl" style="font-variation-settings: 'wght' 300;">
+                        auto_stories
+                    </span>
+<!-- Overlaid Connection Hub -->
+<div class="absolute -bottom-1 -right-1 w-8 h-8 bg-primary rounded-xl flex items-center justify-center shadow-lg">
+<span class="material-symbols-outlined text-on-primary text-lg" style="font-variation-settings: 'FILL' 1;">
+                            hub
+                        </span>
+</div>
+</div>
+</div>
+<!-- Brand Typography -->
+<div class="text-center">
+<h1 class="font-headline font-extrabold text-4xl tracking-tighter text-primary-dim">
+                    InteraEdu
+                </h1>
+<p class="font-body text-on-surface-variant text-sm tracking-widest mt-2 uppercase">
+                    Curadoria Digital
+                </p>
+</div>
+</div>
+<!-- Footer Loading Indicator -->
+<div class="absolute bottom-16 flex flex-col items-center space-y-6 w-full px-12">
+<div class="w-full h-[3px] bg-surface-container-high rounded-full overflow-hidden">
+<div class="loading-bar-segment h-full bg-primary-dim w-1/3 rounded-full mx-auto"></div>
+</div>
+<div class="flex flex-col items-center space-y-1">
+<span class="text-xs font-label text-outline tracking-wider">
+                    Sincronizando conhecimento
+                </span>
+<p class="text-[10px] text-outline-variant font-label">
+                    Seus dados estão protegidos sob a LGPD.
+                </p>
+</div>
+</div>
+<!-- Background Editorial Texture (Subtle Glassmorphism Element) -->
+<div class="fixed -top-24 -left-24 w-96 h-96 bg-primary-container/10 rounded-full blur-[100px] pointer-events-none"></div>
+<div class="fixed -bottom-48 -right-48 w-[500px] h-[500px] bg-secondary-fixed/20 rounded-full blur-[120px] pointer-events-none"></div>
+</main>
+<!-- Navigation Shell Suppression: As per rules, Splash Screen suppresses TopAppBar and BottomNavBar -->
+</body></html>

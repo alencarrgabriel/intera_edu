@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../../../core/design/app_tokens.dart';
+import '../../../core/widgets/stitch_card.dart';
 import '../../../domain/entities/post.dart';
 import '../../shared/relative_time_text.dart';
 import '../../shared/user_avatar.dart';
@@ -33,8 +35,16 @@ class _PostCardState extends State<PostCard> {
     _reactionCount = widget.post.reactionCount;
   }
 
+  @override
+  void didUpdateWidget(PostCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.post != widget.post) {
+      _reacted = widget.post.userReaction != null;
+      _reactionCount = widget.post.reactionCount;
+    }
+  }
+
   void _handleReact() {
-    // Atualização otimista
     setState(() {
       if (_reacted) {
         _reacted = false;
@@ -54,27 +64,28 @@ class _PostCardState extends State<PostCard> {
     final authorCourse = post.authorCourse;
     final institutionName = post.authorInstitutionName;
 
-    return Card(
-      clipBehavior: Clip.antiAlias,
+    return StitchCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Cabeçalho da publicação
+          // ── Cabeçalho ──────────────────────────────────────────────────
           Padding(
-            padding: const EdgeInsets.fromLTRB(16, 14, 8, 8),
+            padding: const EdgeInsets.fromLTRB(16, 14, 8, 10),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                UserAvatar(name: authorName, imageUrl: post.authorAvatarUrl, radius: 20),
+                UserAvatar(
+                    name: authorName,
+                    imageUrl: post.authorAvatarUrl,
+                    radius: 20),
                 const SizedBox(width: 10),
-                // Nome e metadados
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         authorName,
-                        style: const TextStyle(fontWeight: FontWeight.w600),
+                        style: Theme.of(context).textTheme.titleSmall,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -90,43 +101,50 @@ class _PostCardState extends State<PostCard> {
                     ],
                   ),
                 ),
-                // Tempo + scope
+                // Tempo + scope badge
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     RelativeTimeText(date: post.createdAt),
-                    const SizedBox(height: 2),
+                    const SizedBox(height: 4),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 7, vertical: 2),
                       decoration: BoxDecoration(
                         color: post.scope == 'local'
-                            ? Theme.of(context).colorScheme.primaryContainer
-                            : Theme.of(context).colorScheme.secondaryContainer,
-                        borderRadius: BorderRadius.circular(8),
+                            ? AppTokens.primaryContainer
+                            : AppTokens.surfaceContainerHigh,
+                        borderRadius:
+                            BorderRadius.circular(AppTokens.radiusFull),
                       ),
                       child: Text(
                         post.scope == 'local' ? 'Local' : 'Global',
-                        style: Theme.of(context).textTheme.labelSmall,
+                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                              color: post.scope == 'local'
+                                  ? AppTokens.onPrimaryContainer
+                                  : AppTokens.onSurfaceVariant,
+                            ),
                       ),
                     ),
                   ],
                 ),
                 if (widget.onDelete != null)
                   PopupMenuButton<String>(
-                    icon: const Icon(Icons.more_vert, size: 18),
+                    icon: const Icon(Icons.more_vert,
+                        size: 18, color: AppTokens.onSurfaceVariant),
                     onSelected: (v) {
                       if (v == 'delete') widget.onDelete?.call();
                     },
                     itemBuilder: (_) => [
                       const PopupMenuItem(
                         value: 'delete',
-                        child: Row(
-                          children: [
-                            Icon(Icons.delete_outline, size: 18, color: Colors.red),
-                            SizedBox(width: 8),
-                            Text('Excluir', style: TextStyle(color: Colors.red)),
-                          ],
-                        ),
+                        child: Row(children: [
+                          Icon(Icons.delete_outline,
+                              size: 18, color: AppTokens.error),
+                          SizedBox(width: 8),
+                          Text('Excluir',
+                              style: TextStyle(color: AppTokens.error)),
+                        ]),
                       ),
                     ],
                   ),
@@ -134,51 +152,65 @@ class _PostCardState extends State<PostCard> {
             ),
           ),
 
-          // Conteúdo
+          // ── Conteúdo ───────────────────────────────────────────────────
           Padding(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
-            child: Text(post.content, style: const TextStyle(height: 1.5)),
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 14),
+            child: Text(
+              post.content,
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyMedium
+                  ?.copyWith(height: 1.6),
+            ),
           ),
 
-          const Divider(height: 1),
+          // ── Separador via color-shift ───────────────────────────────────
+          Container(
+            height: 1,
+            color: AppTokens.surfaceContainerLow,
+          ),
 
-          // Barra de ações
+          // ── Ações ──────────────────────────────────────────────────────
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 4),
+            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
             child: Row(
               children: [
-                // Curtir
                 TextButton.icon(
                   onPressed: _handleReact,
                   icon: Icon(
-                    _reacted ? Icons.thumb_up : Icons.thumb_up_outlined,
+                    _reacted
+                        ? Icons.thumb_up_rounded
+                        : Icons.thumb_up_outlined,
                     size: 18,
                     color: _reacted
-                        ? Theme.of(context).colorScheme.primary
-                        : Theme.of(context).colorScheme.onSurfaceVariant,
+                        ? AppTokens.primary
+                        : AppTokens.onSurfaceVariant,
                   ),
                   label: Text(
                     _reactionCount > 0 ? '$_reactionCount' : 'Curtir',
                     style: TextStyle(
                       color: _reacted
-                          ? Theme.of(context).colorScheme.primary
-                          : Theme.of(context).colorScheme.onSurfaceVariant,
+                          ? AppTokens.primary
+                          : AppTokens.onSurfaceVariant,
+                      fontSize: 13,
                     ),
                   ),
                 ),
                 const SizedBox(width: 4),
-                // Comentar
                 TextButton.icon(
                   onPressed: widget.onComment,
-                  icon: Icon(
-                    Icons.chat_bubble_outline,
+                  icon: const Icon(
+                    Icons.chat_bubble_outline_rounded,
                     size: 18,
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    color: AppTokens.onSurfaceVariant,
                   ),
                   label: Text(
-                    post.commentCount > 0 ? '${post.commentCount}' : 'Comentar',
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    post.commentCount > 0
+                        ? '${post.commentCount}'
+                        : 'Comentar',
+                    style: const TextStyle(
+                      color: AppTokens.onSurfaceVariant,
+                      fontSize: 13,
                     ),
                   ),
                 ),

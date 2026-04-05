@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../core/design/app_tokens.dart';
 import '../../../core/di/service_locator.dart';
 import '../../../domain/entities/user.dart';
 import '../../../domain/repositories/profile_repository.dart';
@@ -99,27 +100,40 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                   : ListView(
                       padding: const EdgeInsets.all(16),
                       children: [
-                        // Avatar e nome
-                        Center(
-                          child: Column(children: [
-                            UserAvatar(
-                              name: _profile!.fullName,
-                              imageUrl: _profile!.avatarUrl,
-                              radius: 48,
+                        // ── Header ──────────────────────────────────────
+                        Container(
+                          padding: const EdgeInsets.symmetric(vertical: 24),
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [
+                                AppTokens.primaryContainer.withValues(alpha: 0.5),
+                                AppTokens.background,
+                              ],
                             ),
-                            const SizedBox(height: 12),
-                            Text(
-                              _profile!.fullName,
-                              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                            ),
-                            Text(
-                              _profile!.institution.name,
-                              style: TextStyle(
-                                  color: Theme.of(context).colorScheme.primary),
-                            ),
-                          ]),
+                          ),
+                          child: Center(
+                            child: Column(children: [
+                              UserAvatar(
+                                name: _profile!.fullName,
+                                imageUrl: _profile!.avatarUrl,
+                                radius: 48,
+                              ),
+                              const SizedBox(height: 12),
+                              Text(
+                                _profile!.fullName,
+                                style: Theme.of(context).textTheme.headlineSmall,
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                _profile!.institution.name,
+                                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                    color: AppTokens.primary,
+                                    fontWeight: FontWeight.w500),
+                              ),
+                            ]),
+                          ),
                         ),
                         const SizedBox(height: 16),
 
@@ -181,7 +195,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                     .map((s) => Chip(
                                           label: Text(s.name),
                                           side: BorderSide.none,
-                                          backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
+                                          backgroundColor: AppTokens.primaryContainer,
                                         ))
                                     .toList(),
                               ),

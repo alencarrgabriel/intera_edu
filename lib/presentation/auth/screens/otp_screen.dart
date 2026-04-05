@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
+import '../../../core/design/app_tokens.dart';
 import '../../../core/di/service_locator.dart';
 import '../../../core/router/app_router.dart';
 import '../../../core/utils/validators.dart';
+import '../../../core/widgets/gradient_button.dart';
 import '../../../domain/repositories/auth_repository.dart';
 
 class OtpScreen extends StatefulWidget {
@@ -31,7 +33,8 @@ class _OtpScreenState extends State<OtpScreen> {
     setState(() => _isLoading = true);
 
     try {
-      final token = await _authRepo.verifyOtp(widget.email, _otpController.text.trim());
+      final token =
+          await _authRepo.verifyOtp(widget.email, _otpController.text.trim());
       if (!mounted) return;
       context.go(AppRoutes.profileSetup, extra: {
         'token': token,
@@ -39,7 +42,8 @@ class _OtpScreenState extends State<OtpScreen> {
       });
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(e.toString())));
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -54,25 +58,41 @@ class _OtpScreenState extends State<OtpScreen> {
       );
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(e.toString())));
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppTokens.background,
       appBar: AppBar(title: const Text('Verificar E-mail')),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(24),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 24),
           child: Form(
             key: _formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const SizedBox(height: 24),
-                Icon(Icons.mark_email_read_outlined,
-                    size: 64, color: Theme.of(context).colorScheme.primary),
+                const SizedBox(height: 16),
+                // ── Ícone ────────────────────────────────────────────────
+                Center(
+                  child: Container(
+                    width: 80,
+                    height: 80,
+                    decoration: BoxDecoration(
+                      color: AppTokens.primaryContainer,
+                      borderRadius: BorderRadius.circular(AppTokens.radiusLg),
+                    ),
+                    child: const Icon(
+                      Icons.mark_email_read_outlined,
+                      size: 40,
+                      color: AppTokens.onPrimaryContainer,
+                    ),
+                  ),
+                ),
                 const SizedBox(height: 24),
                 Text(
                   'Verifique seu e-mail',
@@ -82,10 +102,15 @@ class _OtpScreenState extends State<OtpScreen> {
                 const SizedBox(height: 8),
                 Text(
                   'Enviamos um código de 6 dígitos para\n${widget.email}',
-                  style: Theme.of(context).textTheme.bodyMedium,
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyMedium
+                      ?.copyWith(color: AppTokens.onSurfaceVariant),
                   textAlign: TextAlign.center,
                 ),
-                const SizedBox(height: 32),
+                const SizedBox(height: 36),
+
+                // ── Campo OTP ────────────────────────────────────────────
                 TextFormField(
                   controller: _otpController,
                   decoration: const InputDecoration(
@@ -98,25 +123,29 @@ class _OtpScreenState extends State<OtpScreen> {
                   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                   validator: Validators.otpCode,
                   textAlign: TextAlign.center,
-                  style: const TextStyle(fontSize: 24, letterSpacing: 8),
+                  style: const TextStyle(
+                      fontSize: 28,
+                      letterSpacing: 10,
+                      fontWeight: FontWeight.w700,
+                      color: AppTokens.primary),
                   textInputAction: TextInputAction.done,
                   onFieldSubmitted: (_) => _handleVerify(),
                 ),
-                const SizedBox(height: 24),
-                SizedBox(
-                  height: 52,
-                  child: ElevatedButton(
-                    onPressed: _isLoading ? null : _handleVerify,
-                    child: _isLoading
-                        ? const SizedBox(
-                            height: 20,
-                            width: 20,
-                            child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
-                          )
-                        : const Text('Verificar', style: TextStyle(fontSize: 16)),
-                  ),
+                const SizedBox(height: 28),
+
+                GradientButton(
+                  onPressed: _isLoading ? null : _handleVerify,
+                  child: _isLoading
+                      ? const SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(
+                              strokeWidth: 2, color: Colors.white),
+                        )
+                      : const Text('Verificar'),
                 ),
                 const SizedBox(height: 16),
+
                 TextButton(
                   onPressed: _handleResend,
                   child: const Text('Não recebeu o código? Reenviar'),

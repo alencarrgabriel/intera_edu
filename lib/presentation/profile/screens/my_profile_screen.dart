@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import '../../../core/design/app_tokens.dart';
 import '../../../core/router/app_router.dart';
+import '../../../core/widgets/stitch_card.dart';
 import '../../../domain/entities/user.dart';
 import '../../shared/error_retry_widget.dart';
 import '../../shared/user_avatar.dart';
@@ -68,10 +70,21 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
     return RefreshIndicator(
       onRefresh: () => context.read<ProfileNotifier>().load(force: true),
       child: ListView(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.fromLTRB(16, 0, 16, 32),
         children: [
-          // Avatar e nome
-          Center(
+          // ── Header com gradiente ─────────────────────────────────────────
+          Container(
+            padding: const EdgeInsets.symmetric(vertical: 28),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  AppTokens.primaryContainer.withValues(alpha: 0.5),
+                  AppTokens.background,
+                ],
+              ),
+            ),
             child: Column(
               children: [
                 UserAvatar(
@@ -82,30 +95,31 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                 const SizedBox(height: 12),
                 Text(
                   profile.fullName,
-                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
+                  style: Theme.of(context).textTheme.headlineSmall,
                 ),
+                const SizedBox(height: 2),
                 Text(
                   profile.institution.name,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Theme.of(context).colorScheme.primary,
+                        color: AppTokens.primary,
+                        fontWeight: FontWeight.w500,
                       ),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 10),
                 Chip(
                   label: Text(
                     _privacyLabel(profile.privacyLevel),
                     style: const TextStyle(fontSize: 12),
                   ),
                   side: BorderSide.none,
+                  backgroundColor: AppTokens.surfaceContainer,
                 ),
               ],
             ),
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 12),
 
-          // Informações acadêmicas
+          // ── Informações acadêmicas ───────────────────────────────────────
           if (profile.course != null || profile.period != null)
             _InfoCard(children: [
               if (profile.course != null)
@@ -120,26 +134,32 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                     value: '${profile.period}º período'),
             ]),
 
-          // Bio
+          // ── Bio ──────────────────────────────────────────────────────────
           if (profile.bio != null && profile.bio!.isNotEmpty)
             _Section(
               title: 'Sobre',
-              child: Text(profile.bio!, style: const TextStyle(height: 1.5)),
+              child: Text(profile.bio!,
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyMedium
+                      ?.copyWith(height: 1.6)),
             ),
 
-          // Habilidades
+          // ── Habilidades ──────────────────────────────────────────────────
           if (profile.skills.isNotEmpty)
             _Section(
               title: 'Habilidades',
               child: Wrap(
                 spacing: 8,
-                runSpacing: 4,
+                runSpacing: 6,
                 children: profile.skills
                     .map((s) => Chip(
                           label: Text(s.name),
                           side: BorderSide.none,
-                          backgroundColor:
-                              Theme.of(context).colorScheme.secondaryContainer,
+                          backgroundColor: AppTokens.primaryContainer,
+                          labelStyle: const TextStyle(
+                              color: AppTokens.onPrimaryContainer,
+                              fontWeight: FontWeight.w500),
                         ))
                     .toList(),
               ),
@@ -188,10 +208,10 @@ class _InfoCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 16),
-      child: Padding(
-        padding: const EdgeInsets.all(12),
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: StitchCard(
+        padding: const EdgeInsets.all(14),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: children,
@@ -214,7 +234,7 @@ class _InfoRow extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
         children: [
-          Icon(icon, size: 18, color: Theme.of(context).colorScheme.primary),
+          Icon(icon, size: 18, color: AppTokens.primary),
           const SizedBox(width: 8),
           Text('$label: ', style: const TextStyle(fontWeight: FontWeight.w500)),
           Expanded(child: Text(value)),

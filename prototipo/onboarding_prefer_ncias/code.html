@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+
+<html class="light" lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Inter:wght@300;400;500;600&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-secondary-fixed-variant": "#5a5b63",
+              "surface-container-high": "#e9e7f0",
+              "secondary-fixed": "#e3e1ec",
+              "tertiary-fixed-dim": "#c3cfeb",
+              "on-secondary-container": "#515159",
+              "primary-fixed-dim": "#ccd2ff",
+              "error": "#9e3f4e",
+              "on-surface-variant": "#5e5e67",
+              "surface-variant": "#e3e1ec",
+              "outline": "#7a7a83",
+              "on-surface": "#31323a",
+              "surface-container-lowest": "#ffffff",
+              "background": "#fbf8fc",
+              "primary": "#4355b9",
+              "on-secondary-fixed": "#3e3f47",
+              "on-tertiary-container": "#434e66",
+              "primary-dim": "#3649ac",
+              "on-primary-fixed-variant": "#4052b6",
+              "inverse-primary": "#8596ff",
+              "on-tertiary-fixed": "#303c53",
+              "surface-bright": "#fbf8fc",
+              "secondary-dim": "#52525b",
+              "secondary": "#5e5e67",
+              "error-container": "#ff8b9a",
+              "primary-fixed": "#dee0ff",
+              "error-dim": "#4f0116",
+              "surface-container-low": "#f5f2f8",
+              "on-primary": "#f9f6ff",
+              "tertiary-dim": "#47536b",
+              "tertiary-fixed": "#d1ddfa",
+              "on-primary-fixed": "#203498",
+              "primary-container": "#dee0ff",
+              "on-tertiary": "#f8f8ff",
+              "on-error": "#fff7f7",
+              "on-tertiary-fixed-variant": "#4c5870",
+              "surface-container-highest": "#e3e1ec",
+              "outline-variant": "#b2b1bb",
+              "tertiary": "#535f78",
+              "on-background": "#31323a",
+              "on-primary-container": "#3648ac",
+              "inverse-surface": "#0e0e11",
+              "surface-container": "#efedf4",
+              "on-error-container": "#782232",
+              "inverse-on-surface": "#9e9ca0",
+              "surface": "#fbf8fc",
+              "surface-dim": "#dad9e5",
+              "secondary-container": "#e3e1ec",
+              "tertiary-container": "#d1ddfa",
+              "on-secondary": "#faf8ff",
+              "secondary-fixed-dim": "#d4d3dd",
+              "surface-tint": "#4355b9"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .toggle-checkbox:checked {
+            right: 0;
+            border-color: transparent;
+        }
+        .toggle-checkbox:checked + .toggle-label {
+            background-color: #4355b9;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface font-body antialiased min-h-screen flex flex-col items-center justify-center p-6">
+<div class="max-w-md w-full space-y-12">
+<!-- Progress Indicator Section -->
+<header class="text-center space-y-4">
+<div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-surface-container-high text-on-primary-fixed-variant font-label text-xs font-semibold uppercase tracking-wider">
+<span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
+                Passo 5 de 5
+            </div>
+<div class="w-full bg-surface-container-low h-1 rounded-full overflow-hidden">
+<div class="h-full bg-primary w-full rounded-full"></div>
+</div>
+</header>
+<!-- Main Headline -->
+<section class="space-y-3">
+<h1 class="font-headline font-extrabold text-3xl md:text-4xl text-on-surface tracking-tight leading-tight">
+                Sua privacidade é nossa prioridade.
+            </h1>
+<p class="text-on-surface-variant font-body text-base leading-relaxed">
+                Personalize como você deseja interagir com a comunidade acadêmica. O controle é totalmente seu.
+            </p>
+</section>
+<!-- Settings Content - Bento/Layered Style -->
+<main class="space-y-4">
+<!-- Toggle Group 1: Visibility -->
+<div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm border border-transparent hover:border-outline-variant/15 transition-all duration-300">
+<div class="flex items-center justify-between gap-4">
+<div class="flex items-start gap-4">
+<div class="mt-1 w-10 h-10 rounded-lg bg-primary-container flex items-center justify-center text-on-primary-container">
+<span class="material-symbols-outlined">visibility</span>
+</div>
+<div class="space-y-1">
+<h3 class="font-headline font-bold text-on-surface text-base">Perfil visível para outras universidades</h3>
+<p class="text-sm text-on-surface-variant leading-snug">Permita que pesquisadores de outras instituições encontrem seu trabalho.</p>
+</div>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+</div>
+<!-- Toggle Group 2: Notifications -->
+<div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm border border-transparent hover:border-outline-variant/15 transition-all duration-300">
+<div class="flex items-center justify-between gap-4">
+<div class="flex items-start gap-4">
+<div class="mt-1 w-10 h-10 rounded-lg bg-tertiary-container flex items-center justify-center text-on-tertiary-container">
+<span class="material-symbols-outlined">notifications_active</span>
+</div>
+<div class="space-y-1">
+<h3 class="font-headline font-bold text-on-surface text-base">Receber notificações de novas conexões</h3>
+<p class="text-sm text-on-surface-variant leading-snug">Seja avisado instantaneamente quando alguém desejar colaborar.</p>
+</div>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+</div>
+<!-- Toggle Group 3: Direct Messages -->
+<div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm border border-transparent hover:border-outline-variant/15 transition-all duration-300">
+<div class="flex items-center justify-between gap-4">
+<div class="flex items-start gap-4">
+<div class="mt-1 w-10 h-10 rounded-lg bg-secondary-container flex items-center justify-center text-on-secondary-container">
+<span class="material-symbols-outlined">forum</span>
+</div>
+<div class="space-y-1">
+<h3 class="font-headline font-bold text-on-surface text-base">Permitir mensagens diretas</h3>
+<p class="text-sm text-on-surface-variant leading-snug">Habilite o canal de chat para diálogos rápidos e trocas acadêmicas.</p>
+</div>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+</div>
+<!-- LGPD Compliance Subtext -->
+<div class="flex items-center gap-3 p-4 rounded-lg bg-surface-container-low mt-6">
+<span class="material-symbols-outlined text-outline text-sm">info</span>
+<p class="text-xs font-label text-on-surface-variant leading-relaxed">
+                    Você pode mudar isso a qualquer momento nas configurações. Seus dados estão protegidos sob a LGPD.
+                </p>
+</div>
+</main>
+<!-- Footer Actions -->
+<footer class="pt-4 flex flex-col gap-4">
+<button class="w-full py-4 px-6 rounded-xl bg-gradient-to-br from-primary to-primary-dim text-on-primary font-headline font-bold text-lg shadow-lg shadow-primary/10 active:scale-95 transition-all duration-200 flex items-center justify-center gap-2">
+                Finalizar Cadastro
+                <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</button>
+<p class="text-center text-xs text-on-surface-variant/60 font-medium">
+                Ao finalizar, você concorda com nossos Termos de Uso.
+            </p>
+</footer>
+</div>
+<!-- Decorative Element (Asymmetry/Editorial touch) -->
+<div class="fixed top-20 -right-20 w-64 h-64 bg-primary-container/20 rounded-full blur-3xl -z-10"></div>
+<div class="fixed -bottom-20 -left-20 w-80 h-80 bg-tertiary-container/20 rounded-full blur-3xl -z-10"></div>
+</body></html>

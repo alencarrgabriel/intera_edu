@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+
+<html class="light" lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>InteraEdu - Conexões</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&amp;family=Inter:wght@400;500;600&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-secondary-fixed-variant": "#5a5b63",
+              "surface-container-high": "#e9e7f0",
+              "secondary-fixed": "#e3e1ec",
+              "tertiary-fixed-dim": "#c3cfeb",
+              "on-secondary-container": "#515159",
+              "primary-fixed-dim": "#ccd2ff",
+              "error": "#9e3f4e",
+              "on-surface-variant": "#5e5e67",
+              "surface-variant": "#e3e1ec",
+              "outline": "#7a7a83",
+              "on-surface": "#31323a",
+              "surface-container-lowest": "#ffffff",
+              "background": "#fbf8fc",
+              "primary": "#4355b9",
+              "on-secondary-fixed": "#3e3f47",
+              "on-tertiary-container": "#434e66",
+              "primary-dim": "#3649ac",
+              "on-primary-fixed-variant": "#4052b6",
+              "inverse-primary": "#8596ff",
+              "on-tertiary-fixed": "#303c53",
+              "surface-bright": "#fbf8fc",
+              "secondary-dim": "#52525b",
+              "secondary": "#5e5e67",
+              "error-container": "#ff8b9a",
+              "primary-fixed": "#dee0ff",
+              "error-dim": "#4f0116",
+              "surface-container-low": "#f5f2f8",
+              "on-primary": "#f9f6ff",
+              "tertiary-dim": "#47536b",
+              "tertiary-fixed": "#d1ddfa",
+              "on-primary-fixed": "#203498",
+              "primary-container": "#dee0ff",
+              "on-tertiary": "#f8f8ff",
+              "on-error": "#fff7f7",
+              "on-tertiary-fixed-variant": "#4c5870",
+              "surface-container-highest": "#e3e1ec",
+              "outline-variant": "#b2b1bb",
+              "tertiary": "#535f78",
+              "on-background": "#31323a",
+              "on-primary-container": "#3648ac",
+              "inverse-surface": "#0e0e11",
+              "surface-container": "#efedf4",
+              "on-error-container": "#782232",
+              "inverse-on-surface": "#9e9ca0",
+              "surface": "#fbf8fc",
+              "surface-dim": "#dad9e5",
+              "secondary-container": "#e3e1ec",
+              "tertiary-container": "#d1ddfa",
+              "on-secondary": "#faf8ff",
+              "secondary-fixed-dim": "#d4d3dd",
+              "surface-tint": "#4355b9"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background font-body text-on-surface min-h-screen pb-24">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-[#ffffffcc] dark:bg-[#0e0e11cc] backdrop-blur-xl shadow-sm flex justify-between items-center px-6 h-16">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-[#3F51B5] cursor-pointer active:scale-95 transition-transform duration-200">menu</span>
+<h1 class="font-headline font-extrabold tracking-tighter text-xl text-[#3F51B5]">InteraEdu</h1>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[#3F51B5] cursor-pointer active:scale-95 transition-transform duration-200">notifications</span>
+</div>
+</header>
+<main class="pt-20 px-4 md:max-w-3xl md:mx-auto">
+<!-- Editorial Header -->
+<section class="mt-4 mb-8">
+<h2 class="font-headline font-extrabold text-3xl text-on-surface tracking-tight leading-tight">Suas Conexões</h2>
+<p class="text-on-surface-variant mt-2 leading-relaxed">Gerencie suas colaborações acadêmicas e expanda sua rede de conhecimento.</p>
+</section>
+<!-- Tab Bar -->
+<nav class="flex gap-1 bg-surface-container-low p-1 rounded-xl mb-8">
+<button class="flex-1 py-2 px-4 rounded-lg bg-surface-container-lowest text-primary font-semibold text-sm transition-all flex items-center justify-center gap-2 shadow-sm">
+                Pendentes
+                <span class="bg-primary text-on-primary text-[10px] px-2 py-0.5 rounded-full">3</span>
+</button>
+<button class="flex-1 py-2 px-4 rounded-lg text-on-surface-variant font-medium text-sm hover:bg-surface-container-high transition-colors flex items-center justify-center gap-2">
+                Conectados
+            </button>
+</nav>
+<!-- Connection Cards List (Notion-inspired/Editorial) -->
+<div class="space-y-4">
+<!-- Card 1 -->
+<article class="bg-surface-container-low rounded-xl p-5 flex flex-col sm:flex-row gap-5 items-start sm:items-center group hover:bg-surface-container transition-colors">
+<div class="relative">
+<img alt="" class="w-16 h-16 rounded-xl object-cover" data-alt="Close up portrait of a male student" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDf0-vjzNitNYLi014-L_gguqQkgeJjJTTZxlzgLlGBODoU_tG3HOfEEIYJmtGEf-d2zbPd7yviDAeYMqeWZsUZ6oeQycvoYfu5DeD9Cvi5pOP-mpCVI_X19BGv8uFDsWOtIhvyhQspyME92YD29Q5XXffe7uap8hbmYAJc6tSFBbvY7jF4o8Rf4v3bVQehuhKcqeZLLZyKIHYqK6tOTKjrTcf-m9PzgJbYziznj5cS23AaibBA6CNdhe8NKJLPknGO0ymTpIFjlZg"/>
+<div class="absolute -bottom-1 -right-1 w-5 h-5 bg-primary rounded-full border-2 border-surface-container-low flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-[12px]" style="font-variation-settings: 'FILL' 1;">school</span>
+</div>
+</div>
+<div class="flex-1">
+<div class="flex flex-col">
+<h3 class="font-headline font-bold text-lg text-on-surface">Lucas Ferreira</h3>
+<p class="text-secondary text-sm font-medium">Arquitetura e Urbanismo • FAU-USP</p>
+</div>
+<div class="mt-2 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-sm">handshake</span>
+<span class="text-on-surface-variant text-sm italic">Solicitou colaboração</span>
+</div>
+</div>
+<div class="flex gap-2 w-full sm:w-auto">
+<button class="flex-1 sm:flex-none px-4 py-2.5 bg-surface-container-highest text-on-surface font-semibold text-sm rounded-lg border border-outline-variant/15 hover:bg-surface-variant transition-colors active:scale-95 duration-200">
+                        Recusar
+                    </button>
+<button class="flex-1 sm:flex-none px-6 py-2.5 bg-gradient-to-br from-primary to-primary-dim text-white font-bold text-sm rounded-lg shadow-sm hover:opacity-90 transition-opacity active:scale-95 duration-200">
+                        Aceitar
+                    </button>
+</div>
+</article>
+<!-- Card 2 -->
+<article class="bg-surface-container-low rounded-xl p-5 flex flex-col sm:flex-row gap-5 items-start sm:items-center group hover:bg-surface-container transition-colors">
+<div class="relative">
+<img alt="" class="w-16 h-16 rounded-xl object-cover" data-alt="Portrait of a female researcher wearing glasses" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCDIuL26ibOQ0pIh_r1spVTAgTz9K5vi05_R1rlzUhbAkZStEB3vYpMO4MvLiImnxrGjEgZy9NQEMZjcTYo8Xqyi-JHHLZ7lM8WlGlJYkh0DOEM4ppWHU-rfi-IjwA9YUFkdnx7a8xyUf_jjIg7r1HFE-a45VTRVnncXhXHPN8ErHAkBK5NcukrSc99Xj0Mt632w2blJQQ63KaMbyOCMcBSUobSXn4ZOOy6NOIYNYM4f19Mr2NW9MW9kCaN6d_WBmJem1ICKya00Rc"/>
+<div class="absolute -bottom-1 -right-1 w-5 h-5 bg-primary rounded-full border-2 border-surface-container-low flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-[12px]" style="font-variation-settings: 'FILL' 1;">science</span>
+</div>
+</div>
+<div class="flex-1">
+<div class="flex flex-col">
+<h3 class="font-headline font-bold text-lg text-on-surface">Mariana Souza</h3>
+<p class="text-secondary text-sm font-medium">Biotecnologia • UNICAMP</p>
+</div>
+<div class="mt-2 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-sm">handshake</span>
+<span class="text-on-surface-variant text-sm italic">Solicitou colaboração</span>
+</div>
+</div>
+<div class="flex gap-2 w-full sm:w-auto">
+<button class="flex-1 sm:flex-none px-4 py-2.5 bg-surface-container-highest text-on-surface font-semibold text-sm rounded-lg border border-outline-variant/15 hover:bg-surface-variant transition-colors active:scale-95 duration-200">
+                        Recusar
+                    </button>
+<button class="flex-1 sm:flex-none px-6 py-2.5 bg-gradient-to-br from-primary to-primary-dim text-white font-bold text-sm rounded-lg shadow-sm hover:opacity-90 transition-opacity active:scale-95 duration-200">
+                        Aceitar
+                    </button>
+</div>
+</article>
+<!-- Card 3 -->
+<article class="bg-surface-container-low rounded-xl p-5 flex flex-col sm:flex-row gap-5 items-start sm:items-center group hover:bg-surface-container transition-colors">
+<div class="relative">
+<img alt="" class="w-16 h-16 rounded-xl object-cover" data-alt="Portrait of a young man smiling" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDiTSJZsg7QRkJ9Q_H1dwni0fHWHkjHFLE7SRaOQUUxHAKuWCqnvDd-Ab7qnIlRjcySX23QfEBzOr9yeLK_8q_eDayKxdJ1ddi_ihSg46TKvElMu7a_9-2ZnquVpUtr2yu2gKYzfU7GTrccHse7P-H9p44S02os6chE0yXN85G4p7yZPAKpklE2uAE7ORY4a3NdNibsl9DT4kiJ6mGynItvmPvK3J7kDiYRi-VSunr6rouMqhIaUbuWK6MhBeGuQpbV5ZYvOqvTRKg"/>
+<div class="absolute -bottom-1 -right-1 w-5 h-5 bg-primary rounded-full border-2 border-surface-container-low flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-[12px]" style="font-variation-settings: 'FILL' 1;">computer</span>
+</div>
+</div>
+<div class="flex-1">
+<div class="flex flex-col">
+<h3 class="font-headline font-bold text-lg text-on-surface">Gustavo Mendes</h3>
+<p class="text-secondary text-sm font-medium">Ciência da Computação • UFMG</p>
+</div>
+<div class="mt-2 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-sm">handshake</span>
+<span class="text-on-surface-variant text-sm italic">Solicitou colaboração</span>
+</div>
+</div>
+<div class="flex gap-2 w-full sm:w-auto">
+<button class="flex-1 sm:flex-none px-4 py-2.5 bg-surface-container-highest text-on-surface font-semibold text-sm rounded-lg border border-outline-variant/15 hover:bg-surface-variant transition-colors active:scale-95 duration-200">
+                        Recusar
+                    </button>
+<button class="flex-1 sm:flex-none px-6 py-2.5 bg-gradient-to-br from-primary to-primary-dim text-white font-bold text-sm rounded-lg shadow-sm hover:opacity-90 transition-opacity active:scale-95 duration-200">
+                        Aceitar
+                    </button>
+</div>
+</article>
+</div>
+<!-- Empty State (Hidden initially, but included for complete logic) -->
+<section class="hidden flex flex-col items-center justify-center py-24 text-center px-8">
+<div class="w-20 h-20 bg-surface-container-high rounded-full flex items-center justify-center mb-6">
+<span class="material-symbols-outlined text-outline text-4xl">group_off</span>
+</div>
+<h3 class="font-headline font-bold text-xl text-on-surface">Nenhuma conexão pendente por aqui.</h3>
+<p class="text-on-surface-variant mt-2 max-w-xs mx-auto">Que tal buscar novas colaborações e pesquisadores na aba explorar?</p>
+<button class="mt-8 px-8 py-3 bg-surface-container-highest text-primary font-bold rounded-full hover:bg-surface-variant transition-colors">
+                Explorar Rede
+            </button>
+</section>
+<!-- Footer Privacy Hint -->
+<p class="mt-12 text-center text-[10px] text-secondary tracking-wide uppercase font-semibold opacity-50">
+            Seus dados estão protegidos sob a LGPD.
+        </p>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full h-20 flex justify-around items-center px-4 pb-safe bg-[#ffffffcc] dark:bg-[#0e0e11cc] backdrop-blur-xl rounded-t-2xl shadow-[0_-8px_24px_rgba(49,50,58,0.04)] z-50">
+<a class="flex flex-col items-center justify-center text-[#5e5e67] dark:text-[#b2b1bb] px-3 py-1 hover:text-[#3F51B5] transition-all active:scale-90" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="font-body font-medium text-[11px] mt-1">Início</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#5e5e67] dark:text-[#b2b1bb] px-3 py-1 hover:text-[#3F51B5] transition-all active:scale-90" href="#">
+<span class="material-symbols-outlined">search</span>
+<span class="font-body font-medium text-[11px] mt-1">Explorar</span>
+</a>
+<!-- Active State: Conexões -->
+<a class="flex flex-col items-center justify-center bg-[#e3e1ec] dark:bg-[#3649ac33] text-[#3F51B5] dark:text-[#7986cb] rounded-xl px-3 py-1 active:scale-90 transition-all" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">group</span>
+<span class="font-body font-medium text-[11px] mt-1">Conexões</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#5e5e67] dark:text-[#b2b1bb] px-3 py-1 hover:text-[#3F51B5] transition-all active:scale-90" href="#">
+<span class="material-symbols-outlined">chat_bubble</span>
+<span class="font-body font-medium text-[11px] mt-1">Mensagens</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#5e5e67] dark:text-[#b2b1bb] px-3 py-1 hover:text-[#3F51B5] transition-all active:scale-90" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="font-body font-medium text-[11px] mt-1">Perfil</span>
+</a>
+</nav>
+</body></html>

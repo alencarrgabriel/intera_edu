@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+
+<html class="light" lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Explorar - InteraEdu</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&amp;family=Inter:wght@400;500;600&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-secondary-fixed-variant": "#5a5b63",
+              "surface-container-high": "#e9e7f0",
+              "secondary-fixed": "#e3e1ec",
+              "tertiary-fixed-dim": "#c3cfeb",
+              "on-secondary-container": "#515159",
+              "primary-fixed-dim": "#ccd2ff",
+              "error": "#9e3f4e",
+              "on-surface-variant": "#5e5e67",
+              "surface-variant": "#e3e1ec",
+              "outline": "#7a7a83",
+              "on-surface": "#31323a",
+              "surface-container-lowest": "#ffffff",
+              "background": "#fbf8fc",
+              "primary": "#4355b9",
+              "on-secondary-fixed": "#3e3f47",
+              "on-tertiary-container": "#434e66",
+              "primary-dim": "#3649ac",
+              "on-primary-fixed-variant": "#4052b6",
+              "inverse-primary": "#8596ff",
+              "on-tertiary-fixed": "#303c53",
+              "surface-bright": "#fbf8fc",
+              "secondary-dim": "#52525b",
+              "secondary": "#5e5e67",
+              "error-container": "#ff8b9a",
+              "primary-fixed": "#dee0ff",
+              "error-dim": "#4f0116",
+              "surface-container-low": "#f5f2f8",
+              "on-primary": "#f9f6ff",
+              "tertiary-dim": "#47536b",
+              "tertiary-fixed": "#d1ddfa",
+              "on-primary-fixed": "#203498",
+              "primary-container": "#dee0ff",
+              "on-tertiary": "#f8f8ff",
+              "on-error": "#fff7f7",
+              "on-tertiary-fixed-variant": "#4c5870",
+              "surface-container-highest": "#e3e1ec",
+              "outline-variant": "#b2b1bb",
+              "tertiary": "#535f78",
+              "on-background": "#31323a",
+              "on-primary-container": "#3648ac",
+              "inverse-surface": "#0e0e11",
+              "surface-container": "#efedf4",
+              "on-error-container": "#782232",
+              "inverse-on-surface": "#9e9ca0",
+              "surface": "#fbf8fc",
+              "surface-dim": "#dad9e5",
+              "secondary-container": "#e3e1ec",
+              "tertiary-container": "#d1ddfa",
+              "on-secondary": "#faf8ff",
+              "secondary-fixed-dim": "#d4d3dd",
+              "surface-tint": "#4355b9"
+            },
+            fontFamily: {
+              "headline": ["Manrope", "sans-serif"],
+              "body": ["Inter", "sans-serif"],
+              "label": ["Inter", "sans-serif"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            line-height: 1;
+            text-transform: none;
+            letter-spacing: normal;
+            word-wrap: normal;
+            white-space: nowrap;
+            direction: ltr;
+        }
+        .glass-panel {
+            background: #ffffffcc;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        .dark .glass-panel {
+            background: #0e0e11cc;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background font-body text-on-background min-h-screen">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 glass-panel shadow-sm dark:shadow-none">
+<div class="flex justify-between items-center px-6 h-16 w-full max-w-7xl mx-auto">
+<div class="flex items-center gap-4">
+<button class="active:scale-95 transition-transform duration-200 text-on-surface-variant">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+<h1 class="text-xl font-extrabold tracking-tighter text-primary font-headline">InteraEdu</h1>
+</div>
+<div class="flex items-center gap-4">
+<button class="active:scale-95 transition-transform duration-200 text-on-surface-variant">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+</div>
+</div>
+</header>
+<main class="pt-20 pb-24 px-4 max-w-2xl mx-auto">
+<!-- Apple-style Search Bar Section -->
+<section class="mb-8">
+<div class="relative group">
+<div class="absolute inset-y-0 left-4 flex items-center pointer-events-none text-outline">
+<span class="material-symbols-outlined" data-icon="search">search</span>
+</div>
+<input class="w-full h-14 pl-12 pr-4 bg-surface-container-high border-none rounded-2xl focus:ring-2 focus:ring-primary-dim transition-all text-on-surface placeholder-on-surface-variant font-medium" placeholder="Buscar por pessoas, habilidades ou cursos..." type="text"/>
+</div>
+<!-- Filter Chips -->
+<div class="flex gap-2 mt-6 overflow-x-auto pb-2 scrollbar-hide">
+<button class="flex items-center gap-2 px-5 py-2.5 bg-primary-container text-on-primary-container rounded-full text-sm font-semibold whitespace-nowrap active:scale-95 transition-all">
+<span class="material-symbols-outlined text-[18px]" data-icon="school">school</span>
+                    Habilidades
+                </button>
+<button class="flex items-center gap-2 px-5 py-2.5 bg-surface-container-highest text-on-surface-variant rounded-full text-sm font-semibold whitespace-nowrap hover:bg-surface-variant active:scale-95 transition-all">
+<span class="material-symbols-outlined text-[18px]" data-icon="account_balance">account_balance</span>
+                    Instituição
+                </button>
+<button class="flex items-center gap-2 px-5 py-2.5 bg-surface-container-highest text-on-surface-variant rounded-full text-sm font-semibold whitespace-nowrap hover:bg-surface-variant active:scale-95 transition-all">
+<span class="material-symbols-outlined text-[18px]" data-icon="menu_book">menu_book</span>
+                    Curso
+                </button>
+</div>
+</section>
+<!-- Empty State (Initially Hidden or Shown based on context) -->
+<section class="hidden flex flex-col items-center justify-center py-20 text-center opacity-60">
+<div class="w-24 h-24 bg-surface-container rounded-full flex items-center justify-center mb-6">
+<span class="material-symbols-outlined text-5xl text-outline-variant" data-icon="search_off">search_off</span>
+</div>
+<h3 class="font-headline text-xl font-bold text-on-surface mb-2">Nenhum resultado encontrado</h3>
+<p class="text-on-surface-variant max-w-xs mx-auto">Tente buscar por termos diferentes ou ajuste seus filtros.</p>
+</section>
+<!-- Suggested People List (Bento-style layout or Editorial Cards) -->
+<section class="space-y-6">
+<div class="flex items-center justify-between mb-4">
+<h2 class="font-headline text-2xl font-extrabold tracking-tight text-on-surface">Pessoas sugeridas para você</h2>
+<span class="text-xs font-bold uppercase tracking-widest text-primary-dim opacity-70">Baseado em suas skills</span>
+</div>
+<div class="grid grid-cols-1 gap-4">
+<!-- Researcher Card 1 -->
+<div class="group bg-surface-container-low rounded-3xl p-5 hover:bg-surface-container-highest transition-colors cursor-pointer border-none">
+<div class="flex items-start gap-4">
+<img alt="Profile photo" class="w-16 h-16 rounded-2xl object-cover shadow-sm" data-alt="Professional portrait of a male researcher" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBLaCajkWaS4sJcA7StHLs1f1R3IB1WkzX50MJMZt4hzVjkf2HRLjT3gWSrbScfCQoLadxe2bVkneBPi78lpAjB9kL-QOgmxZdYaZoto9X3fABOiT-XKvkOx1oJ_CFxYCVpyCFrKdLM5DLDgK1BgTp64ZAv4VSMYg2Oj5Ntd3sNEKGN3PJwP8QjI9QESf6oxXMYA_qFfTRK6EUMTRgTgVICe8SIK0T4F2ewezF9TBOseW--IIeodL2gq_jKuhNp4sl04jb_XzGXgP8"/>
+<div class="flex-1">
+<div class="flex justify-between items-start">
+<div>
+<h4 class="font-headline font-bold text-on-surface text-lg">Dr. Rafael Mendes</h4>
+<p class="text-sm text-secondary font-medium">Universidade de São Paulo (USP)</p>
+</div>
+<button class="text-primary-dim hover:bg-primary-container p-2 rounded-xl transition-colors">
+<span class="material-symbols-outlined" data-icon="person_add">person_add</span>
+</button>
+</div>
+<div class="mt-4 flex flex-wrap gap-2">
+<span class="px-3 py-1 bg-surface-container text-on-surface-variant text-[11px] font-bold rounded-lg uppercase tracking-tight italic">Especialista</span>
+<span class="px-3 py-1 bg-surface-container-highest text-primary-dim text-[11px] font-bold rounded-lg uppercase tracking-tight">IA Generativa</span>
+<span class="px-3 py-1 bg-surface-container-highest text-primary-dim text-[11px] font-bold rounded-lg uppercase tracking-tight">Data Science</span>
+</div>
+<p class="mt-4 text-xs text-secondary italic">Conectado via Grupo de Pesquisa em IA</p>
+</div>
+</div>
+</div>
+<!-- Researcher Card 2 -->
+<div class="group bg-surface-container-low rounded-3xl p-5 hover:bg-surface-container-highest transition-colors cursor-pointer border-none">
+<div class="flex items-start gap-4">
+<img alt="Profile photo" class="w-16 h-16 rounded-2xl object-cover shadow-sm" data-alt="Professional portrait of a female researcher" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBoW2QAaWuwm0kmngEP5UWMxncDd7p6J0NgHrMCENzG01I2Y2TSzZ7l5y18fBlbz197iJqFD0DI_sdc7VzhR-KLrLbe1lbaUctU-BRCCSMdiW_IzusY6m9C6wuK9hUJRWnt5PdLm8eQVo7kg6sfE1py8TBzp_Evy9ehE3ae0FYktDBbI4PLriJrgF8uEt3QWOy17jY30eUucBzr2wWuNEoNTnKzbNu1FKxKVGlJ97_jzGkwgUaS4oR7uaytrFPc9pfrxsJAAL5njjU"/>
+<div class="flex-1">
+<div class="flex justify-between items-start">
+<div>
+<h4 class="font-headline font-bold text-on-surface text-lg">Beatriz Alencar</h4>
+<p class="text-sm text-secondary font-medium">UFRJ • Mestrado em Design</p>
+</div>
+<button class="text-primary-dim hover:bg-primary-container p-2 rounded-xl transition-colors">
+<span class="material-symbols-outlined" data-icon="person_add">person_add</span>
+</button>
+</div>
+<div class="mt-4 flex flex-wrap gap-2">
+<span class="px-3 py-1 bg-surface-container text-on-surface-variant text-[11px] font-bold rounded-lg uppercase tracking-tight italic">Colaborador</span>
+<span class="px-3 py-1 bg-surface-container-highest text-primary-dim text-[11px] font-bold rounded-lg uppercase tracking-tight">UX Research</span>
+<span class="px-3 py-1 bg-surface-container-highest text-primary-dim text-[11px] font-bold rounded-lg uppercase tracking-tight">Semiologia</span>
+</div>
+<p class="mt-4 text-xs text-secondary italic">Interesses em comum: Acessibilidade Digital</p>
+</div>
+</div>
+</div>
+<!-- Researcher Card 3 -->
+<div class="group bg-surface-container-low rounded-3xl p-5 hover:bg-surface-container-highest transition-colors cursor-pointer border-none">
+<div class="flex items-start gap-4">
+<div class="w-16 h-16 rounded-2xl bg-tertiary-container flex items-center justify-center text-on-tertiary-container font-headline font-bold text-2xl">
+                            LM
+                        </div>
+<div class="flex-1">
+<div class="flex justify-between items-start">
+<div>
+<h4 class="font-headline font-bold text-on-surface text-lg">Lucas Martins</h4>
+<p class="text-sm text-secondary font-medium">Unicamp • Doutorado em Biotec</p>
+</div>
+<button class="text-primary-dim hover:bg-primary-container p-2 rounded-xl transition-colors">
+<span class="material-symbols-outlined" data-icon="person_add">person_add</span>
+</button>
+</div>
+<div class="mt-4 flex flex-wrap gap-2">
+<span class="px-3 py-1 bg-surface-container text-on-surface-variant text-[11px] font-bold rounded-lg uppercase tracking-tight italic">Pesquisador</span>
+<span class="px-3 py-1 bg-surface-container-highest text-primary-dim text-[11px] font-bold rounded-lg uppercase tracking-tight">CRISPR</span>
+<span class="px-3 py-1 bg-surface-container-highest text-primary-dim text-[11px] font-bold rounded-lg uppercase tracking-tight">Genômica</span>
+</div>
+<p class="mt-4 text-xs text-secondary italic">Conectado via Laboratório de Genômica</p>
+</div>
+</div>
+</div>
+</div>
+<p class="text-center py-4 text-secondary text-xs font-label italic">
+<span class="material-symbols-outlined align-middle mr-1 text-sm" data-icon="verified_user">verified_user</span>
+                Seus dados estão protegidos sob a LGPD.
+            </p>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full h-20 glass-panel flex justify-around items-center px-4 pb-safe z-50 rounded-t-2xl shadow-[0_-8px_24px_rgba(49,50,58,0.04)]">
+<a class="flex flex-col items-center justify-center text-[#5e5e67] dark:text-[#b2b1bb] px-3 py-1 active:scale-90 transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="font-['Inter'] font-medium text-[11px] leading-relaxed">Início</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-[#e3e1ec] dark:bg-[#3649ac33] text-[#3F51B5] dark:text-[#7986cb] rounded-xl px-3 py-1 active:scale-90 transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="search" style="font-variation-settings: 'FILL' 1;">search</span>
+<span class="font-['Inter'] font-medium text-[11px] leading-relaxed">Explorar</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#5e5e67] dark:text-[#b2b1bb] px-3 py-1 active:scale-90 transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span class="font-['Inter'] font-medium text-[11px] leading-relaxed">Conexões</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#5e5e67] dark:text-[#b2b1bb] px-3 py-1 active:scale-90 transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="chat_bubble">chat_bubble</span>
+<span class="font-['Inter'] font-medium text-[11px] leading-relaxed">Mensagens</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#5e5e67] dark:text-[#b2b1bb] px-3 py-1 active:scale-90 transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-['Inter'] font-medium text-[11px] leading-relaxed">Perfil</span>
+</a>
+</nav>
+</body></html>

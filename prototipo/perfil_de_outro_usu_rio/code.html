@@ -1,0 +1,243 @@
+<!DOCTYPE html><html class="light" lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Perfil de Usuário - InteraEdu</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-secondary-fixed-variant": "#5a5b63",
+              "surface-container-high": "#e9e7f0",
+              "secondary-fixed": "#e3e1ec",
+              "tertiary-fixed-dim": "#c3cfeb",
+              "on-secondary-container": "#515159",
+              "primary-fixed-dim": "#ccd2ff",
+              "error": "#9e3f4e",
+              "on-surface-variant": "#5e5e67",
+              "surface-variant": "#e3e1ec",
+              "outline": "#7a7a83",
+              "on-surface": "#31323a",
+              "surface-container-lowest": "#ffffff",
+              "background": "#fbf8fc",
+              "primary": "#4355b9",
+              "on-secondary-fixed": "#3e3f47",
+              "on-tertiary-container": "#434e66",
+              "primary-dim": "#3649ac",
+              "on-primary-fixed-variant": "#4052b6",
+              "inverse-primary": "#8596ff",
+              "on-tertiary-fixed": "#303c53",
+              "surface-bright": "#fbf8fc",
+              "secondary-dim": "#52525b",
+              "secondary": "#5e5e67",
+              "error-container": "#ff8b9a",
+              "primary-fixed": "#dee0ff",
+              "error-dim": "#4f0116",
+              "surface-container-low": "#f5f2f8",
+              "on-primary": "#f9f6ff",
+              "tertiary-dim": "#47536b",
+              "tertiary-fixed": "#d1ddfa",
+              "on-primary-fixed": "#203498",
+              "primary-container": "#dee0ff",
+              "on-tertiary": "#f8f8ff",
+              "on-error": "#fff7f7",
+              "on-tertiary-fixed-variant": "#4c5870",
+              "surface-container-highest": "#e3e1ec",
+              "outline-variant": "#b2b1bb",
+              "tertiary": "#535f78",
+              "on-background": "#31323a",
+              "on-primary-container": "#3648ac",
+              "inverse-surface": "#0e0e11",
+              "surface-container": "#efedf4",
+              "on-error-container": "#782232",
+              "inverse-on-surface": "#9e9ca0",
+              "surface": "#fbf8fc",
+              "surface-dim": "#dad9e5",
+              "secondary-container": "#e3e1ec",
+              "tertiary-container": "#d1ddfa",
+              "on-secondary": "#faf8ff",
+              "secondary-fixed-dim": "#d4d3dd",
+              "surface-tint": "#4355b9"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      .glass-nav {
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(20px);
+      }
+      .no-scrollbar::-webkit-scrollbar {
+        display: none;
+      }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background font-body text-on-surface min-h-screen pb-24">
+<!-- Top Navigation Bar -->
+<header class="fixed top-0 w-full z-50 bg-[#ffffffcc] backdrop-blur-xl shadow-sm flex justify-between items-center px-6 h-16">
+<div class="flex items-center gap-4">
+<button class="active:scale-95 transition-transform duration-200 text-on-surface-variant" style="">
+<span class="material-symbols-outlined" style="">arrow_back</span>
+</button>
+<h1 class="font-headline font-bold text-lg tracking-tight text-[#3F51B5]" style="">Dr. Ricardo Almeida</h1>
+</div>
+<div class="flex items-center gap-2">
+<button class="p-2 hover:bg-[#e3e1ec] rounded-full transition-colors active:scale-95" style="">
+<span class="material-symbols-outlined" style="">more_vert</span>
+</button>
+</div>
+</header>
+<main class="pt-20 px-4 md:px-8 max-w-4xl mx-auto space-y-8">
+<!-- Profile Header: Asymmetric Layout -->
+<section class="flex flex-col md:flex-row gap-8 items-start py-6">
+<div class="relative">
+<div class="w-32 h-32 md:w-40 md:h-40 rounded-3xl overflow-hidden bg-surface-container-high shadow-lg rotate-3">
+<img alt="Avatar do usuário" class="w-full h-full object-cover -rotate-3 scale-110" data-alt="Foto de perfil de um homem de meia idade sorrindo" src="https://elements-resized.envatousercontent.com/elements-video-cover-images/files/219784013/preview.jpg?w=500&amp;cf_fit=cover&amp;q=85&amp;format=auto&amp;s=562019878a2f7d83679aed72bb0e0945d057f540f660bd0ae24df7340adbeb02" style="">
+</div>
+<div class="absolute -bottom-2 -right-2 bg-primary p-2 rounded-xl text-on-primary shadow-xl">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: &quot;FILL&quot; 1;">verified</span>
+</div>
+</div>
+<div class="flex-1 space-y-4">
+<div>
+<h2 class="font-headline font-extrabold text-3xl tracking-tighter text-on-surface" style="">Ricardo Almeida</h2>
+<p class="text-primary-dim font-medium tracking-tight" style="">Especialista em Biotecnologia</p>
+<p class="text-secondary text-sm" style="">Universidade de São Paulo (USP) • São Paulo, Brasil</p>
+</div>
+<div class="flex gap-3 pt-2">
+<button class="px-6 py-2.5 bg-gradient-to-br from-primary to-primary-dim text-on-primary rounded-xl font-semibold shadow-[0_8px_24px_rgba(49,50,58,0.04)] active:scale-95 transition-all" style="">
+                        Solicitar Colaboração
+                    </button>
+<button class="px-6 py-2.5 bg-surface-container-highest text-on-surface rounded-xl font-semibold active:scale-95 transition-all" style="">
+                        Enviar Mensagem
+                    </button>
+</div>
+<p class="text-secondary text-[10px] uppercase tracking-widest pt-2" style="">
+<span class="material-symbols-outlined align-middle text-xs mr-1" style="">shield_with_heart</span>
+                    Perfil protegido pela LGPD
+                </p>
+</div>
+</section>
+<!-- Bento Grid Section: Information & Skills -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<!-- About Card -->
+<div class="md:col-span-2 bg-surface-container-lowest p-6 rounded-2xl space-y-4">
+<h3 class="font-headline font-bold text-xl tracking-tight text-on-surface" style="">Sobre a Pesquisa</h3>
+<p class="text-on-surface-variant leading-relaxed text-sm" style="">
+                    Atualmente focado no desenvolvimento de polímeros biodegradáveis para aplicações médicas. Doutor em Engenharia de Materiais com 12 anos de experiência acadêmica. Aberto para mentorias e colaborações em projetos de impacto sustentável.
+                </p>
+<div class="flex items-center gap-6 pt-2">
+<div class="flex flex-col">
+<span class="text-on-surface font-bold" style="">14</span>
+<span class="text-secondary text-xs uppercase tracking-tighter" style="">Publicações</span>
+</div>
+<div class="flex flex-col">
+<span class="text-on-surface font-bold" style="">8</span>
+<span class="text-secondary text-xs uppercase tracking-tighter" style="">Patentes</span>
+</div>
+<div class="flex flex-col">
+<span class="text-on-surface font-bold" style="">USP</span>
+<span class="text-secondary text-xs uppercase tracking-tighter" style="">Instituição</span>
+</div>
+</div>
+</div>
+<!-- Skills Card -->
+<div class="bg-surface-container-low p-6 rounded-2xl space-y-4">
+<h3 class="font-headline font-bold text-lg tracking-tight text-on-surface" style="">Habilidades</h3>
+<div class="flex flex-wrap gap-2">
+<span class="px-3 py-1 bg-surface-container-highest text-on-surface-variant rounded-full text-xs font-medium" style="">Biotecnologia</span>
+<span class="px-3 py-1 bg-surface-container-highest text-on-surface-variant rounded-full text-xs font-medium" style="">Polímeros</span>
+<span class="px-3 py-1 bg-surface-container-highest text-on-surface-variant rounded-full text-xs font-medium" style="">Sustentabilidade</span>
+<span class="px-3 py-1 bg-surface-container-highest text-on-surface-variant rounded-full text-xs font-medium" style="">Nanotecnologia</span>
+<span class="px-3 py-1 bg-surface-container-highest text-on-surface-variant rounded-full text-xs font-medium" style="">Gestão de Laboratório</span>
+</div>
+</div>
+</div>
+<!-- Recent Content Section -->
+<section class="space-y-6 pt-4">
+<div class="flex justify-between items-end">
+<h3 class="font-headline font-bold text-2xl tracking-tight text-on-surface" style="">Publicações Recentes</h3>
+<button class="text-primary text-sm font-semibold" style="">Ver todas</button>
+</div>
+<!-- List of Content (No borders, only tonal shift spacing) -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<!-- Publication Card 1 -->
+<div class="bg-surface-container-low p-5 rounded-2xl space-y-3 hover:bg-surface-container transition-colors group">
+<div class="flex justify-between items-start">
+<span class="text-[10px] font-bold uppercase tracking-widest text-primary-dim bg-primary-container px-2 py-0.5 rounded" style="">Artigo Científico</span>
+<span class="text-secondary text-xs" style="">Jun 2023</span>
+</div>
+<h4 class="font-headline font-bold text-base leading-snug group-hover:text-primary transition-colors" style="">Avanços em Polímeros Hidrossolúveis para Próteses</h4>
+<p class="text-on-surface-variant text-sm line-clamp-2" style="">Estudo detalhado sobre a viabilidade de materiais degradáveis em ambientes hospitalares...</p>
+<div class="flex items-center gap-2 pt-2 text-secondary text-xs">
+<span class="material-symbols-outlined text-base" style="">share</span>
+<span class="" style="">Compartilhado por 42 pesquisadores</span>
+</div>
+</div>
+<!-- Publication Card 2 -->
+<div class="bg-surface-container-low p-5 rounded-2xl space-y-3 hover:bg-surface-container transition-colors group">
+<div class="flex justify-between items-start">
+<span class="text-[10px] font-bold uppercase tracking-widest text-tertiary-dim bg-tertiary-container px-2 py-0.5 rounded" style="">Nota Técnica</span>
+<span class="text-secondary text-xs" style="">Mar 2023</span>
+</div>
+<h4 class="font-headline font-bold text-base leading-snug group-hover:text-primary transition-colors" style="">Protocolos de Segurança em Labs Nível 3</h4>
+<p class="text-on-surface-variant text-sm line-clamp-2" style="">Revisão dos métodos de contenção biológica em universidades federais do sudeste...</p>
+<div class="flex items-center gap-2 pt-2 text-secondary text-xs">
+<span class="material-symbols-outlined text-base" style="">bookmark</span>
+<span class="" style="">Salvo em 12 bibliotecas</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Connectivity Footer (Tonal Separation) -->
+<footer class="bg-surface-container-low rounded-3xl p-8 text-center space-y-4">
+<h4 class="font-headline font-bold text-lg" style="">Deseja colaborar com Ricardo?</h4>
+<p class="text-secondary text-sm max-w-md mx-auto" style="">Ao solicitar uma conexão, você poderá visualizar dados de contato e histórico completo de pesquisas.</p>
+<button class="px-8 py-3 bg-on-surface text-surface rounded-xl font-bold active:scale-95 transition-transform" style="">
+                Enviar Solicitação
+            </button>
+</footer>
+</main>
+<!-- Bottom Navigation Bar (Contextual: Profile tab active) -->
+<nav class="fixed bottom-0 left-0 w-full h-20 flex justify-around items-center px-4 pb-safe bg-[#ffffffcc] backdrop-blur-xl rounded-t-2xl z-50 shadow-[0_-8px_24px_rgba(49,50,58,0.04)]">
+<div class="flex flex-col items-center justify-center text-[#5e5e67] dark:text-[#b2b1bb] px-3 py-1 hover:text-[#3F51B5] transition-all cursor-pointer">
+<span class="material-symbols-outlined" data-icon="home" style="">home</span>
+<span class="font-['Inter'] font-medium text-[11px] leading-relaxed" style="">Início</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#5e5e67] dark:text-[#b2b1bb] px-3 py-1 hover:text-[#3F51B5] transition-all cursor-pointer">
+<span class="material-symbols-outlined" data-icon="search" style="">search</span>
+<span class="font-['Inter'] font-medium text-[11px] leading-relaxed" style="">Explorar</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#5e5e67] dark:text-[#b2b1bb] px-3 py-1 hover:text-[#3F51B5] transition-all cursor-pointer">
+<span class="material-symbols-outlined" data-icon="group" style="">group</span>
+<span class="font-['Inter'] font-medium text-[11px] leading-relaxed" style="">Conexões</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#5e5e67] dark:text-[#b2b1bb] px-3 py-1 hover:text-[#3F51B5] transition-all cursor-pointer">
+<span class="material-symbols-outlined" data-icon="chat_bubble" style="">chat_bubble</span>
+<span class="font-['Inter'] font-medium text-[11px] leading-relaxed" style="">Mensagens</span>
+</div>
+<div class="flex flex-col items-center justify-center bg-[#e3e1ec] text-[#3F51B5] rounded-xl px-3 py-1 active:scale-90 transition-all duration-200 cursor-pointer">
+<span class="material-symbols-outlined" data-icon="person" style="font-variation-settings: &quot;FILL&quot; 1;">person</span>
+<span class="font-['Inter'] font-medium text-[11px] leading-relaxed" style="">Perfil</span>
+</div>
+</nav>
+</body></html>
