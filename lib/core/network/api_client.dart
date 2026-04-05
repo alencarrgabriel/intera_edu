@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../config/app_config.dart';
@@ -11,8 +12,8 @@ class ApiClient {
   final SecureStorageService _storage = SecureStorageService();
   OnForceLogout? onForceLogout;
 
-  /// Flag para evitar múltiplos refreshes simultâneos
-  bool _isRefreshing = false;
+  /// Completer para coordenar múltiplos refreshes simultâneos
+  Completer<bool>? _refreshCompleter;
 
   ApiClient({String? baseUrl, this.onForceLogout})
       : baseUrl = baseUrl ?? AppConfig.apiBaseUrl;
@@ -73,7 +74,7 @@ class ApiClient {
     }
 
     // Token expirado — tentar refresh automático
-    if (response.statusCode == 401 && !_isRefreshing) {
+    if (response.statusCode == 401) {
       final refreshed = await _tryRefresh();
       if (refreshed) {
         return retry(); // Retentar a requisição original com o novo token
@@ -99,12 +100,21 @@ class ApiClient {
   }
 
   /// Tenta renovar o access token usando o refresh token armazenado.
-  /// Retorna true se o refresh foi bem-sucedido.
+  /// Usa Completer para coordenar requests concorrentes — se um refresh
+  /// já está em andamento, as demais requisi��ões aguardam o resultado.
   Future<bool> _tryRefresh() async {
-    _isRefreshing = true;
+    // Se já existe um refresh em andamento, aguardar o resultado
+    if (_refreshCompleter != null) {
+      return _refreshCompleter!.future;
+    }
+
+    _refreshCompleter = Completer<bool>();
     try {
       final refreshToken = await _storage.getRefreshToken();
-      if (refreshToken == null) return false;
+      if (refreshToken == null) {
+        _refreshCompleter!.complete(false);
+        return false;
+      }
 
       final uri = Uri.parse('$baseUrl/auth/refresh');
       final response = await http
@@ -122,13 +132,16 @@ class ApiClient {
           accessToken: tokens['access_token'] as String,
           refreshToken: tokens['refresh_token'] as String,
         );
+        _refreshCompleter!.complete(true);
         return true;
       }
+      _refreshCompleter!.complete(false);
       return false;
     } catch (_) {
+      _refreshCompleter!.complete(false);
       return false;
     } finally {
-      _isRefreshing = false;
+      _refreshCompleter = null;
     }
   }
 }

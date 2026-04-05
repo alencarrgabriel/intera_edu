@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../../core/auth/auth_notifier.dart';
-import '../../../data/repositories/feed_repository_impl.dart';
-import '../../../domain/repositories/feed_repository.dart';
+import '../../../core/router/app_router.dart';
+import '../../../domain/entities/post.dart';
+import '../notifiers/feed_notifier.dart';
 import '../widgets/post_card.dart';
 import '../widgets/comments_sheet.dart';
-import 'create_post_screen.dart';
+import '../../shared/error_retry_widget.dart';
 
 class FeedScreen extends StatefulWidget {
   const FeedScreen({super.key});
@@ -15,20 +17,18 @@ class FeedScreen extends StatefulWidget {
 }
 
 class _FeedScreenState extends State<FeedScreen> {
-  final FeedRepository _feedRepo = FeedRepositoryImpl();
+  late final FeedNotifier _notifier;
   final ScrollController _scrollController = ScrollController();
-  String _scope = 'local';
-  bool _loading = true;
-  bool _loadingMore = false;
-  String? _error;
-  List<Map<String, dynamic>> _posts = [];
-  String? _nextCursor;
 
   @override
   void initState() {
     super.initState();
-    _load();
+    _notifier = context.read<FeedNotifier>();
     _scrollController.addListener(_onScroll);
+    // Adiar o load para o primeiro frame evitar setState-during-build.
+    if (_notifier.posts.isEmpty && !_notifier.loading) {
+      WidgetsBinding.instance.addPostFrameCallback((_) => _notifier.load());
+    }
   }
 
   @override
@@ -40,60 +40,12 @@ class _FeedScreenState extends State<FeedScreen> {
   void _onScroll() {
     if (_scrollController.position.pixels >=
             _scrollController.position.maxScrollExtent - 200 &&
-        !_loadingMore &&
-        _nextCursor != null) {
-      _loadMore();
+        !_notifier.loadingMore) {
+      _notifier.loadMore();
     }
   }
 
-  Future<void> _load() async {
-    setState(() {
-      _loading = true;
-      _error = null;
-      _posts = [];
-      _nextCursor = null;
-    });
-    await _fetchFeed();
-    if (mounted) setState(() => _loading = false);
-  }
-
-  Future<void> _loadMore() async {
-    if (_loadingMore || _nextCursor == null) return;
-    setState(() => _loadingMore = true);
-    await _fetchFeed(cursor: _nextCursor);
-    if (mounted) setState(() => _loadingMore = false);
-  }
-
-  Future<void> _fetchFeed({String? cursor}) async {
-    try {
-      final res = await _feedRepo.getFeed(
-          scope: _scope, cursor: cursor, limit: 20);
-      final data = (res['data'] as List<dynamic>? ?? [])
-          .cast<Map<String, dynamic>>();
-      setState(() {
-        if (cursor == null) {
-          _posts = data;
-        } else {
-          _posts.addAll(data);
-        }
-        _nextCursor = res['next_cursor'] as String?;
-      });
-    } catch (e) {
-      if (cursor == null) {
-        setState(() => _error = e.toString());
-      }
-    }
-  }
-
-  Future<void> _handleReact(String postId) async {
-    try {
-      await _feedRepo.addReaction(postId, 'like');
-    } catch (_) {
-      // Falha silenciosa — o PostCard já fez atualização otimista
-    }
-  }
-
-  void _openComments(Map<String, dynamic> post) {
+  void _openComments(Post post) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -102,29 +54,15 @@ class _FeedScreenState extends State<FeedScreen> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (_) => CommentsSheet(
-        postId: post['id'] as String,
-        initialCount: (post['comment_count'] as num?)?.toInt() ?? 0,
+        postId: post.id,
+        initialCount: post.commentCount,
       ),
     );
   }
 
-  Future<void> _handleDelete(String postId) async {
-    try {
-      await _feedRepo.deletePost(postId);
-      setState(() => _posts.removeWhere((p) => p['id'] == postId));
-    } catch (e) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(e.toString())));
-    }
-  }
-
   Future<void> _goToCreatePost() async {
-    final created = await Navigator.push<bool>(
-      context,
-      MaterialPageRoute(builder: (_) => const CreatePostScreen()),
-    );
-    if (created == true) _load();
+    final created = await context.push<bool>(AppRoutes.createPost);
+    if (created == true) _notifier.onPostCreated();
   }
 
   Future<void> _handleLogout() async {
@@ -156,31 +94,32 @@ class _FeedScreenState extends State<FeedScreen> {
       appBar: AppBar(
         title: const Text('InteraEdu'),
         actions: [
-          SegmentedButton<String>(
-            segments: const [
-              ButtonSegment(
-                value: 'local',
-                icon: Icon(Icons.location_on, size: 18),
-                label: Text('Local'),
-              ),
-              ButtonSegment(
-                value: 'global',
-                icon: Icon(Icons.public, size: 18),
-                label: null,
-              ),
-            ],
-            selected: {_scope},
-            showSelectedIcon: false,
-            onSelectionChanged: (s) {
-              setState(() => _scope = s.first);
-              _load();
-            },
+          Consumer<FeedNotifier>(
+            builder: (_, n, __) => SegmentedButton<String>(
+              segments: const [
+                ButtonSegment(
+                  value: 'local',
+                  icon: Icon(Icons.location_on, size: 18),
+                  label: Text('Local'),
+                ),
+                ButtonSegment(
+                  value: 'global',
+                  icon: Icon(Icons.public, size: 18),
+                  label: null,
+                ),
+              ],
+              selected: {n.scope},
+              showSelectedIcon: false,
+              onSelectionChanged: (s) => n.changeScope(s.first),
+            ),
           ),
           const SizedBox(width: 4),
-          IconButton(
-            onPressed: _loading ? null : _load,
-            icon: const Icon(Icons.refresh),
-            tooltip: 'Atualizar',
+          Consumer<FeedNotifier>(
+            builder: (_, n, __) => IconButton(
+              onPressed: n.loading ? null : n.load,
+              icon: const Icon(Icons.refresh),
+              tooltip: 'Atualizar',
+            ),
           ),
           IconButton(
             onPressed: _handleLogout,
@@ -195,75 +134,67 @@ class _FeedScreenState extends State<FeedScreen> {
         label: const Text('Publicar'),
       ),
       body: SafeArea(
-        child: _loading
-            ? const Center(child: CircularProgressIndicator())
-            : _error != null
-                ? Center(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(Icons.error_outline,
-                            size: 48, color: Colors.red),
-                        const SizedBox(height: 8),
-                        Text(_error!, textAlign: TextAlign.center),
-                        const SizedBox(height: 16),
-                        ElevatedButton(
-                            onPressed: _load,
-                            child: const Text('Tentar novamente')),
-                      ],
+        child: Consumer<FeedNotifier>(
+          builder: (_, notifier, __) {
+            if (notifier.loading) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            if (notifier.error != null) {
+              return ErrorRetryWidget(
+                  message: notifier.error!, onRetry: notifier.load);
+            }
+            if (notifier.isEmpty) {
+              return Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.article_outlined,
+                        size: 64,
+                        color: Theme.of(context).colorScheme.outline),
+                    const SizedBox(height: 16),
+                    const Text('Nenhuma publicação ainda.',
+                        style: TextStyle(fontSize: 16)),
+                    const SizedBox(height: 8),
+                    const Text('Seja o primeiro a compartilhar algo!'),
+                    const SizedBox(height: 24),
+                    FilledButton.icon(
+                      onPressed: _goToCreatePost,
+                      icon: const Icon(Icons.edit_outlined),
+                      label: const Text('Criar publicação'),
                     ),
-                  )
-                : _posts.isEmpty
-                    ? Center(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(Icons.article_outlined,
-                                size: 64,
-                                color: Theme.of(context).colorScheme.outline),
-                            const SizedBox(height: 16),
-                            const Text('Nenhuma publicação ainda.',
-                                style: TextStyle(fontSize: 16)),
-                            const SizedBox(height: 8),
-                            const Text('Seja o primeiro a compartilhar algo!'),
-                            const SizedBox(height: 24),
-                            FilledButton.icon(
-                              onPressed: _goToCreatePost,
-                              icon: const Icon(Icons.edit_outlined),
-                              label: const Text('Criar publicação'),
-                            ),
-                          ],
-                        ),
-                      )
-                    : RefreshIndicator(
-                        onRefresh: _load,
-                        child: ListView.separated(
-                          controller: _scrollController,
-                          padding: const EdgeInsets.fromLTRB(12, 12, 12, 80),
-                          itemCount: _posts.length + (_loadingMore ? 1 : 0),
-                          separatorBuilder: (_, __) =>
-                              const SizedBox(height: 8),
-                          itemBuilder: (ctx, i) {
-                            if (i >= _posts.length) {
-                              return const Center(
-                                child: Padding(
-                                  padding: EdgeInsets.all(16),
-                                  child: CircularProgressIndicator(),
-                                ),
-                              );
-                            }
-                            final post = _posts[i];
-                            return PostCard(
-                              post: post,
-                              onReact: () =>
-                                  _handleReact(post['id'] as String),
-                              onComment: () => _openComments(post),
-                              onDelete: () =>
-                                  _handleDelete(post['id'] as String),
-                            );
-                          },
-                        ),
+                  ],
+                ),
+              );
+            }
+            return RefreshIndicator(
+              onRefresh: notifier.load,
+              child: ListView.separated(
+                controller: _scrollController,
+                padding: const EdgeInsets.fromLTRB(12, 12, 12, 80),
+                itemCount:
+                    notifier.posts.length + (notifier.loadingMore ? 1 : 0),
+                separatorBuilder: (_, __) => const SizedBox(height: 8),
+                itemBuilder: (ctx, i) {
+                  if (i >= notifier.posts.length) {
+                    return const Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(16),
+                        child: CircularProgressIndicator(),
                       ),
+                    );
+                  }
+                  final post = notifier.posts[i];
+                  return PostCard(
+                    post: post,
+                    onReact: () => notifier.toggleReaction(post),
+                    onComment: () => _openComments(post),
+                    onDelete: () => notifier.deletePost(post.id),
+                  );
+                },
+              ),
+            );
+          },
+        ),
       ),
     );
   }

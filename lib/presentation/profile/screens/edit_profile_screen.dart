@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
-import '../../../data/repositories/profile_repository_impl.dart';
+import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
+import '../../../core/di/service_locator.dart';
+import '../../../domain/entities/user.dart';
 import '../../../domain/repositories/profile_repository.dart';
+import '../notifiers/profile_notifier.dart';
 
 class EditProfileScreen extends StatefulWidget {
-  final Map<String, dynamic> profile;
+  final User profile;
   const EditProfileScreen({super.key, required this.profile});
 
   @override
@@ -11,14 +15,15 @@ class EditProfileScreen extends StatefulWidget {
 }
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
-  final ProfileRepository _profileRepo = ProfileRepositoryImpl();
+  // Skills ainda são buscadas diretamente — não pertencem ao ProfileNotifier
+  final ProfileRepository _profileRepo = sl.profileRepo;
   late final TextEditingController _nameCtrl;
   late final TextEditingController _bioCtrl;
   late final TextEditingController _courseCtrl;
   int? _period;
   String _privacyLevel = 'local_only';
   bool _isLoading = false;
-  List<Map<String, dynamic>> _allSkills = [];
+  List<Skill> _allSkills = [];
   Set<String> _selectedSkillIds = {};
   bool _loadingSkills = true;
 
@@ -32,16 +37,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   void initState() {
     super.initState();
     final p = widget.profile;
-    _nameCtrl = TextEditingController(text: p['full_name']?.toString() ?? '');
-    _bioCtrl = TextEditingController(text: p['bio']?.toString() ?? '');
-    _courseCtrl = TextEditingController(text: p['course']?.toString() ?? '');
-    _period = p['period'] as int?;
-    _privacyLevel = p['privacy_level']?.toString() ?? 'local_only';
-
-    final currentSkills = (p['skills'] as List<dynamic>? ?? []);
-    _selectedSkillIds = currentSkills
-        .map((s) => (s['id'] as String))
-        .toSet();
+    _nameCtrl = TextEditingController(text: p.fullName);
+    _bioCtrl = TextEditingController(text: p.bio ?? '');
+    _courseCtrl = TextEditingController(text: p.course ?? '');
+    _period = p.period;
+    _privacyLevel = p.privacyLevel;
+    _selectedSkillIds = p.skills.map((s) => s.id).toSet();
 
     _loadSkills();
   }
@@ -74,7 +75,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     }
     setState(() => _isLoading = true);
     try {
-      await _profileRepo.updateProfile({
+      await context.read<ProfileNotifier>().update({
         'full_name': _nameCtrl.text.trim(),
         'bio': _bioCtrl.text.trim(),
         'course': _courseCtrl.text.trim().isEmpty ? null : _courseCtrl.text.trim(),
@@ -83,7 +84,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         'skill_ids': _selectedSkillIds.toList(),
       });
       if (!mounted) return;
-      Navigator.pop(context, true);
+      context.pop();
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context)
@@ -192,16 +193,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               spacing: 8,
               runSpacing: 4,
               children: _allSkills.map((s) {
-                final id = s['id'].toString();
-                final selected = _selectedSkillIds.contains(id);
+                final selected = _selectedSkillIds.contains(s.id);
                 return FilterChip(
-                  label: Text(s['name'].toString()),
+                  label: Text(s.name),
                   selected: selected,
                   onSelected: (v) => setState(() {
                     if (v) {
-                      _selectedSkillIds.add(id);
+                      _selectedSkillIds.add(s.id);
                     } else {
-                      _selectedSkillIds.remove(id);
+                      _selectedSkillIds.remove(s.id);
                     }
                   }),
                   selectedColor: Theme.of(context).colorScheme.secondaryContainer,

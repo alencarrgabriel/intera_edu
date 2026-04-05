@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
-import '../../../data/repositories/feed_repository_impl.dart';
+import '../../../core/di/service_locator.dart';
+import '../../../domain/entities/post.dart';
 import '../../../domain/repositories/feed_repository.dart';
+import '../../shared/relative_time_text.dart';
+import '../../shared/user_avatar.dart';
 
 /// Bottom sheet com lista de comentários e campo para adicionar novos comentários.
 class CommentsSheet extends StatefulWidget {
@@ -18,12 +21,12 @@ class CommentsSheet extends StatefulWidget {
 }
 
 class _CommentsSheetState extends State<CommentsSheet> {
-  final FeedRepository _feedRepo = FeedRepositoryImpl();
+  final FeedRepository _feedRepo = sl.feedRepo;
   final _controller = TextEditingController();
   final _scrollController = ScrollController();
   bool _loading = true;
   bool _sending = false;
-  List<Map<String, dynamic>> _comments = [];
+  List<Comment> _comments = [];
 
   @override
   void initState() {
@@ -41,11 +44,8 @@ class _CommentsSheetState extends State<CommentsSheet> {
   Future<void> _loadComments() async {
     setState(() => _loading = true);
     try {
-      final res = await _feedRepo.getComments(widget.postId);
-      final data = (res['data'] as List<dynamic>? ?? []);
-      setState(() {
-        _comments = data.cast<Map<String, dynamic>>();
-      });
+      final result = await _feedRepo.getComments(widget.postId);
+      setState(() => _comments = result.data);
     } catch (_) {
       // Falha silenciosa — exibe lista vazia
     } finally {
@@ -76,20 +76,6 @@ class _CommentsSheetState extends State<CommentsSheet> {
           .showSnackBar(SnackBar(content: Text(e.toString())));
     } finally {
       if (mounted) setState(() => _sending = false);
-    }
-  }
-
-  String _formatDate(String? isoDate) {
-    if (isoDate == null) return '';
-    try {
-      final dt = DateTime.parse(isoDate).toLocal();
-      final diff = DateTime.now().difference(dt);
-      if (diff.inMinutes < 1) return 'agora';
-      if (diff.inMinutes < 60) return '${diff.inMinutes} min';
-      if (diff.inHours < 24) return '${diff.inHours} h';
-      return '${diff.inDays} d';
-    } catch (_) {
-      return '';
     }
   }
 
@@ -164,30 +150,15 @@ class _CommentsSheetState extends State<CommentsSheet> {
                             const SizedBox(height: 12),
                         itemBuilder: (_, i) {
                           final c = _comments[i];
-                          final author =
-                              c['author'] as Map<String, dynamic>?;
-                          final authorName = (author?['full_name'] ??
-                                  c['author_name'] ??
-                                  'Usuário')
-                              .toString();
-                          final content = (c['content'] ?? '').toString();
-                          final date = c['created_at']?.toString();
+                          final authorName = c.authorName ?? 'Usuário';
 
                           return Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              CircleAvatar(
-                                radius: 16,
-                                backgroundColor: Theme.of(context)
-                                    .colorScheme
-                                    .primaryContainer,
-                                child: Text(
-                                  authorName.isNotEmpty
-                                      ? authorName[0].toUpperCase()
-                                      : '?',
-                                  style: const TextStyle(fontSize: 12),
-                                ),
-                              ),
+                              UserAvatar(
+                                  name: authorName,
+                                  imageUrl: c.authorAvatarUrl,
+                                  radius: 16),
                               const SizedBox(width: 8),
                               Expanded(
                                 child: Container(
@@ -212,16 +183,12 @@ class _CommentsSheetState extends State<CommentsSheet> {
                                                 fontSize: 13),
                                           ),
                                           const Spacer(),
-                                          Text(
-                                            _formatDate(date),
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .labelSmall,
-                                          ),
+                                          RelativeTimeText(
+                                              date: c.createdAt, compact: true),
                                         ],
                                       ),
                                       const SizedBox(height: 4),
-                                      Text(content),
+                                      Text(c.content),
                                     ],
                                   ),
                                 ),

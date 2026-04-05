@@ -1,8 +1,11 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import '../../../data/repositories/profile_repository_impl.dart';
+import 'package:go_router/go_router.dart';
+import '../../../core/di/service_locator.dart';
+import '../../../core/router/app_router.dart';
+import '../../../data/models/search_result_model.dart';
 import '../../../domain/repositories/profile_repository.dart';
-import 'user_profile_screen.dart';
+import '../../shared/user_avatar.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -12,11 +15,11 @@ class SearchScreen extends StatefulWidget {
 }
 
 class _SearchScreenState extends State<SearchScreen> {
-  final ProfileRepository _profileRepo = ProfileRepositoryImpl();
+  final ProfileRepository _profileRepo = sl.profileRepo;
   final _searchCtrl = TextEditingController();
   Timer? _debounce;
   bool _loading = false;
-  List<Map<String, dynamic>> _results = [];
+  List<SearchResult> _results = [];
   bool _hasSearched = false;
 
   @override
@@ -38,9 +41,8 @@ class _SearchScreenState extends State<SearchScreen> {
   Future<void> _search(String query) async {
     setState(() { _loading = true; _hasSearched = true; });
     try {
-      final res = await _profileRepo.searchUsers(query.trim());
-      final data = (res['data'] as List<dynamic>? ?? []).cast<Map<String, dynamic>>();
-      setState(() => _results = data);
+      final result = await _profileRepo.searchUsers(query.trim());
+      setState(() => _results = result.data);
     } catch (_) {
       setState(() => _results = []);
     } finally {
@@ -96,40 +98,26 @@ class _SearchScreenState extends State<SearchScreen> {
                       separatorBuilder: (_, __) => const SizedBox(height: 8),
                       itemBuilder: (_, i) {
                         final u = _results[i];
-                        final name = (u['full_name'] ?? 'Sem nome').toString();
-                        final course = u['course']?.toString();
-                        final institution = (u['institution']?['name'])?.toString();
 
                         return Card(
                           child: ListTile(
-                            leading: CircleAvatar(
-                              backgroundColor:
-                                  Theme.of(context).colorScheme.primaryContainer,
-                              child: Text(
-                                name.isNotEmpty ? name[0].toUpperCase() : '?',
-                                style: TextStyle(
-                                  color: Theme.of(context).colorScheme.onPrimaryContainer,
-                                ),
-                              ),
+                            leading: UserAvatar(
+                              name: u.fullName,
+                              imageUrl: u.avatarUrl,
                             ),
-                            title: Text(name,
+                            title: Text(u.fullName,
                                 style: const TextStyle(fontWeight: FontWeight.w600)),
                             subtitle: Text(
-                              [course, institution]
+                              [u.course, u.institution?.name]
                                   .where((e) => e != null && e.isNotEmpty)
                                   .join(' · '),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
                             trailing: const Icon(Icons.chevron_right),
-                            onTap: () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => UserProfileScreen(
-                                  userId: u['id'].toString(),
-                                  initialName: name,
-                                ),
-                              ),
+                            onTap: () => context.push(
+                              AppRoutes.userProfile(u.id),
+                              extra: u.fullName,
                             ),
                           ),
                         );

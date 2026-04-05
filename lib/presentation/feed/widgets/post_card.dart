@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import '../../../domain/entities/post.dart';
+import '../../shared/relative_time_text.dart';
+import '../../shared/user_avatar.dart';
 
 /// Card de uma publicação no feed com suporte a reações e comentários.
 class PostCard extends StatefulWidget {
-  final Map<String, dynamic> post;
+  final Post post;
   final VoidCallback? onReact;
   final VoidCallback? onComment;
   final VoidCallback? onDelete;
@@ -26,8 +29,8 @@ class _PostCardState extends State<PostCard> {
   @override
   void initState() {
     super.initState();
-    _reacted = widget.post['user_reaction'] != null;
-    _reactionCount = (widget.post['reaction_count'] as num?)?.toInt() ?? 0;
+    _reacted = widget.post.userReaction != null;
+    _reactionCount = widget.post.reactionCount;
   }
 
   void _handleReact() {
@@ -44,34 +47,12 @@ class _PostCardState extends State<PostCard> {
     widget.onReact?.call();
   }
 
-  String _formatDate(String? isoDate) {
-    if (isoDate == null || isoDate.isEmpty) return '';
-    try {
-      final dt = DateTime.parse(isoDate).toLocal();
-      final now = DateTime.now();
-      final diff = now.difference(dt);
-      if (diff.inMinutes < 1) return 'agora mesmo';
-      if (diff.inMinutes < 60) return 'há ${diff.inMinutes} min';
-      if (diff.inHours < 24) return 'há ${diff.inHours} h';
-      if (diff.inDays < 7) return 'há ${diff.inDays} d';
-      return '${dt.day.toString().padLeft(2, '0')}/${dt.month.toString().padLeft(2, '0')}/${dt.year}';
-    } catch (_) {
-      return isoDate;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    final content = (widget.post['content'] ?? '').toString();
-    final scope = (widget.post['scope'] ?? 'global').toString();
-    final createdAt = widget.post['created_at']?.toString();
-    final commentCount = (widget.post['comment_count'] as num?)?.toInt() ?? 0;
-
-    // Dados do autor (podem vir aninhados como 'author' ou flat)
-    final author = widget.post['author'] as Map<String, dynamic>?;
-    final authorName = (author?['full_name'] ?? widget.post['author_name'] ?? 'Usuário').toString();
-    final authorCourse = (author?['course'] ?? widget.post['author_course'])?.toString();
-    final institutionName = (author?['institution']?['name'] ?? widget.post['institution_name'])?.toString();
+    final post = widget.post;
+    final authorName = post.authorName ?? 'Usuário';
+    final authorCourse = post.authorCourse;
+    final institutionName = post.authorInstitutionName;
 
     return Card(
       clipBehavior: Clip.antiAlias,
@@ -84,18 +65,7 @@ class _PostCardState extends State<PostCard> {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Avatar
-                CircleAvatar(
-                  radius: 20,
-                  backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-                  child: Text(
-                    authorName.isNotEmpty ? authorName[0].toUpperCase() : '?',
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.onPrimaryContainer,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
+                UserAvatar(name: authorName, imageUrl: post.authorAvatarUrl, radius: 20),
                 const SizedBox(width: 10),
                 // Nome e metadados
                 Expanded(
@@ -124,21 +94,18 @@ class _PostCardState extends State<PostCard> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    Text(
-                      _formatDate(createdAt),
-                      style: Theme.of(context).textTheme.labelSmall,
-                    ),
+                    RelativeTimeText(date: post.createdAt),
                     const SizedBox(height: 2),
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                       decoration: BoxDecoration(
-                        color: scope == 'local'
+                        color: post.scope == 'local'
                             ? Theme.of(context).colorScheme.primaryContainer
                             : Theme.of(context).colorScheme.secondaryContainer,
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
-                        scope == 'local' ? 'Local' : 'Global',
+                        post.scope == 'local' ? 'Local' : 'Global',
                         style: Theme.of(context).textTheme.labelSmall,
                       ),
                     ),
@@ -170,7 +137,7 @@ class _PostCardState extends State<PostCard> {
           // Conteúdo
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
-            child: Text(content, style: const TextStyle(height: 1.5)),
+            child: Text(post.content, style: const TextStyle(height: 1.5)),
           ),
 
           const Divider(height: 1),
@@ -209,7 +176,7 @@ class _PostCardState extends State<PostCard> {
                     color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
                   label: Text(
-                    commentCount > 0 ? '$commentCount' : 'Comentar',
+                    post.commentCount > 0 ? '${post.commentCount}' : 'Comentar',
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),

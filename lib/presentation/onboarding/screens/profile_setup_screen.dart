@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../core/auth/auth_notifier.dart';
 import '../../../core/utils/validators.dart';
-import '../../../data/repositories/auth_repository_impl.dart';
+import '../../../core/di/service_locator.dart';
 import '../../../domain/repositories/auth_repository.dart';
 
 class ProfileSetupScreen extends StatefulWidget {
@@ -28,7 +28,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
   bool _isLoading = false;
   bool _obscurePassword = true;
   bool _acceptedTerms = false;
-  final AuthRepository _authRepo = AuthRepositoryImpl();
+  final AuthRepository _authRepo = sl.authRepo;
 
   @override
   void dispose() {

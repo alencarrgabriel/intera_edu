@@ -1,5 +1,3 @@
-import 'user.dart';
-
 /// Representa uma publicação no feed acadêmico.
 class Post {
   final String id;
