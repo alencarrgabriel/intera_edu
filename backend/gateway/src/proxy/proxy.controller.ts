@@ -8,6 +8,25 @@ export class ProxyController {
 
   constructor(private readonly proxyService: ProxyService) {}
 
+  /** Normaliza erros downstream para o formato canônico { error: { code, message, status } }.
+   *  NestJS por padrão retorna { statusCode, message, error } — isso unifica para todos os clientes. */
+  private normalizeError(data: any, status: number): object {
+    if (data?.error?.code) return data; // já no formato correto (gateway próprio)
+    const rawMessage = data?.message;
+    const message = Array.isArray(rawMessage)
+      ? rawMessage.join('; ')
+      : (rawMessage ?? 'Erro interno do servidor');
+    return {
+      error: {
+        code: (typeof data?.error === 'string' ? data.error.toUpperCase().replace(/\s+/g, '_') : null)
+          ?? 'DOWNSTREAM_ERROR',
+        message,
+        status,
+        timestamp: new Date().toISOString(),
+      },
+    };
+  }
+
   // Route mapping: URL prefix → service name
   private resolveService(path: string): { service: string; servicePath: string } | null {
     const routes: Array<{ prefix: string; service: string }> = [
@@ -85,7 +104,9 @@ export class ProxyController {
       }
       
       if (error.response) {
-        return res.status(error.response.status).json(error.response.data);
+        return res
+          .status(error.response.status)
+          .json(this.normalizeError(error.response.data, error.response.status));
       }
 
       this.logger.error(`Proxy error for ${req.method} ${path}`, error.message);

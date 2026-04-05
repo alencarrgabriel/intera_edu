@@ -8,6 +8,7 @@ import '../../../core/theme/app_theme.dart';
 import '../../../domain/entities/post.dart';
 import '../notifiers/feed_notifier.dart';
 import '../widgets/post_card.dart';
+import '../widgets/post_card_skeleton.dart';
 import '../widgets/comments_sheet.dart';
 import '../../shared/error_retry_widget.dart';
 
@@ -130,7 +131,12 @@ class _FeedScreenState extends State<FeedScreen> {
       body: Consumer<FeedNotifier>(
         builder: (_, notifier, __) {
           if (notifier.loading) {
-            return const Center(child: CircularProgressIndicator());
+            return ListView.separated(
+              padding: EdgeInsets.fromLTRB(12, kToolbarHeight + 20, 12, 24),
+              itemCount: 4,
+              separatorBuilder: (_, __) => const SizedBox(height: 10),
+              itemBuilder: (_, __) => const PostCardSkeleton(),
+            );
           }
           if (notifier.error != null) {
             return SafeArea(

@@ -8,6 +8,7 @@ import '../../../domain/entities/user.dart';
 import '../../shared/error_retry_widget.dart';
 import '../../shared/user_avatar.dart';
 import '../notifiers/profile_notifier.dart';
+import '../widgets/profile_header_skeleton.dart';
 
 class MyProfileScreen extends StatefulWidget {
   const MyProfileScreen({super.key});
@@ -55,7 +56,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
             ],
           ),
           body: (notifier.loading || notifier.profile == null)
-              ? const Center(child: CircularProgressIndicator())
+              ? const ProfileHeaderSkeleton()
               : notifier.error != null
                   ? ErrorRetryWidget(
                       message: notifier.error!,
@@ -87,10 +88,40 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
             ),
             child: Column(
               children: [
-                UserAvatar(
-                  name: profile.fullName,
-                  imageUrl: profile.avatarUrl,
-                  radius: 48,
+                // Avatar com ícone de câmera (affordance "em breve")
+                GestureDetector(
+                  onTap: () => ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                        content: Text('Upload de foto em breve 📸')),
+                  ),
+                  child: Stack(
+                    children: [
+                      UserAvatar(
+                        name: profile.fullName,
+                        imageUrl: profile.avatarUrl,
+                        radius: 48,
+                      ),
+                      Positioned(
+                        bottom: 0,
+                        right: 0,
+                        child: Container(
+                          width: 28,
+                          height: 28,
+                          decoration: BoxDecoration(
+                            color: AppTokens.primary,
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                                color: AppTokens.background, width: 2),
+                          ),
+                          child: const Icon(
+                            Icons.camera_alt_rounded,
+                            size: 14,
+                            color: AppTokens.onPrimary,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
                 const SizedBox(height: 12),
                 Text(

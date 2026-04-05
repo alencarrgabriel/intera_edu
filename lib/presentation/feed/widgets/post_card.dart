@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../../../core/design/app_tokens.dart';
 import '../../../core/widgets/stitch_card.dart';
 import '../../../domain/entities/post.dart';
@@ -24,15 +25,28 @@ class PostCard extends StatefulWidget {
   State<PostCard> createState() => _PostCardState();
 }
 
-class _PostCardState extends State<PostCard> {
+class _PostCardState extends State<PostCard>
+    with SingleTickerProviderStateMixin {
   late bool _reacted;
   late int _reactionCount;
+  late final AnimationController _likeController;
+  late final Animation<double> _likeScale;
 
   @override
   void initState() {
     super.initState();
     _reacted = widget.post.userReaction != null;
     _reactionCount = widget.post.reactionCount;
+
+    _likeController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 300),
+    );
+    _likeScale = TweenSequence<double>([
+      TweenSequenceItem(tween: Tween(begin: 1.0, end: 1.35), weight: 40),
+      TweenSequenceItem(tween: Tween(begin: 1.35, end: 0.9), weight: 30),
+      TweenSequenceItem(tween: Tween(begin: 0.9, end: 1.0), weight: 30),
+    ]).animate(CurvedAnimation(parent: _likeController, curve: Curves.easeOut));
   }
 
   @override
@@ -44,6 +58,12 @@ class _PostCardState extends State<PostCard> {
     }
   }
 
+  @override
+  void dispose() {
+    _likeController.dispose();
+    super.dispose();
+  }
+
   void _handleReact() {
     setState(() {
       if (_reacted) {
@@ -52,6 +72,8 @@ class _PostCardState extends State<PostCard> {
       } else {
         _reacted = true;
         _reactionCount++;
+        _likeController.forward(from: 0); // animação apenas ao curtir
+        HapticFeedback.lightImpact();
       }
     });
     widget.onReact?.call();
@@ -177,14 +199,17 @@ class _PostCardState extends State<PostCard> {
               children: [
                 TextButton.icon(
                   onPressed: _handleReact,
-                  icon: Icon(
-                    _reacted
-                        ? Icons.thumb_up_rounded
-                        : Icons.thumb_up_outlined,
-                    size: 18,
-                    color: _reacted
-                        ? AppTokens.primary
-                        : AppTokens.onSurfaceVariant,
+                  icon: ScaleTransition(
+                    scale: _likeScale,
+                    child: Icon(
+                      _reacted
+                          ? Icons.thumb_up_rounded
+                          : Icons.thumb_up_outlined,
+                      size: 18,
+                      color: _reacted
+                          ? AppTokens.primary
+                          : AppTokens.onSurfaceVariant,
+                    ),
                   ),
                   label: Text(
                     _reactionCount > 0 ? '$_reactionCount' : 'Curtir',
