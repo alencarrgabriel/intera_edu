@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
-import '../../../data/repositories/profile_repository_impl.dart';
-import '../../../domain/repositories/profile_repository.dart';
-import 'edit_profile_screen.dart';
-import 'connections_screen.dart';
+import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
+import '../../../core/router/app_router.dart';
+import '../../../domain/entities/user.dart';
+import '../../shared/error_retry_widget.dart';
+import '../../shared/user_avatar.dart';
+import '../notifiers/profile_notifier.dart';
 
 class MyProfileScreen extends StatefulWidget {
   const MyProfileScreen({super.key});
@@ -12,35 +15,18 @@ class MyProfileScreen extends StatefulWidget {
 }
 
 class _MyProfileScreenState extends State<MyProfileScreen> {
-  final ProfileRepository _profileRepo = ProfileRepositoryImpl();
-  Map<String, dynamic>? _profile;
-  bool _loading = true;
-  String? _error;
-
   @override
   void initState() {
     super.initState();
-    _load();
-  }
-
-  Future<void> _load() async {
-    setState(() { _loading = true; _error = null; });
-    try {
-      final p = await _profileRepo.getMyProfile();
-      setState(() => _profile = p);
-    } catch (e) {
-      setState(() => _error = e.toString());
-    } finally {
-      if (mounted) setState(() => _loading = false);
+    final notifier = context.read<ProfileNotifier>();
+    if (notifier.profile == null && !notifier.loading) {
+      WidgetsBinding.instance.addPostFrameCallback((_) => notifier.load());
     }
   }
 
-  Future<void> _goToEdit() async {
-    final updated = await Navigator.push<bool>(
-      context,
-      MaterialPageRoute(builder: (_) => EditProfileScreen(profile: _profile!)),
-    );
-    if (updated == true) _load();
+  Future<void> _goToEdit(User profile) async {
+    await context.push(AppRoutes.editProfile, extra: profile);
+    // ProfileNotifier.update() já atualizou o cache — sem reload manual.
   }
 
   String _privacyLabel(String? level) => switch (level) {
@@ -52,134 +38,122 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Meu Perfil'),
-        actions: [
-          if (_profile != null)
-            IconButton(
-              onPressed: _goToEdit,
-              icon: const Icon(Icons.edit_outlined),
-              tooltip: 'Editar perfil',
+    return Consumer<ProfileNotifier>(
+      builder: (_, notifier, __) {
+        return Scaffold(
+          appBar: AppBar(
+            title: const Text('Meu Perfil'),
+            actions: [
+              if (notifier.profile != null)
+                IconButton(
+                  onPressed: () => _goToEdit(notifier.profile!),
+                  icon: const Icon(Icons.edit_outlined),
+                  tooltip: 'Editar perfil',
+                ),
+            ],
+          ),
+          body: (notifier.loading || notifier.profile == null)
+              ? const Center(child: CircularProgressIndicator())
+              : notifier.error != null
+                  ? ErrorRetryWidget(
+                      message: notifier.error!,
+                      onRetry: () => notifier.load(force: true))
+                  : _buildProfile(context, notifier.profile!),
+        );
+      },
+    );
+  }
+
+  Widget _buildProfile(BuildContext context, User profile) {
+    return RefreshIndicator(
+      onRefresh: () => context.read<ProfileNotifier>().load(force: true),
+      child: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          // Avatar e nome
+          Center(
+            child: Column(
+              children: [
+                UserAvatar(
+                  name: profile.fullName,
+                  imageUrl: profile.avatarUrl,
+                  radius: 48,
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  profile.fullName,
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                ),
+                Text(
+                  profile.institution.name,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                ),
+                const SizedBox(height: 8),
+                Chip(
+                  label: Text(
+                    _privacyLabel(profile.privacyLevel),
+                    style: const TextStyle(fontSize: 12),
+                  ),
+                  side: BorderSide.none,
+                ),
+              ],
             ),
+          ),
+          const SizedBox(height: 24),
+
+          // Informações acadêmicas
+          if (profile.course != null || profile.period != null)
+            _InfoCard(children: [
+              if (profile.course != null)
+                _InfoRow(
+                    icon: Icons.menu_book_outlined,
+                    label: 'Curso',
+                    value: profile.course!),
+              if (profile.period != null)
+                _InfoRow(
+                    icon: Icons.calendar_today_outlined,
+                    label: 'Período',
+                    value: '${profile.period}º período'),
+            ]),
+
+          // Bio
+          if (profile.bio != null && profile.bio!.isNotEmpty)
+            _Section(
+              title: 'Sobre',
+              child: Text(profile.bio!, style: const TextStyle(height: 1.5)),
+            ),
+
+          // Habilidades
+          if (profile.skills.isNotEmpty)
+            _Section(
+              title: 'Habilidades',
+              child: Wrap(
+                spacing: 8,
+                runSpacing: 4,
+                children: profile.skills
+                    .map((s) => Chip(
+                          label: Text(s.name),
+                          side: BorderSide.none,
+                          backgroundColor:
+                              Theme.of(context).colorScheme.secondaryContainer,
+                        ))
+                    .toList(),
+              ),
+            ),
+
+          const SizedBox(height: 8),
+
+          OutlinedButton.icon(
+            onPressed: () => context.push(AppRoutes.connections),
+            icon: const Icon(Icons.people_outline),
+            label: const Text('Minhas Conexões'),
+          ),
         ],
       ),
-      body: _loading
-          ? const Center(child: CircularProgressIndicator())
-          : _error != null
-              ? Center(
-                  child: Column(mainAxisSize: MainAxisSize.min, children: [
-                    const Icon(Icons.error_outline, size: 48, color: Colors.red),
-                    const SizedBox(height: 8),
-                    Text(_error!),
-                    const SizedBox(height: 16),
-                    ElevatedButton(onPressed: _load, child: const Text('Tentar novamente')),
-                  ]),
-                )
-              : RefreshIndicator(
-                  onRefresh: _load,
-                  child: ListView(
-                    padding: const EdgeInsets.all(16),
-                    children: [
-                      // Avatar e nome
-                      Center(
-                        child: Column(
-                          children: [
-                            CircleAvatar(
-                              radius: 48,
-                              backgroundColor:
-                                  Theme.of(context).colorScheme.primaryContainer,
-                              child: Text(
-                                (_profile!['full_name'] ?? '?').toString().isNotEmpty
-                                    ? (_profile!['full_name'] as String)[0].toUpperCase()
-                                    : '?',
-                                style: TextStyle(
-                                  fontSize: 40,
-                                  color: Theme.of(context).colorScheme.onPrimaryContainer,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(height: 12),
-                            Text(
-                              (_profile!['full_name'] ?? 'Sem nome').toString(),
-                              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                            ),
-                            if (_profile!['institution'] != null)
-                              Text(
-                                (_profile!['institution']?['name'] ?? '').toString(),
-                                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                      color: Theme.of(context).colorScheme.primary,
-                                    ),
-                              ),
-                            const SizedBox(height: 8),
-                            // Badge de privacidade
-                            Chip(
-                              label: Text(
-                                _privacyLabel(_profile!['privacy_level']?.toString()),
-                                style: const TextStyle(fontSize: 12),
-                              ),
-                              side: BorderSide.none,
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 24),
-
-                      // Informações acadêmicas
-                      if (_profile!['course'] != null || _profile!['period'] != null)
-                        _InfoCard(children: [
-                          if (_profile!['course'] != null)
-                            _InfoRow(icon: Icons.menu_book_outlined, label: 'Curso',
-                                value: _profile!['course'].toString()),
-                          if (_profile!['period'] != null)
-                            _InfoRow(icon: Icons.calendar_today_outlined, label: 'Período',
-                                value: '${_profile!['period']}º período'),
-                        ]),
-
-                      // Bio
-                      if (_profile!['bio'] != null && (_profile!['bio'] as String).isNotEmpty)
-                        _Section(
-                          title: 'Sobre',
-                          child: Text(_profile!['bio'].toString(),
-                              style: const TextStyle(height: 1.5)),
-                        ),
-
-                      // Habilidades
-                      if (_profile!['skills'] != null &&
-                          (_profile!['skills'] as List).isNotEmpty)
-                        _Section(
-                          title: 'Habilidades',
-                          child: Wrap(
-                            spacing: 8,
-                            runSpacing: 4,
-                            children: (_profile!['skills'] as List)
-                                .map((s) => Chip(
-                                      label: Text(s['name'].toString()),
-                                      side: BorderSide.none,
-                                      backgroundColor: Theme.of(context)
-                                          .colorScheme
-                                          .secondaryContainer,
-                                    ))
-                                .toList(),
-                          ),
-                        ),
-
-                      const SizedBox(height: 8),
-
-                      // Botão de conexões
-                      OutlinedButton.icon(
-                        onPressed: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (_) => const ConnectionsScreen()),
-                        ),
-                        icon: const Icon(Icons.people_outline),
-                        label: const Text('Minhas Conexões'),
-                      ),
-                    ],
-                  ),
-                ),
     );
   }
 }
@@ -231,7 +205,8 @@ class _InfoRow extends StatelessWidget {
   final IconData icon;
   final String label;
   final String value;
-  const _InfoRow({required this.icon, required this.label, required this.value});
+  const _InfoRow(
+      {required this.icon, required this.label, required this.value});
 
   @override
   Widget build(BuildContext context) {

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import '../../../core/di/service_locator.dart';
+import '../../../core/router/app_router.dart';
 import '../../../core/utils/validators.dart';
-import '../../../data/repositories/auth_repository_impl.dart';
 import '../../../domain/repositories/auth_repository.dart';
-import 'otp_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -15,7 +16,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   bool _isLoading = false;
-  final AuthRepository _authRepo = AuthRepositoryImpl();
+  final AuthRepository _authRepo = sl.authRepo;
 
   @override
   void dispose() {
@@ -31,10 +32,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       final email = _emailController.text.trim();
       await _authRepo.register(email);
       if (!mounted) return;
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => OtpScreen(email: email)),
-      );
+      context.go(AppRoutes.otp, extra: email);
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));

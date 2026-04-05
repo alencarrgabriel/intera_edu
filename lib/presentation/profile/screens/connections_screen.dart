@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
-import '../../../data/repositories/connection_repository_impl.dart';
+import 'package:go_router/go_router.dart';
+import '../../../core/di/service_locator.dart';
+import '../../../core/router/app_router.dart';
+import '../../../data/models/connection_model.dart';
 import '../../../domain/repositories/connection_repository.dart';
-import 'user_profile_screen.dart';
+import '../../shared/user_avatar.dart';
 
 class ConnectionsScreen extends StatefulWidget {
   const ConnectionsScreen({super.key});
@@ -12,13 +15,14 @@ class ConnectionsScreen extends StatefulWidget {
 
 class _ConnectionsScreenState extends State<ConnectionsScreen>
     with SingleTickerProviderStateMixin {
-  final ConnectionRepository _connRepo = ConnectionRepositoryImpl();
+  final ConnectionRepository _connRepo = sl.connRepo;
   late final TabController _tabController;
 
-  List<Map<String, dynamic>> _connected = [];
-  List<Map<String, dynamic>> _received = [];
-  List<Map<String, dynamic>> _sent = [];
+  List<Connection> _connected = [];
+  List<Connection> _received = [];
+  List<Connection> _sent = [];
   bool _loading = true;
+  String? _error;
 
   @override
   void initState() {
@@ -34,7 +38,7 @@ class _ConnectionsScreenState extends State<ConnectionsScreen>
   }
 
   Future<void> _load() async {
-    setState(() => _loading = true);
+    setState(() { _loading = true; _error = null; });
     try {
       final results = await Future.wait([
         _connRepo.listConnections(status: 'accepted'),
@@ -46,8 +50,8 @@ class _ConnectionsScreenState extends State<ConnectionsScreen>
         _received = results[1];
         _sent = results[2];
       });
-    } catch (_) {
-      // Silent fail — exibe listas vazias
+    } catch (e) {
+      setState(() => _error = e.toString());
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -76,24 +80,17 @@ class _ConnectionsScreenState extends State<ConnectionsScreen>
   }
 
   Widget _buildUserTile(
-    Map<String, dynamic> conn, {
+    Connection conn, {
     List<Widget>? actions,
   }) {
-    final user = conn['other_user'] as Map<String, dynamic>?;
-    final name = (user?['full_name'] ?? 'Usuário').toString();
-    final course = user?['course']?.toString();
-    final institution = (user?['institution']?['name'])?.toString();
+    final user = conn.otherUser;
+    final name = user?.fullName ?? 'Usuário';
+    final course = user?.course;
+    final institution = user?.institution?.name;
 
     return Card(
       child: ListTile(
-        leading: CircleAvatar(
-          backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-          child: Text(
-            name.isNotEmpty ? name[0].toUpperCase() : '?',
-            style: TextStyle(
-                color: Theme.of(context).colorScheme.onPrimaryContainer),
-          ),
-        ),
+        leading: UserAvatar(name: name, imageUrl: user?.avatarUrl),
         title: Text(name, style: const TextStyle(fontWeight: FontWeight.w600)),
         subtitle: Text(
           [course, institution].where((e) => e != null && e.isNotEmpty).join(' · '),
@@ -101,15 +98,7 @@ class _ConnectionsScreenState extends State<ConnectionsScreen>
           overflow: TextOverflow.ellipsis,
         ),
         onTap: user != null
-            ? () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => UserProfileScreen(
-                      userId: user['id'].toString(),
-                      initialName: name,
-                    ),
-                  ),
-                )
+            ? () => context.push(AppRoutes.userProfile(user.id), extra: name)
             : null,
         trailing: actions != null ? Row(mainAxisSize: MainAxisSize.min, children: actions) : null,
       ),
@@ -157,7 +146,17 @@ class _ConnectionsScreenState extends State<ConnectionsScreen>
       ),
       body: _loading
           ? const Center(child: CircularProgressIndicator())
-          : RefreshIndicator(
+          : _error != null
+              ? Center(
+                  child: Column(mainAxisSize: MainAxisSize.min, children: [
+                    const Icon(Icons.error_outline, size: 48, color: Colors.red),
+                    const SizedBox(height: 8),
+                    const Text('Erro ao carregar conexões.'),
+                    const SizedBox(height: 8),
+                    ElevatedButton(onPressed: _load, child: const Text('Tentar novamente')),
+                  ]),
+                )
+              : RefreshIndicator(
               onRefresh: _load,
               child: TabBarView(
                 controller: _tabController,
@@ -175,7 +174,7 @@ class _ConnectionsScreenState extends State<ConnectionsScreen>
                               IconButton(
                                 icon: const Icon(Icons.person_remove_outlined, color: Colors.red),
                                 tooltip: 'Remover conexão',
-                                onPressed: () => _remove(_connected[i]['id'].toString()),
+                                onPressed: () => _remove(_connected[i].id),
                               ),
                             ],
                           ),
@@ -195,13 +194,13 @@ class _ConnectionsScreenState extends State<ConnectionsScreen>
                                 icon: const Icon(Icons.check_circle_outline, color: Colors.green),
                                 tooltip: 'Aceitar',
                                 onPressed: () =>
-                                    _updateRequest(_received[i]['id'].toString(), 'accept'),
+                                    _updateRequest(_received[i].id, 'accept'),
                               ),
                               IconButton(
                                 icon: const Icon(Icons.cancel_outlined, color: Colors.red),
                                 tooltip: 'Rejeitar',
                                 onPressed: () =>
-                                    _updateRequest(_received[i]['id'].toString(), 'reject'),
+                                    _updateRequest(_received[i].id, 'reject'),
                               ),
                             ],
                           ),
@@ -221,7 +220,7 @@ class _ConnectionsScreenState extends State<ConnectionsScreen>
                                 icon: const Icon(Icons.cancel_outlined),
                                 tooltip: 'Cancelar solicitação',
                                 onPressed: () =>
-                                    _remove(_sent[i]['id'].toString()),
+                                    _remove(_sent[i].id),
                               ),
                             ],
                           ),

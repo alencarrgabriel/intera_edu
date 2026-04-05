@@ -1,7 +1,11 @@
+import '../../data/models/search_result_model.dart';
+import '../entities/user.dart';
+import 'feed_repository.dart';
+
 abstract class ProfileRepository {
-  Future<Map<String, dynamic>> getMyProfile();
-  Future<Map<String, dynamic>> updateProfile(Map<String, dynamic> data);
-  Future<Map<String, dynamic>> getUserProfile(String userId);
-  Future<Map<String, dynamic>> searchUsers(String query, {String? skillId, String? institutionId, String? cursor});
-  Future<List<Map<String, dynamic>>> getSkills({String? query});
+  Future<User> getMyProfile();
+  Future<User> updateProfile(Map<String, dynamic> data);
+  Future<User> getUserProfile(String userId);
+  Future<PaginatedResult<SearchResult>> searchUsers(String query, {String? skillId, String? institutionId, String? cursor});
+  Future<List<Skill>> getSkills({String? query});
 }

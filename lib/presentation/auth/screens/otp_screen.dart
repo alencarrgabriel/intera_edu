@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:go_router/go_router.dart';
+import '../../../core/di/service_locator.dart';
+import '../../../core/router/app_router.dart';
 import '../../../core/utils/validators.dart';
-import '../../../data/repositories/auth_repository_impl.dart';
 import '../../../domain/repositories/auth_repository.dart';
-import '../../onboarding/screens/profile_setup_screen.dart';
 
 class OtpScreen extends StatefulWidget {
   final String email;
@@ -17,7 +18,7 @@ class _OtpScreenState extends State<OtpScreen> {
   final _formKey = GlobalKey<FormState>();
   final _otpController = TextEditingController();
   bool _isLoading = false;
-  final AuthRepository _authRepo = AuthRepositoryImpl();
+  final AuthRepository _authRepo = sl.authRepo;
 
   @override
   void dispose() {
@@ -32,15 +33,10 @@ class _OtpScreenState extends State<OtpScreen> {
     try {
       final token = await _authRepo.verifyOtp(widget.email, _otpController.text.trim());
       if (!mounted) return;
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (_) => ProfileSetupScreen(
-            temporaryToken: token,
-            email: widget.email,
-          ),
-        ),
-      );
+      context.go(AppRoutes.profileSetup, extra: {
+        'token': token,
+        'email': widget.email,
+      });
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));

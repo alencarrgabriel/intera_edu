@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../auth/screens/login_screen.dart';
-import '../../auth/screens/register_screen.dart';
+import 'package:go_router/go_router.dart';
+import '../../../core/router/app_router.dart';
 
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({super.key});
@@ -42,12 +42,7 @@ class WelcomeScreen extends StatelessWidget {
                 width: double.infinity,
                 height: 52,
                 child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => const RegisterScreen()),
-                    );
-                  },
+                  onPressed: () => context.push(AppRoutes.register),
                   child: const Text('Começar', style: TextStyle(fontSize: 16)),
                 ),
               ),
@@ -56,13 +51,9 @@ class WelcomeScreen extends StatelessWidget {
                 width: double.infinity,
                 height: 52,
                 child: OutlinedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => const LoginScreen()),
-                    );
-                  },
-                  child: const Text('Já tenho uma conta', style: TextStyle(fontSize: 16)),
+                  onPressed: () => context.push(AppRoutes.login),
+                  child: const Text('Já tenho uma conta',
+                      style: TextStyle(fontSize: 16)),
                 ),
               ),
               const SizedBox(height: 32),

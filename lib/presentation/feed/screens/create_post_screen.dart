@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../data/repositories/feed_repository_impl.dart';
+import 'package:go_router/go_router.dart';
+import '../../../core/di/service_locator.dart';
 import '../../../domain/repositories/feed_repository.dart';
 
 class CreatePostScreen extends StatefulWidget {
@@ -11,7 +12,7 @@ class CreatePostScreen extends StatefulWidget {
 
 class _CreatePostScreenState extends State<CreatePostScreen> {
   final _controller = TextEditingController();
-  final FeedRepository _feedRepo = FeedRepositoryImpl();
+  final FeedRepository _feedRepo = sl.feedRepo;
   String _scope = 'local';
   bool _isLoading = false;
   static const int _maxChars = 1000;
@@ -31,7 +32,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
       await _feedRepo.createPost(content: content, scope: _scope);
       if (!mounted) return;
       // Retorna true para que o FeedScreen saiba que deve recarregar
-      Navigator.pop(context, true);
+      context.pop(true);
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context)

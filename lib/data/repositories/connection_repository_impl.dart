@@ -1,13 +1,14 @@
 import '../../core/network/api_client.dart';
 import '../../core/network/api_endpoints.dart';
 import '../../domain/repositories/connection_repository.dart';
+import '../models/connection_model.dart';
 
 class ConnectionRepositoryImpl implements ConnectionRepository {
   final ApiClient _api;
   ConnectionRepositoryImpl({ApiClient? api}) : _api = api ?? ApiClient();
 
   @override
-  Future<List<Map<String, dynamic>>> listConnections({
+  Future<List<Connection>> listConnections({
     String? status,
     String? direction,
   }) async {
@@ -16,7 +17,9 @@ class ConnectionRepositoryImpl implements ConnectionRepository {
       if (direction != null) 'direction': direction,
     });
     final data = res['data'] as List<dynamic>? ?? [];
-    return data.cast<Map<String, dynamic>>();
+    return data
+        .map((e) => Connection.fromJson(e as Map<String, dynamic>))
+        .toList();
   }
 
   @override

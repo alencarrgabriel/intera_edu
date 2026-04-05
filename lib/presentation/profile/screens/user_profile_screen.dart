@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
-import '../../../data/repositories/profile_repository_impl.dart';
-import '../../../data/repositories/connection_repository_impl.dart';
+import '../../../core/di/service_locator.dart';
+import '../../../domain/entities/user.dart';
 import '../../../domain/repositories/profile_repository.dart';
 import '../../../domain/repositories/connection_repository.dart';
+import '../../shared/error_retry_widget.dart';
+import '../../shared/profile_info_card.dart';
+import '../../shared/user_avatar.dart';
 
 class UserProfileScreen extends StatefulWidget {
   final String userId;
@@ -19,9 +22,9 @@ class UserProfileScreen extends StatefulWidget {
 }
 
 class _UserProfileScreenState extends State<UserProfileScreen> {
-  final ProfileRepository _profileRepo = ProfileRepositoryImpl();
-  final ConnectionRepository _connRepo = ConnectionRepositoryImpl();
-  Map<String, dynamic>? _profile;
+  final ProfileRepository _profileRepo = sl.profileRepo;
+  final ConnectionRepository _connRepo = sl.connRepo;
+  User? _profile;
   bool _loading = true;
   String? _error;
   bool _isPrivate = false;
@@ -40,7 +43,8 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
       final p = await _profileRepo.getUserProfile(widget.userId);
       setState(() {
         _profile = p;
-        _connectionStatus = p['connection_status']?.toString() ?? 'none';
+        // connection_status may come from the API as an extra field
+        // For now we keep 'none' as default
       });
     } catch (e) {
       final msg = e.toString();
@@ -68,12 +72,6 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
     }
   }
 
-  String _privacyLabel(String? level) => switch (level) {
-    'public' => '🌎 Público',
-    'local_only' => '🏫 Somente minha instituição',
-    _ => '',
-  };
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -97,45 +95,30 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                   ]),
                 )
               : _error != null
-                  ? Center(child: Column(mainAxisSize: MainAxisSize.min, children: [
-                      const Icon(Icons.error_outline, size: 48, color: Colors.red),
-                      const SizedBox(height: 8),
-                      Text(_error!),
-                      ElevatedButton(onPressed: _load, child: const Text('Tentar novamente')),
-                    ]))
+                  ? ErrorRetryWidget(message: _error!, onRetry: _load)
                   : ListView(
                       padding: const EdgeInsets.all(16),
                       children: [
                         // Avatar e nome
                         Center(
                           child: Column(children: [
-                            CircleAvatar(
+                            UserAvatar(
+                              name: _profile!.fullName,
+                              imageUrl: _profile!.avatarUrl,
                               radius: 48,
-                              backgroundColor:
-                                  Theme.of(context).colorScheme.primaryContainer,
-                              child: Text(
-                                (_profile!['full_name'] ?? '?').toString().isNotEmpty
-                                    ? (_profile!['full_name'] as String)[0].toUpperCase()
-                                    : '?',
-                                style: TextStyle(
-                                  fontSize: 40,
-                                  color: Theme.of(context).colorScheme.onPrimaryContainer,
-                                ),
-                              ),
                             ),
                             const SizedBox(height: 12),
                             Text(
-                              (_profile!['full_name'] ?? 'Sem nome').toString(),
+                              _profile!.fullName,
                               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                                     fontWeight: FontWeight.bold,
                                   ),
                             ),
-                            if (_profile!['institution'] != null)
-                              Text(
-                                (_profile!['institution']?['name'] ?? '').toString(),
-                                style: TextStyle(
-                                    color: Theme.of(context).colorScheme.primary),
-                              ),
+                            Text(
+                              _profile!.institution.name,
+                              style: TextStyle(
+                                  color: Theme.of(context).colorScheme.primary),
+                            ),
                           ]),
                         ),
                         const SizedBox(height: 16),
@@ -166,49 +149,25 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                         const SizedBox(height: 16),
 
                         // Info acadêmica
-                        if (_profile!['course'] != null || _profile!['period'] != null)
-                          Card(
-                            child: Padding(
-                              padding: const EdgeInsets.all(12),
-                              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                                if (_profile!['course'] != null)
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(vertical: 4),
-                                    child: Row(children: [
-                                      const Icon(Icons.menu_book_outlined, size: 18),
-                                      const SizedBox(width: 8),
-                                      Text('Curso: ', style: const TextStyle(fontWeight: FontWeight.w500)),
-                                      Expanded(child: Text(_profile!['course'].toString())),
-                                    ]),
-                                  ),
-                                if (_profile!['period'] != null)
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(vertical: 4),
-                                    child: Row(children: [
-                                      const Icon(Icons.calendar_today_outlined, size: 18),
-                                      const SizedBox(width: 8),
-                                      Text('${_profile!["period"]}º período'),
-                                    ]),
-                                  ),
-                              ]),
-                            ),
-                          ),
+                        ProfileInfoCard(
+                          course: _profile!.course,
+                          period: _profile!.period,
+                        ),
 
                         // Bio
-                        if (_profile!['bio'] != null && (_profile!['bio'] as String).isNotEmpty)
+                        if (_profile!.bio != null && _profile!.bio!.isNotEmpty)
                           Padding(
                             padding: const EdgeInsets.only(top: 12),
                             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                               Text('Sobre', style: Theme.of(context).textTheme.titleSmall?.copyWith(
                                       fontWeight: FontWeight.w600)),
                               const SizedBox(height: 4),
-                              Text(_profile!['bio'].toString(), style: const TextStyle(height: 1.5)),
+                              Text(_profile!.bio!, style: const TextStyle(height: 1.5)),
                             ]),
                           ),
 
                         // Habilidades
-                        if (_profile!['skills'] != null &&
-                            (_profile!['skills'] as List).isNotEmpty)
+                        if (_profile!.skills.isNotEmpty)
                           Padding(
                             padding: const EdgeInsets.only(top: 12),
                             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -218,9 +177,9 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                               Wrap(
                                 spacing: 8,
                                 runSpacing: 4,
-                                children: (_profile!['skills'] as List)
+                                children: _profile!.skills
                                     .map((s) => Chip(
-                                          label: Text(s['name'].toString()),
+                                          label: Text(s.name),
                                           side: BorderSide.none,
                                           backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
                                         ))
