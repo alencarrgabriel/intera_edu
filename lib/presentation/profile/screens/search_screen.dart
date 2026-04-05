@@ -19,6 +19,7 @@ class _SearchScreenState extends State<SearchScreen> {
   final _searchCtrl = TextEditingController();
   Timer? _debounce;
   bool _loading = false;
+  String? _error;
   List<SearchResult> _results = [];
   bool _hasSearched = false;
 
@@ -39,12 +40,12 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   Future<void> _search(String query) async {
-    setState(() { _loading = true; _hasSearched = true; });
+    setState(() { _loading = true; _hasSearched = true; _error = null; });
     try {
       final result = await _profileRepo.searchUsers(query.trim());
       setState(() => _results = result.data);
-    } catch (_) {
-      setState(() => _results = []);
+    } catch (e) {
+      setState(() { _results = []; _error = e.toString(); });
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -83,6 +84,14 @@ class _SearchScreenState extends State<SearchScreen> {
                     const Text('Pesquise estudantes por nome, curso ou habilidade'),
                   ]),
                 )
+              : _error != null
+                  ? Center(
+                      child: Column(mainAxisSize: MainAxisSize.min, children: [
+                        const Icon(Icons.wifi_off, size: 48, color: Colors.red),
+                        const SizedBox(height: 8),
+                        const Text('Erro ao buscar. Verifique sua conexão.'),
+                      ]),
+                    )
               : _results.isEmpty
                   ? Center(
                       child: Column(mainAxisSize: MainAxisSize.min, children: [

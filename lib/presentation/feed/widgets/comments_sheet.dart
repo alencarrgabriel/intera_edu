@@ -26,6 +26,7 @@ class _CommentsSheetState extends State<CommentsSheet> {
   final _scrollController = ScrollController();
   bool _loading = true;
   bool _sending = false;
+  String? _error;
   List<Comment> _comments = [];
 
   @override
@@ -42,12 +43,12 @@ class _CommentsSheetState extends State<CommentsSheet> {
   }
 
   Future<void> _loadComments() async {
-    setState(() => _loading = true);
+    setState(() { _loading = true; _error = null; });
     try {
       final result = await _feedRepo.getComments(widget.postId);
       setState(() => _comments = result.data);
-    } catch (_) {
-      // Falha silenciosa — exibe lista vazia
+    } catch (e) {
+      setState(() => _error = e.toString());
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -127,7 +128,20 @@ class _CommentsSheetState extends State<CommentsSheet> {
           Expanded(
             child: _loading
                 ? const Center(child: CircularProgressIndicator())
-                : _comments.isEmpty
+                : _error != null
+                    ? Center(
+                        child: Column(mainAxisSize: MainAxisSize.min, children: [
+                          const Icon(Icons.error_outline, size: 40, color: Colors.red),
+                          const SizedBox(height: 8),
+                          const Text('Não foi possível carregar os comentários.'),
+                          const SizedBox(height: 8),
+                          TextButton(
+                            onPressed: _loadComments,
+                            child: const Text('Tentar novamente'),
+                          ),
+                        ]),
+                      )
+                    : _comments.isEmpty
                     ? Center(
                         child: Column(
                           mainAxisSize: MainAxisSize.min,

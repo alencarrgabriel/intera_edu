@@ -22,6 +22,7 @@ class _ConnectionsScreenState extends State<ConnectionsScreen>
   List<Connection> _received = [];
   List<Connection> _sent = [];
   bool _loading = true;
+  String? _error;
 
   @override
   void initState() {
@@ -37,7 +38,7 @@ class _ConnectionsScreenState extends State<ConnectionsScreen>
   }
 
   Future<void> _load() async {
-    setState(() => _loading = true);
+    setState(() { _loading = true; _error = null; });
     try {
       final results = await Future.wait([
         _connRepo.listConnections(status: 'accepted'),
@@ -49,8 +50,8 @@ class _ConnectionsScreenState extends State<ConnectionsScreen>
         _received = results[1];
         _sent = results[2];
       });
-    } catch (_) {
-      // Silent fail — exibe listas vazias
+    } catch (e) {
+      setState(() => _error = e.toString());
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -145,7 +146,17 @@ class _ConnectionsScreenState extends State<ConnectionsScreen>
       ),
       body: _loading
           ? const Center(child: CircularProgressIndicator())
-          : RefreshIndicator(
+          : _error != null
+              ? Center(
+                  child: Column(mainAxisSize: MainAxisSize.min, children: [
+                    const Icon(Icons.error_outline, size: 48, color: Colors.red),
+                    const SizedBox(height: 8),
+                    const Text('Erro ao carregar conexões.'),
+                    const SizedBox(height: 8),
+                    ElevatedButton(onPressed: _load, child: const Text('Tentar novamente')),
+                  ]),
+                )
+              : RefreshIndicator(
               onRefresh: _load,
               child: TabBarView(
                 controller: _tabController,
