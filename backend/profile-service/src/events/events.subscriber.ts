@@ -8,7 +8,7 @@ const EVENTS_CHANNEL = 'interaedu.events';
 
 type UserRegisteredEvent = {
   type: 'user.registered';
-  payload: { userId: string; email: string; institutionId: string };
+  payload: { userId: string; email: string; institutionId: string; institutionName?: string };
   occurredAt: string;
 };
 
@@ -58,13 +58,14 @@ export class EventsSubscriber implements OnModuleInit, OnModuleDestroy {
   }
 
   private async onUserRegistered(evt: UserRegisteredEvent) {
-    const { userId, institutionId } = evt.payload;
+    const { userId, email, institutionId } = evt.payload;
 
     const existing = await this.userRepo.findOne({ where: { id: userId } });
     if (existing) return;
 
     await this.userRepo.save({
       id: userId,
+      email,
       institutionId,
       fullName: '',
       privacyLevel: 'local_only',

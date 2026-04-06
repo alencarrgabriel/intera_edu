@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+
+<html class="light" lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>InteraEdu - Conversa</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-secondary-fixed-variant": "#5a5b63",
+                        "surface-container-high": "#e9e7f0",
+                        "secondary-fixed": "#e3e1ec",
+                        "tertiary-fixed-dim": "#c3cfeb",
+                        "on-secondary-container": "#515159",
+                        "primary-fixed-dim": "#ccd2ff",
+                        "error": "#9e3f4e",
+                        "on-surface-variant": "#5e5e67",
+                        "surface-variant": "#e3e1ec",
+                        "outline": "#7a7a83",
+                        "on-surface": "#31323a",
+                        "surface-container-lowest": "#ffffff",
+                        "background": "#fbf8fc",
+                        "primary": "#4355b9",
+                        "on-secondary-fixed": "#3e3f47",
+                        "on-tertiary-container": "#434e66",
+                        "primary-dim": "#3649ac",
+                        "on-primary-fixed-variant": "#4052b6",
+                        "inverse-primary": "#8596ff",
+                        "on-tertiary-fixed": "#303c53",
+                        "surface-bright": "#fbf8fc",
+                        "secondary-dim": "#52525b",
+                        "secondary": "#5e5e67",
+                        "error-container": "#ff8b9a",
+                        "primary-fixed": "#dee0ff",
+                        "error-dim": "#4f0116",
+                        "surface-container-low": "#f5f2f8",
+                        "on-primary": "#f9f6ff",
+                        "tertiary-dim": "#47536b",
+                        "tertiary-fixed": "#d1ddfa",
+                        "on-primary-fixed": "#203498",
+                        "primary-container": "#dee0ff",
+                        "on-tertiary": "#f8f8ff",
+                        "on-error": "#fff7f7",
+                        "on-tertiary-fixed-variant": "#4c5870",
+                        "surface-container-highest": "#e3e1ec",
+                        "outline-variant": "#b2b1bb",
+                        "tertiary": "#535f78",
+                        "on-background": "#31323a",
+                        "on-primary-container": "#3648ac",
+                        "inverse-surface": "#0e0e11",
+                        "surface-container": "#efedf4",
+                        "on-error-container": "#782232",
+                        "inverse-on-surface": "#9e9ca0",
+                        "surface": "#fbf8fc",
+                        "surface-dim": "#dad9e5",
+                        "secondary-container": "#e3e1ec",
+                        "tertiary-container": "#d1ddfa",
+                        "on-secondary": "#faf8ff",
+                        "secondary-fixed-dim": "#d4d3dd",
+                        "surface-tint": "#4355b9"
+                    },
+                    fontFamily: {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #fbf8fc;
+        }
+        .message-bubble-left {
+            border-bottom-left-radius: 4px;
+        }
+        .message-bubble-right {
+            border-bottom-right-radius: 4px;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="text-on-surface">
+<!-- Header / TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-[#ffffffcc] backdrop-blur-xl shadow-sm flex justify-between items-center px-6 h-16 w-full">
+<div class="flex items-center gap-4">
+<button class="flex items-center justify-center w-10 h-10 rounded-full hover:bg-[#e3e1ec] transition-colors active:scale-95 transition-transform duration-200">
+<span class="material-symbols-outlined text-[#5e5e67]">arrow_back</span>
+</button>
+<div class="flex items-center gap-3">
+<div class="relative">
+<img alt="Avatar do Usuário" class="w-10 h-10 rounded-full object-cover" data-alt="Close-up portrait of a male researcher" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAp1N-nDjPypcDKTe0Y75Pj1SRxxmirEOazPFiGoO17ctPhzn33xeKTpJz2ma_I1BVyEN4RfKxL6BNiD6e4ZgjhyvpoS24CTgQBqp2pculTcsSNIPYBd-ytX2AhtiPGlSaCsEJ94sjnTLn1oiaOZSKY1cgybecum--K7zsWZIlRHz3VMEduE-eUzRQ0rJsQJ0IJjUQwNEjeVR2hUgipNVYR-5qATDySJzpMtiwmpD3LMt3JmU9kNT-SFb0B3Z3NGsuNIKKIHpWteMg"/>
+<span class="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 border-2 border-white rounded-full"></span>
+</div>
+<div>
+<h1 class="font-['Manrope'] font-bold text-base tracking-tight leading-tight text-on-surface">Ricardo Silva</h1>
+<span class="text-xs font-medium text-emerald-600 block">Online</span>
+</div>
+</div>
+</div>
+<div class="flex items-center">
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-[#e3e1ec] transition-colors active:scale-95 transition-transform duration-200">
+<span class="material-symbols-outlined text-[#3F51B5]">videocam</span>
+</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-[#e3e1ec] transition-colors active:scale-95 transition-transform duration-200">
+<span class="material-symbols-outlined text-[#3F51B5]">more_vert</span>
+</button>
+</div>
+</header>
+<!-- Main Content: Chat Canvas -->
+<main class="pt-20 pb-24 px-4 md:px-12 max-w-4xl mx-auto min-h-screen flex flex-col gap-6">
+<!-- Date Separator -->
+<div class="flex items-center justify-center my-4">
+<span class="text-[11px] font-semibold tracking-wider text-outline uppercase px-4 py-1 bg-surface-container-low rounded-full">Hoje</span>
+</div>
+<!-- Message List -->
+<div class="flex flex-col gap-4">
+<!-- Message Left (Them) -->
+<div class="flex flex-col items-start max-w-[85%] md:max-w-[70%]">
+<div class="bg-surface-container-high text-on-surface-variant p-4 rounded-2xl message-bubble-left shadow-sm">
+<p class="text-sm leading-relaxed">Olá! Li seu último artigo sobre redes neurais aplicadas à educação. Achei a metodologia excepcional.</p>
+</div>
+<span class="text-[10px] text-outline mt-1 ml-1">14:20</span>
+</div>
+<!-- Message Right (Me) -->
+<div class="flex flex-col items-end max-w-[85%] md:max-w-[70%] self-end">
+<div class="bg-gradient-to-br from-primary to-primary-dim text-on-primary p-4 rounded-2xl message-bubble-right shadow-sm">
+<p class="text-sm leading-relaxed">Muito obrigado, Ricardo! Fico feliz que tenha gostado. Foi um trabalho de campo bem intenso.</p>
+</div>
+<div class="flex items-center gap-1 mt-1 mr-1">
+<span class="text-[10px] text-outline">14:22</span>
+<span class="material-symbols-outlined text-[12px] text-primary" style="font-variation-settings: 'FILL' 1;">done_all</span>
+</div>
+</div>
+<!-- Message Left (Them) -->
+<div class="flex flex-col items-start max-w-[85%] md:max-w-[70%]">
+<div class="bg-surface-container-high text-on-surface-variant p-4 rounded-2xl message-bubble-left shadow-sm">
+<p class="text-sm leading-relaxed">Você teria disponibilidade para conversarmos sobre uma possível colaboração no próximo semestre? Estamos montando um grupo focado em acessibilidade digital.</p>
+</div>
+<span class="text-[10px] text-outline mt-1 ml-1">14:25</span>
+</div>
+<!-- Typing Indicator -->
+<div class="flex items-center gap-3 mt-2 animate-pulse">
+<div class="flex gap-1">
+<span class="w-1.5 h-1.5 bg-outline-variant rounded-full"></span>
+<span class="w-1.5 h-1.5 bg-outline-variant rounded-full"></span>
+<span class="w-1.5 h-1.5 bg-outline-variant rounded-full"></span>
+</div>
+<span class="text-xs font-medium text-secondary italic">Ricardo está digitando...</span>
+</div>
+</div>
+</main>
+<!-- Footer: Message Input Area -->
+<footer class="fixed bottom-0 w-full z-50 bg-[#ffffffcc] backdrop-blur-xl px-4 py-4 md:px-12 flex items-center justify-center">
+<div class="max-w-4xl w-full flex items-center gap-3">
+<!-- Attachment Button -->
+<button class="w-10 h-10 flex items-center justify-center rounded-full bg-surface-container text-secondary hover:bg-surface-container-high transition-colors active:scale-95">
+<span class="material-symbols-outlined">add</span>
+</button>
+<!-- Input Container -->
+<div class="flex-1 relative flex items-center bg-surface-container-low rounded-2xl px-4 h-12">
+<input class="w-full bg-transparent border-none focus:ring-0 text-sm placeholder:text-outline text-on-surface font-body" placeholder="Escreva sua mensagem..." type="text"/>
+<button class="text-secondary hover:text-primary transition-colors ml-2">
+<span class="material-symbols-outlined">sentiment_satisfied</span>
+</button>
+</div>
+<!-- Send Button -->
+<button class="w-12 h-12 flex items-center justify-center rounded-xl bg-gradient-to-br from-primary to-primary-dim text-white shadow-[0_8px_16px_rgba(67,85,185,0.2)] hover:opacity-90 active:scale-90 transition-all duration-200">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">send</span>
+</button>
+</div>
+</footer>
+<!-- LGPD Compliance Minimalist Hint -->
+<div class="fixed bottom-20 left-1/2 -translate-x-1/2 md:bottom-24">
+<span class="text-[9px] text-outline-variant uppercase tracking-widest font-bold bg-surface/50 backdrop-blur-sm px-2 py-0.5 rounded">Seus dados estão protegidos sob a LGPD</span>
+</div>
+</body></html>

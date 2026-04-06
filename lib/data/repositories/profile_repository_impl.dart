@@ -13,19 +13,19 @@ class ProfileRepositoryImpl implements ProfileRepository {
   @override
   Future<User> getMyProfile() async {
     final res = await _api.get(ApiEndpoints.myProfile);
-    return UserModel.fromJson(res);
+    return UserModel.fromJson(res['data'] as Map<String, dynamic>);
   }
 
   @override
   Future<User> updateProfile(Map<String, dynamic> data) async {
     final res = await _api.patch(ApiEndpoints.myProfile, body: data);
-    return UserModel.fromJson(res);
+    return UserModel.fromJson(res['data'] as Map<String, dynamic>);
   }
 
   @override
   Future<User> getUserProfile(String userId) async {
     final res = await _api.get(ApiEndpoints.userProfile(userId));
-    return UserModel.fromJson(res);
+    return UserModel.fromJson(res['data'] as Map<String, dynamic>);
   }
 
   @override

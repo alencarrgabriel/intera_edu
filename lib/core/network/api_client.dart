@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import '../config/app_config.dart';
 import '../storage/secure_storage.dart';
@@ -12,7 +14,8 @@ class ApiClient {
   final SecureStorageService _storage = SecureStorageService();
   OnForceLogout? onForceLogout;
 
-  /// Completer para coordenar múltiplos refreshes simultâneos
+  /// Completer para coordenar múltiplos refreshes simultâneos.
+  /// Garante que apenas uma chamada ao /auth/refresh ocorre por vez.
   Completer<bool>? _refreshCompleter;
 
   ApiClient({String? baseUrl, this.onForceLogout})
@@ -28,56 +31,124 @@ class ApiClient {
 
   Future<Map<String, dynamic>> get(String endpoint,
       {Map<String, String>? queryParams}) async {
-    final uri =
-        Uri.parse('$baseUrl$endpoint').replace(queryParameters: queryParams);
-    final response =
-        await http.get(uri, headers: await _headers()).timeout(AppConfig.receiveTimeout);
-    return _handleResponse(response, () => get(endpoint, queryParams: queryParams));
+    try {
+      final uri = Uri.parse('$baseUrl$endpoint')
+          .replace(queryParameters: queryParams);
+      final response = await http
+          .get(uri, headers: await _headers())
+          .timeout(AppConfig.receiveTimeout);
+      return _handleResponse(
+          response, () => get(endpoint, queryParams: queryParams));
+    } on ApiException {
+      rethrow;
+    } on TimeoutException {
+      throw ApiException(
+          statusCode: 408,
+          message: 'Tempo limite excedido. Verifique sua conexão.',
+          code: 'TIMEOUT');
+    } on SocketException {
+      throw ApiException(
+          statusCode: 0,
+          message: 'Sem conexão com a internet.',
+          code: 'NO_NETWORK');
+    }
   }
 
   Future<Map<String, dynamic>> post(String endpoint,
       {Map<String, dynamic>? body}) async {
-    final uri = Uri.parse('$baseUrl$endpoint');
-    final response = await http
-        .post(uri,
-            headers: await _headers(),
-            body: body != null ? jsonEncode(body) : null)
-        .timeout(AppConfig.receiveTimeout);
-    return _handleResponse(response, () => post(endpoint, body: body));
+    try {
+      final uri = Uri.parse('$baseUrl$endpoint');
+      final response = await http
+          .post(uri,
+              headers: await _headers(),
+              body: body != null ? jsonEncode(body) : null)
+          .timeout(AppConfig.receiveTimeout);
+      return _handleResponse(response, () => post(endpoint, body: body));
+    } on ApiException {
+      rethrow;
+    } on TimeoutException {
+      throw ApiException(
+          statusCode: 408,
+          message: 'Tempo limite excedido. Verifique sua conexão.',
+          code: 'TIMEOUT');
+    } on SocketException {
+      throw ApiException(
+          statusCode: 0,
+          message: 'Sem conexão com a internet.',
+          code: 'NO_NETWORK');
+    }
   }
 
   Future<Map<String, dynamic>> patch(String endpoint,
       {Map<String, dynamic>? body}) async {
-    final uri = Uri.parse('$baseUrl$endpoint');
-    final response = await http
-        .patch(uri,
-            headers: await _headers(),
-            body: body != null ? jsonEncode(body) : null)
-        .timeout(AppConfig.receiveTimeout);
-    return _handleResponse(response, () => patch(endpoint, body: body));
+    try {
+      final uri = Uri.parse('$baseUrl$endpoint');
+      final response = await http
+          .patch(uri,
+              headers: await _headers(),
+              body: body != null ? jsonEncode(body) : null)
+          .timeout(AppConfig.receiveTimeout);
+      return _handleResponse(response, () => patch(endpoint, body: body));
+    } on ApiException {
+      rethrow;
+    } on TimeoutException {
+      throw ApiException(
+          statusCode: 408,
+          message: 'Tempo limite excedido. Verifique sua conexão.',
+          code: 'TIMEOUT');
+    } on SocketException {
+      throw ApiException(
+          statusCode: 0,
+          message: 'Sem conexão com a internet.',
+          code: 'NO_NETWORK');
+    }
   }
 
   Future<Map<String, dynamic>> delete(String endpoint) async {
-    final uri = Uri.parse('$baseUrl$endpoint');
-    final response =
-        await http.delete(uri, headers: await _headers()).timeout(AppConfig.receiveTimeout);
-    return _handleResponse(response, () => delete(endpoint));
+    try {
+      final uri = Uri.parse('$baseUrl$endpoint');
+      final response = await http
+          .delete(uri, headers: await _headers())
+          .timeout(AppConfig.receiveTimeout);
+      return _handleResponse(response, () => delete(endpoint));
+    } on ApiException {
+      rethrow;
+    } on TimeoutException {
+      throw ApiException(
+          statusCode: 408,
+          message: 'Tempo limite excedido. Verifique sua conexão.',
+          code: 'TIMEOUT');
+    } on SocketException {
+      throw ApiException(
+          statusCode: 0,
+          message: 'Sem conexão com a internet.',
+          code: 'NO_NETWORK');
+    }
   }
 
   Future<Map<String, dynamic>> _handleResponse(
     http.Response response,
     Future<Map<String, dynamic>> Function() retry,
   ) async {
+    _log('${response.request?.method} ${response.request?.url} → ${response.statusCode}');
+
     if (response.statusCode >= 200 && response.statusCode < 300) {
       if (response.body.isEmpty) return {};
-      return jsonDecode(response.body) as Map<String, dynamic>;
+      try {
+        return jsonDecode(response.body) as Map<String, dynamic>;
+      } on FormatException {
+        throw ApiException(
+            statusCode: 0,
+            message: 'Resposta inválida do servidor.',
+            code: 'INVALID_RESPONSE');
+      }
     }
 
     // Token expirado — tentar refresh automático
     if (response.statusCode == 401) {
       final refreshed = await _tryRefresh();
       if (refreshed) {
-        return retry(); // Retentar a requisição original com o novo token
+        return retry();
       } else {
         onForceLogout?.call();
         throw ApiException(
@@ -88,22 +159,55 @@ class ApiClient {
       }
     }
 
-    final errorBody = response.body.isNotEmpty
-        ? jsonDecode(response.body) as Map<String, dynamic>
-        : {'error': {'message': 'Erro desconhecido', 'status': response.statusCode}};
+    // Extrair mensagem de erro no formato canônico ou no formato NestJS padrão
+    throw _parseErrorBody(response.body, response.statusCode);
+  }
 
-    throw ApiException(
-      statusCode: response.statusCode,
-      message: errorBody['error']?['message'] ?? 'Requisição falhou',
-      code: errorBody['error']?['code'] ?? 'UNKNOWN',
-    );
+  /// Suporta dois formatos de erro:
+  /// 1. Formato canônico (gateway): `{ "error": { "code": "...", "message": "..." } }`
+  /// 2. Formato NestJS padrão:      `{ "statusCode": 400, "message": "...", "error": "..." }`
+  ApiException _parseErrorBody(String body, int statusCode) {
+    if (body.isEmpty) {
+      return ApiException(
+          statusCode: statusCode,
+          message: 'Requisição falhou.',
+          code: 'HTTP_$statusCode');
+    }
+
+    try {
+      final json = jsonDecode(body) as Map<String, dynamic>;
+
+      // Formato 1: canônico { error: { code, message } }
+      final errorObj = json['error'];
+      if (errorObj is Map<String, dynamic> && errorObj['code'] != null) {
+        final msg = errorObj['message'] as String? ?? 'Erro desconhecido';
+        final code = errorObj['code'] as String? ?? 'UNKNOWN';
+        _log('Erro [$code]: $msg', isError: true);
+        return ApiException(statusCode: statusCode, message: msg, code: code);
+      }
+
+      // Formato 2: NestJS padrão { statusCode, message, error }
+      final raw = json['message'];
+      final message = raw is List
+          ? raw.join('; ')
+          : (raw as String? ?? 'Requisição falhou.');
+      final code = errorObj is String
+          ? errorObj.toUpperCase().replaceAll(' ', '_')
+          : 'HTTP_$statusCode';
+      _log('Erro [$code]: $message', isError: true);
+      return ApiException(statusCode: statusCode, message: message, code: code);
+    } on FormatException {
+      return ApiException(
+          statusCode: statusCode,
+          message: 'Requisição falhou.',
+          code: 'HTTP_$statusCode');
+    }
   }
 
   /// Tenta renovar o access token usando o refresh token armazenado.
   /// Usa Completer para coordenar requests concorrentes — se um refresh
-  /// já está em andamento, as demais requisi��ões aguardam o resultado.
+  /// já está em andamento, as demais requisições aguardam o resultado.
   Future<bool> _tryRefresh() async {
-    // Se já existe um refresh em andamento, aguardar o resultado
     if (_refreshCompleter != null) {
       return _refreshCompleter!.future;
     }
@@ -142,6 +246,15 @@ class ApiClient {
       return false;
     } finally {
       _refreshCompleter = null;
+    }
+  }
+
+  void _log(String message, {bool isError = false}) {
+    if (!AppConfig.devMode) return;
+    if (isError) {
+      debugPrint('[ApiClient] ⚠ $message');
+    } else {
+      debugPrint('[ApiClient] $message');
     }
   }
 }

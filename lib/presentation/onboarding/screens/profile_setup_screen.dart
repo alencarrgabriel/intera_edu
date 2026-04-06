@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../core/auth/auth_notifier.dart';
+import '../../../core/design/app_tokens.dart';
 import '../../../core/utils/validators.dart';
 import '../../../core/di/service_locator.dart';
+import '../../../core/widgets/gradient_button.dart';
 import '../../../domain/repositories/auth_repository.dart';
 
 class ProfileSetupScreen extends StatefulWidget {
@@ -162,17 +164,25 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                 const SizedBox(height: 24),
 
                 // Botão de concluir
-                SizedBox(
-                  height: 52,
-                  child: ElevatedButton(
-                    onPressed: _isLoading ? null : _handleComplete,
-                    child: _isLoading
-                        ? const SizedBox(
-                            height: 20,
-                            width: 20,
-                            child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
-                          )
-                        : const Text('Concluir Cadastro', style: TextStyle(fontSize: 16)),
+                GradientButton(
+                  onPressed: _isLoading ? null : _handleComplete,
+                  child: _isLoading
+                      ? const SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(
+                              strokeWidth: 2, color: Colors.white),
+                        )
+                      : const Text('Concluir Cadastro'),
+                ),
+                const SizedBox(height: 4),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                  child: Text(
+                    'Seus dados são tratados conforme a LGPD. Consulte nossa Política de Privacidade.',
+                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                          color: AppTokens.secondary,
+                        ),
                   ),
                 ),
               ],

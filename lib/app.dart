@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'core/auth/auth_notifier.dart';
 import 'core/di/service_locator.dart';
+import 'core/network/socket_service.dart';
 import 'core/router/app_router.dart';
 import 'core/theme/app_theme.dart';
 import 'presentation/feed/notifiers/feed_notifier.dart';
+import 'presentation/messages/notifiers/messages_notifier.dart';
 import 'presentation/profile/notifiers/profile_notifier.dart';
 
 class InteraEduApp extends StatelessWidget {
@@ -20,8 +22,10 @@ class InteraEduApp extends StatelessWidget {
           auth.checkSession();
           return auth;
         }),
+        ChangeNotifierProvider(create: (_) => SocketService()),
         ChangeNotifierProvider(create: (_) => FeedNotifier(sl.feedRepo)),
         ChangeNotifierProvider(create: (_) => ProfileNotifier(sl.profileRepo)),
+        ChangeNotifierProvider(create: (_) => MessagesNotifier(sl.messagingRepo)),
       ],
       // Builder necessário para que `createRouter` acesse os providers acima.
       child: Builder(

@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../../../core/design/app_tokens.dart';
 import '../../../core/di/service_locator.dart';
 import '../../../core/router/app_router.dart';
+import '../../../core/widgets/stitch_card.dart';
 import '../../../data/models/search_result_model.dart';
 import '../../../domain/repositories/profile_repository.dart';
 import '../../shared/user_avatar.dart';
@@ -79,15 +81,22 @@ class _SearchScreenState extends State<SearchScreen> {
           : !_hasSearched
               ? Center(
                   child: Column(mainAxisSize: MainAxisSize.min, children: [
-                    Icon(Icons.search, size: 64, color: Theme.of(context).colorScheme.outline),
+                    const Icon(Icons.search_rounded,
+                        size: 64, color: AppTokens.outline),
                     const SizedBox(height: 16),
-                    const Text('Pesquise estudantes por nome, curso ou habilidade'),
+                    Text(
+                      'Pesquise estudantes por nome, curso ou habilidade',
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: AppTokens.onSurfaceVariant),
+                    ),
                   ]),
                 )
               : _error != null
                   ? Center(
                       child: Column(mainAxisSize: MainAxisSize.min, children: [
-                        const Icon(Icons.wifi_off, size: 48, color: Colors.red),
+                        const Icon(Icons.wifi_off_rounded,
+                            size: 48, color: AppTokens.error),
                         const SizedBox(height: 8),
                         const Text('Erro ao buscar. Verifique sua conexão.'),
                       ]),
@@ -95,8 +104,8 @@ class _SearchScreenState extends State<SearchScreen> {
               : _results.isEmpty
                   ? Center(
                       child: Column(mainAxisSize: MainAxisSize.min, children: [
-                        Icon(Icons.person_off_outlined,
-                            size: 64, color: Theme.of(context).colorScheme.outline),
+                        const Icon(Icons.person_off_outlined,
+                            size: 64, color: AppTokens.outline),
                         const SizedBox(height: 16),
                         const Text('Nenhum resultado encontrado.'),
                       ]),
@@ -107,15 +116,14 @@ class _SearchScreenState extends State<SearchScreen> {
                       separatorBuilder: (_, __) => const SizedBox(height: 8),
                       itemBuilder: (_, i) {
                         final u = _results[i];
-
-                        return Card(
+                        return StitchCard(
                           child: ListTile(
                             leading: UserAvatar(
                               name: u.fullName,
                               imageUrl: u.avatarUrl,
                             ),
                             title: Text(u.fullName,
-                                style: const TextStyle(fontWeight: FontWeight.w600)),
+                                style: Theme.of(context).textTheme.titleSmall),
                             subtitle: Text(
                               [u.course, u.institution?.name]
                                   .where((e) => e != null && e.isNotEmpty)
@@ -123,7 +131,8 @@ class _SearchScreenState extends State<SearchScreen> {
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
-                            trailing: const Icon(Icons.chevron_right),
+                            trailing: const Icon(Icons.chevron_right_rounded,
+                                color: AppTokens.outline),
                             onTap: () => context.push(
                               AppRoutes.userProfile(u.id),
                               extra: u.fullName,

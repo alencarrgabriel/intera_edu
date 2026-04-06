@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+
+<html class="light" lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-secondary-fixed-variant": "#5a5b63",
+                        "surface-container-high": "#e9e7f0",
+                        "secondary-fixed": "#e3e1ec",
+                        "tertiary-fixed-dim": "#c3cfeb",
+                        "on-secondary-container": "#515159",
+                        "primary-fixed-dim": "#ccd2ff",
+                        "error": "#9e3f4e",
+                        "on-surface-variant": "#5e5e67",
+                        "surface-variant": "#e3e1ec",
+                        "outline": "#7a7a83",
+                        "on-surface": "#31323a",
+                        "surface-container-lowest": "#ffffff",
+                        "background": "#fbf8fc",
+                        "primary": "#4355b9",
+                        "on-secondary-fixed": "#3e3f47",
+                        "on-tertiary-container": "#434e66",
+                        "primary-dim": "#3649ac",
+                        "on-primary-fixed-variant": "#4052b6",
+                        "inverse-primary": "#8596ff",
+                        "on-tertiary-fixed": "#303c53",
+                        "surface-bright": "#fbf8fc",
+                        "secondary-dim": "#52525b",
+                        "secondary": "#5e5e67",
+                        "error-container": "#ff8b9a",
+                        "primary-fixed": "#dee0ff",
+                        "error-dim": "#4f0116",
+                        "surface-container-low": "#f5f2f8",
+                        "on-primary": "#f9f6ff",
+                        "tertiary-dim": "#47536b",
+                        "tertiary-fixed": "#d1ddfa",
+                        "on-primary-fixed": "#203498",
+                        "primary-container": "#dee0ff",
+                        "on-tertiary": "#f8f8ff",
+                        "on-error": "#fff7f7",
+                        "on-tertiary-fixed-variant": "#4c5870",
+                        "surface-container-highest": "#e3e1ec",
+                        "outline-variant": "#b2b1bb",
+                        "tertiary": "#535f78",
+                        "on-background": "#31323a",
+                        "on-primary-container": "#3648ac",
+                        "inverse-surface": "#0e0e11",
+                        "surface-container": "#efedf4",
+                        "on-error-container": "#782232",
+                        "inverse-on-surface": "#9e9ca0",
+                        "surface": "#fbf8fc",
+                        "surface-dim": "#dad9e5",
+                        "secondary-container": "#e3e1ec",
+                        "tertiary-container": "#d1ddfa",
+                        "on-secondary": "#faf8ff",
+                        "secondary-fixed-dim": "#d4d3dd",
+                        "surface-tint": "#4355b9"
+                    },
+                    fontFamily: {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .glass-effect {
+            background-color: #ffffffcc;
+            backdrop-filter: blur(20px);
+        }
+        .primary-gradient {
+            background: linear-gradient(135deg, #4355b9 0%, #3649ac 100%);
+        }
+        .ghost-border {
+            border: 1px solid rgba(178, 177, 187, 0.15);
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background font-body text-on-surface min-h-screen flex flex-col">
+<!-- TopAppBar Suppressed as per Navigation Rules for Transactional/Onboarding Flows -->
+<header class="w-full px-6 py-8 flex items-center justify-between max-w-2xl mx-auto">
+<button class="flex items-center justify-center w-10 h-10 rounded-full hover:bg-surface-container-high transition-colors text-on-surface-variant">
+<span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
+</button>
+<div class="flex flex-col items-center">
+<span class="font-label text-[11px] uppercase tracking-[0.15em] text-secondary font-semibold">Passo 3 de 5</span>
+<div class="flex gap-1 mt-2">
+<div class="h-1 w-6 rounded-full bg-primary-container"></div>
+<div class="h-1 w-6 rounded-full bg-primary-container"></div>
+<div class="h-1 w-12 rounded-full bg-primary"></div>
+<div class="h-1 w-6 rounded-full bg-surface-container-highest"></div>
+<div class="h-1 w-6 rounded-full bg-surface-container-highest"></div>
+</div>
+</div>
+<div class="w-10"></div> <!-- Spacer for symmetry -->
+</header>
+<main class="flex-1 w-full max-w-2xl mx-auto px-6 pb-12 flex flex-col">
+<!-- Hero Section -->
+<section class="mt-8 mb-12">
+<h1 class="font-headline font-extrabold text-4xl text-on-surface tracking-tight leading-tight">
+                Fale um pouco sobre você.
+            </h1>
+<p class="mt-4 text-on-surface-variant text-lg leading-relaxed max-w-md">
+                Essas informações ajudam a conectar você com grupos de estudo e pesquisadores da sua área.
+            </p>
+</section>
+<!-- Form Section -->
+<div class="space-y-8">
+<!-- Full Name Input -->
+<div class="relative group">
+<label class="block text-sm font-medium text-secondary mb-2 px-1" for="full_name">Nome completo</label>
+<input class="w-full bg-surface-container-low ghost-border rounded-xl px-4 py-4 focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none placeholder:text-outline-variant text-on-surface" id="full_name" placeholder="Como você prefere ser chamado?" type="text"/>
+<p class="mt-2 text-[10px] text-secondary px-1 italic">Seus dados estão protegidos sob a LGPD.</p>
+</div>
+<!-- Course / Major Input (Autocomplete Style) -->
+<div class="relative group">
+<label class="block text-sm font-medium text-secondary mb-2 px-1" for="course">Curso</label>
+<div class="relative">
+<input class="w-full bg-surface-container-low ghost-border rounded-xl px-4 py-4 focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none placeholder:text-outline-variant text-on-surface" id="course" placeholder="Ex: Engenharia de Software" type="text"/>
+<span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-outline" data-icon="unfold_more">unfold_more</span>
+</div>
+</div>
+<!-- Asymmetric Layout for Period and Shift -->
+<div class="grid grid-cols-12 gap-4">
+<div class="col-span-12 md:col-span-5">
+<label class="block text-sm font-medium text-secondary mb-2 px-1" for="period">Período / Semestre</label>
+<div class="relative">
+<select class="w-full appearance-none bg-surface-container-low ghost-border rounded-xl px-4 py-4 focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none text-on-surface" id="period">
+<option disabled="" selected="" value="">Selecione</option>
+<option>1º Período</option>
+<option>2º Período</option>
+<option>3º Período</option>
+<option>4º Período</option>
+<option>5º Período</option>
+<option>6º Período</option>
+<option>7º Período</option>
+<option>8º Período</option>
+<option>9º Período</option>
+<option>10º Período</option>
+<option>Concluído</option>
+</select>
+<span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-outline pointer-events-none" data-icon="keyboard_arrow_down">keyboard_arrow_down</span>
+</div>
+</div>
+<!-- Quick Selection Chips for popular courses (Editorial/Bento style touch) -->
+<div class="col-span-12 md:col-span-7 flex flex-wrap items-end gap-2 pb-1">
+<div class="bg-surface-container-high px-4 py-2 rounded-full text-xs font-medium text-secondary-dim border border-transparent hover:border-outline-variant transition-all cursor-pointer">Bacharelado</div>
+<div class="bg-surface-container-high px-4 py-2 rounded-full text-xs font-medium text-secondary-dim border border-transparent hover:border-outline-variant transition-all cursor-pointer">Licenciatura</div>
+<div class="bg-surface-container-high px-4 py-2 rounded-full text-xs font-medium text-secondary-dim border border-transparent hover:border-outline-variant transition-all cursor-pointer">Tecnólogo</div>
+</div>
+</div>
+</div>
+<!-- Sticky Bottom Action Area -->
+<div class="mt-auto pt-12">
+<button class="w-full primary-gradient text-on-primary py-4 rounded-xl font-semibold text-lg hover:brightness-110 active:scale-[0.98] transition-all shadow-[0_8px_24px_rgba(49,50,58,0.1)]">
+                Continuar
+            </button>
+<p class="text-center mt-6 text-sm text-outline-variant">
+                Você poderá editar essas informações no seu perfil mais tarde.
+            </p>
+</div>
+</main>
+<!-- Content Card for visual balance (Editorial touch) -->
+<aside class="hidden lg:block fixed right-12 top-1/2 -translate-y-1/2 w-64">
+<div class="bg-surface-container-lowest p-6 rounded-2xl shadow-sm border border-surface-container">
+<div class="w-12 h-12 rounded-xl bg-primary-container flex items-center justify-center mb-4">
+<span class="material-symbols-outlined text-on-primary-container" data-icon="school" style="font-variation-settings: 'FILL' 1;">school</span>
+</div>
+<h3 class="font-headline font-bold text-on-surface mb-2">Comunidade InteraEdu</h3>
+<p class="text-xs text-on-surface-variant leading-relaxed">
+                Junte-se a mais de 15.000 estudantes e pesquisadores que já estão transformando sua jornada acadêmica.
+            </p>
+<div class="mt-6 pt-6 border-t border-surface-container-high flex -space-x-2">
+<div class="w-8 h-8 rounded-full border-2 border-surface-container-lowest bg-surface-container-highest overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Estudante universitária perfil rosto sorridente" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDjGrVEUg7QZirN70OSpqAhgdu9dMCiH7aq2AaBsuB-e6lnr7g54AccRPgejdsLwGhvpHmmMVX8TFKh4gfyKEfAS2ihELh6nA7wZv3D6pkUko0QSxFkW-oQYtdlrByk_pJJRvdkH3kd1etQ0VcADygtzr7kcC0SMWX8OzzU9hHTFEYMykMc4zC8NMgdghWOSqCKaspINzalsf80_3RSZ8XphoJSXIjWGAZDQrr0J1x54ojX8g2bCxGNivq7qRZIvGfjfnZoTbpC674"/>
+</div>
+<div class="w-8 h-8 rounded-full border-2 border-surface-container-lowest bg-surface-container-highest overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Estudante universitário perfil masculino sério" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCAKAaWKWApx1rAIZGBLaYx99XY8kfcpdOtw95cW06LClA_3BR2OEWfn4LR3_gMDkdFHUgqzF17YGAjs3EpR2BDAmGqj0ITeR3lkQF3PMFV7eIVrJBvae2BltZXpHbU1RmKJ68inkIVHVQQpg33sq9tMypTcIgVGKhFAZd64tNUoC-vaw0R9L-iYfqxs_uYVFK1lyu3zTWw4zDKhSvJjikOMt0-eziXYsXc3tYu1Ynu1kRDJAbwgOauaxDnXtWreaE7wOBBsFdtpVU"/>
+</div>
+<div class="w-8 h-8 rounded-full border-2 border-surface-container-lowest bg-surface-container-highest overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Pesquisadora jovem acadêmica perfil sorrindo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCT6kAtiLM1dEHGv0t0Uz1SCEKplxnrNhwwMsHdyXhem5_5ezZAPuNxuuFJMTbQ5I0MFgWtHFvEUKn7rYV8dHDxENqLK7eh7-ZeLYMlioXjhSlKw-eF9VdkqdOv_7QWR7KKzUmFgpKpVB2RZ6TdLJ_7gKgluKwxZqD3zA9UrLVYhITes6Gdns-jFiUyVSmV0s8YLfld9h_sTq8lNKcn0ifDYZQXuEB4XQ2p-5exgendaXefM4CPSULZkd_dSCPcTUXUPy-Om0jifCE"/>
+</div>
+<div class="w-8 h-8 rounded-full border-2 border-surface-container-lowest bg-primary-fixed flex items-center justify-center text-[10px] font-bold text-on-primary-fixed">
+                    +15k
+                </div>
+</div>
+</div>
+</aside>
+</body></html>

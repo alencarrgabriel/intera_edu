@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import '../../../core/design/app_tokens.dart';
 import '../../../core/di/service_locator.dart';
 import '../../../domain/entities/user.dart';
 import '../../../domain/repositories/profile_repository.dart';
@@ -176,9 +177,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 contentPadding: EdgeInsets.zero,
               )),
 
-          const SizedBox(height: 8),
-          const Divider(),
-          const SizedBox(height: 8),
+          const SizedBox(height: 20),
 
           // Habilidades
           Text('Habilidades',
@@ -204,7 +203,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       _selectedSkillIds.remove(s.id);
                     }
                   }),
-                  selectedColor: Theme.of(context).colorScheme.secondaryContainer,
+                  selectedColor: AppTokens.primaryContainer,
                 );
               }).toList(),
             ),

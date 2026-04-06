@@ -6,6 +6,7 @@ import '../../presentation/auth/screens/otp_screen.dart';
 import '../../presentation/auth/screens/register_screen.dart';
 import '../../presentation/feed/screens/create_post_screen.dart';
 import '../../presentation/main_screen.dart';
+import '../../presentation/messages/screens/chat_room_screen.dart';
 import '../../presentation/onboarding/screens/profile_setup_screen.dart';
 import '../../presentation/onboarding/screens/welcome_screen.dart';
 import '../../presentation/profile/screens/connections_screen.dart';
@@ -13,6 +14,29 @@ import '../../presentation/profile/screens/edit_profile_screen.dart';
 import '../../presentation/profile/screens/user_profile_screen.dart';
 import '../auth/auth_notifier.dart';
 import '../../domain/entities/user.dart';
+
+/// Transição padrão: fade + slide suave (250ms).
+CustomTransitionPage<T> _slideTransition<T>({
+  required BuildContext context,
+  required GoRouterState state,
+  required Widget child,
+}) {
+  return CustomTransitionPage<T>(
+    key: state.pageKey,
+    child: child,
+    transitionDuration: const Duration(milliseconds: 250),
+    transitionsBuilder: (ctx, animation, secondaryAnimation, c) {
+      final slide = Tween(
+        begin: const Offset(0.04, 0),
+        end: Offset.zero,
+      ).animate(CurvedAnimation(parent: animation, curve: Curves.easeOut));
+      return FadeTransition(
+        opacity: animation,
+        child: SlideTransition(position: slide, child: c),
+      );
+    },
+  );
+}
 
 /// Rotas nomeadas — use estas constantes em vez de strings avulsas.
 abstract class AppRoutes {
@@ -29,6 +53,7 @@ abstract class AppRoutes {
   static const connections = '/connections';
 
   static String userProfile(String userId) => '/user/$userId';
+  static String chatRoom(String chatId) => '/chat/$chatId';
 }
 
 /// Cria o GoRouter com auth guard baseado no `AuthNotifier`.
@@ -53,6 +78,9 @@ GoRouter createRouter(BuildContext context) {
       };
       final isAuthPath = authPaths.contains(loc);
 
+      // Permite /profile-setup mesmo autenticado (etapa pós-registro)
+      if (loc == AppRoutes.profileSetup) return null;
+
       if (status == AuthStatus.loading) return null; // aguarda
       if (status == AuthStatus.unauthenticated && !isAuthPath) {
         return AppRoutes.welcome;
@@ -69,25 +97,48 @@ GoRouter createRouter(BuildContext context) {
         routes: [
           GoRoute(
             path: 'create-post',
-            builder: (_, __) => const CreatePostScreen(),
+            pageBuilder: (ctx, state) => _slideTransition(
+                context: ctx, state: state, child: const CreatePostScreen()),
           ),
           GoRoute(
             path: 'edit-profile',
-            builder: (_, state) {
+            pageBuilder: (ctx, state) {
               final profile = state.extra as User;
-              return EditProfileScreen(profile: profile);
+              return _slideTransition(
+                  context: ctx,
+                  state: state,
+                  child: EditProfileScreen(profile: profile));
             },
           ),
           GoRoute(
             path: 'connections',
-            builder: (_, __) => const ConnectionsScreen(),
+            pageBuilder: (ctx, state) => _slideTransition(
+                context: ctx, state: state, child: const ConnectionsScreen()),
           ),
           GoRoute(
             path: 'user/:userId',
-            builder: (_, state) {
+            pageBuilder: (ctx, state) {
               final userId = state.pathParameters['userId']!;
               final name = state.extra as String?;
-              return UserProfileScreen(userId: userId, initialName: name);
+              return _slideTransition(
+                  context: ctx,
+                  state: state,
+                  child:
+                      UserProfileScreen(userId: userId, initialName: name));
+            },
+          ),
+          GoRoute(
+            path: 'chat/:chatId',
+            pageBuilder: (ctx, state) {
+              final chatId = state.pathParameters['chatId']!;
+              final extra = state.extra as Map<String, dynamic>?;
+              return _slideTransition(
+                  context: ctx,
+                  state: state,
+                  child: ChatRoomScreen(
+                    chatId: chatId,
+                    chatName: extra?['name'] as String?,
+                  ));
             },
           ),
         ],
@@ -114,7 +165,11 @@ GoRouter createRouter(BuildContext context) {
       GoRoute(
         path: AppRoutes.profileSetup,
         builder: (_, state) {
-          final extra = state.extra as Map<String, String>;
+          final extra = state.extra as Map<String, String>?;
+          if (extra == null) {
+            // Navegação direta sem dados — volta para register
+            return const RegisterScreen();
+          }
           return ProfileSetupScreen(
             temporaryToken: extra['token']!,
             email: extra['email']!,

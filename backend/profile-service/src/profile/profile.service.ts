@@ -1,6 +1,6 @@
 import { Injectable, Logger, NotFoundException, ForbiddenException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, In, IsNull } from 'typeorm';
+import { Repository, In, IsNull, DataSource } from 'typeorm';
 import { JwtPayload } from '@interaedu/shared';
 import { UserProfile } from '../database/entities/user-profile.entity';
 import { UserSkill } from '../database/entities/user-skill.entity';
@@ -24,7 +24,29 @@ export class ProfileService {
     private readonly linkRepo: Repository<UserLink>,
     @InjectRepository(Connection)
     private readonly connectionRepo: Repository<Connection>,
+    private readonly dataSource: DataSource,
   ) {}
+
+  /** Resolve institution name+slug via cross-schema query (all services share same DB). */
+  private async getInstitution(institutionId: string): Promise<{ id: string; name: string; slug: string | null }> {
+    const rows = await this.dataSource.query(
+      `SELECT id, name, slug FROM auth.institutions WHERE id = $1 LIMIT 1`,
+      [institutionId],
+    );
+    if (rows.length) return { id: rows[0].id, name: rows[0].name, slug: rows[0].slug ?? null };
+    return { id: institutionId, name: '', slug: null };
+  }
+
+  /** Batch-resolve institution ids → { id, name, slug } map. */
+  private async getInstitutionMap(ids: string[]): Promise<Map<string, { name: string; slug: string | null }>> {
+    if (!ids.length) return new Map();
+    const unique = [...new Set(ids)];
+    const rows = await this.dataSource.query(
+      `SELECT id, name, slug FROM auth.institutions WHERE id = ANY($1)`,
+      [unique],
+    );
+    return new Map(rows.map((r: any) => [r.id, { name: r.name, slug: r.slug ?? null }]));
+  }
 
   async findById(userId: string): Promise<any> {
     const user = await this.userRepo.findOne({ where: { id: userId, deletedAt: IsNull() } });
@@ -85,6 +107,20 @@ export class ProfileService {
     }
 
     return this.toProfileResponse(user, userId);
+  }
+
+  async findManyByIds(ids: string[]): Promise<any> {
+    if (!ids.length) return { data: [] };
+    const users = await this.userRepo.find({ where: ids.map((id) => ({ id, deletedAt: IsNull() })) });
+    return {
+      data: users.map((u) => ({
+        id: u.id,
+        full_name: u.fullName,
+        avatar_url: u.avatarUrl ?? null,
+        course: u.course ?? null,
+        institution_id: u.institutionId,
+      })),
+    };
   }
 
   async requestDeletion(userId: string): Promise<any> {
@@ -159,31 +195,38 @@ export class ProfileService {
   }
 
   private async toProfileResponse(user: UserProfile, viewerId: string) {
-    const links = await this.linkRepo.find({ where: { userId: user.id } });
-    const userSkills = await this.userSkillRepo.find({ where: { userId: user.id } });
+    const [links, userSkills, institution] = await Promise.all([
+      this.linkRepo.find({ where: { userId: user.id } }),
+      this.userSkillRepo.find({ where: { userId: user.id } }),
+      this.getInstitution(user.institutionId),
+    ]);
     const skills = userSkills.length
       ? await this.skillRepo.find({ where: { id: In(userSkills.map((us) => us.skillId)) } })
       : [];
 
-    // email lives in Auth service; keep it out here for now
     return {
-      id: user.id,
-      full_name: user.fullName,
-      bio: user.bio ?? null,
-      course: user.course ?? null,
-      period: user.period ?? null,
-      privacy_level: user.privacyLevel,
-      avatar_url: user.avatarUrl ?? null,
-      institution: { id: user.institutionId },
-      skills: skills.map((s) => ({ id: s.id, name: s.name, category: s.category })),
-      links: links.map((l) => ({ id: l.id, type: l.linkType, url: l.url })),
-      created_at: user.createdAt.toISOString(),
-      viewer_context: { viewer_id: viewerId },
+      data: {
+        id: user.id,
+        email: user.email ?? '',
+        full_name: user.fullName,
+        bio: user.bio ?? null,
+        course: user.course ?? null,
+        period: user.period ?? null,
+        privacy_level: user.privacyLevel,
+        avatar_url: user.avatarUrl ?? null,
+        institution: { id: institution.id, name: institution.name, slug: institution.slug },
+        skills: skills.map((s) => ({ id: s.id, name: s.name, category: s.category })),
+        links: links.map((l) => ({ id: l.id, type: l.linkType, url: l.url })),
+        created_at: user.createdAt.toISOString(),
+      },
     };
   }
 
   private async toProfileCard(user: UserProfile) {
-    const userSkills = await this.userSkillRepo.find({ where: { userId: user.id } });
+    const [userSkills, institution] = await Promise.all([
+      this.userSkillRepo.find({ where: { userId: user.id } }),
+      this.getInstitution(user.institutionId),
+    ]);
     const skills = userSkills.length
       ? await this.skillRepo.find({ where: { id: In(userSkills.map((us) => us.skillId)) }, take: 3 })
       : [];
@@ -192,7 +235,7 @@ export class ProfileService {
       id: user.id,
       full_name: user.fullName,
       course: user.course ?? null,
-      institution: { id: user.institutionId },
+      institution: { id: institution.id, name: institution.name, slug: institution.slug },
       skills: skills.map((s) => ({ id: s.id, name: s.name, category: s.category })),
       avatar_url: user.avatarUrl ?? null,
     };

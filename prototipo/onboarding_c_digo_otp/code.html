@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+
+<html class="light" lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>InteraEdu - Verificação de E-mail</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Manrope:wght@700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-secondary-fixed-variant": "#5a5b63",
+              "surface-container-high": "#e9e7f0",
+              "secondary-fixed": "#e3e1ec",
+              "tertiary-fixed-dim": "#c3cfeb",
+              "on-secondary-container": "#515159",
+              "primary-fixed-dim": "#ccd2ff",
+              "error": "#9e3f4e",
+              "on-surface-variant": "#5e5e67",
+              "surface-variant": "#e3e1ec",
+              "outline": "#7a7a83",
+              "on-surface": "#31323a",
+              "surface-container-lowest": "#ffffff",
+              "background": "#fbf8fc",
+              "primary": "#4355b9",
+              "on-secondary-fixed": "#3e3f47",
+              "on-tertiary-container": "#434e66",
+              "primary-dim": "#3649ac",
+              "on-primary-fixed-variant": "#4052b6",
+              "inverse-primary": "#8596ff",
+              "on-tertiary-fixed": "#303c53",
+              "surface-bright": "#fbf8fc",
+              "secondary-dim": "#52525b",
+              "secondary": "#5e5e67",
+              "error-container": "#ff8b9a",
+              "primary-fixed": "#dee0ff",
+              "error-dim": "#4f0116",
+              "surface-container-low": "#f5f2f8",
+              "on-primary": "#f9f6ff",
+              "tertiary-dim": "#47536b",
+              "tertiary-fixed": "#d1ddfa",
+              "on-primary-fixed": "#203498",
+              "primary-container": "#dee0ff",
+              "on-tertiary": "#f8f8ff",
+              "on-error": "#fff7f7",
+              "on-tertiary-fixed-variant": "#4c5870",
+              "surface-container-highest": "#e3e1ec",
+              "outline-variant": "#b2b1bb",
+              "tertiary": "#535f78",
+              "on-background": "#31323a",
+              "on-primary-container": "#3648ac",
+              "inverse-surface": "#0e0e11",
+              "surface-container": "#efedf4",
+              "on-error-container": "#782232",
+              "inverse-on-surface": "#9e9ca0",
+              "surface": "#fbf8fc",
+              "surface-dim": "#dad9e5",
+              "secondary-container": "#e3e1ec",
+              "tertiary-container": "#d1ddfa",
+              "on-secondary": "#faf8ff",
+              "secondary-fixed-dim": "#d4d3dd",
+              "surface-tint": "#4355b9"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      .glass-effect {
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(20px);
+      }
+      .otp-shadow {
+        box-shadow: 0 8px 24px rgba(49, 50, 58, 0.04);
+      }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background font-body text-on-background min-h-screen flex flex-col items-center justify-center p-6">
+<main class="w-full max-w-md mx-auto space-y-12">
+<header class="space-y-6 text-center">
+<div class="inline-flex items-center justify-center px-4 py-1.5 rounded-full bg-surface-container-high text-on-surface-variant font-label text-xs tracking-wider uppercase">
+                Passo 2 de 5
+            </div>
+<div class="space-y-3">
+<h1 class="font-headline font-extrabold text-3xl md:text-4xl text-on-surface tracking-tight">
+                    Verifique seu e-mail.
+                </h1>
+<p class="text-secondary font-body leading-relaxed max-w-xs mx-auto">
+                    Enviamos um código de 6 dígitos para o seu e-mail institucional.
+                </p>
+</div>
+</header>
+<section class="space-y-8">
+<div class="grid grid-cols-6 gap-2 md:gap-3">
+<input aria-label="Digito 1" class="w-full h-14 md:h-16 text-center text-xl font-bold bg-surface-container-low border-0 rounded-xl focus:ring-2 focus:ring-primary focus:bg-surface-container-lowest transition-all otp-shadow text-on-surface" maxlength="1" placeholder="-" type="text"/>
+<input aria-label="Digito 2" class="w-full h-14 md:h-16 text-center text-xl font-bold bg-surface-container-low border-0 rounded-xl focus:ring-2 focus:ring-primary focus:bg-surface-container-lowest transition-all otp-shadow text-on-surface" maxlength="1" placeholder="-" type="text"/>
+<input aria-label="Digito 3" class="w-full h-14 md:h-16 text-center text-xl font-bold bg-surface-container-low border-0 rounded-xl focus:ring-2 focus:ring-primary focus:bg-surface-container-lowest transition-all otp-shadow text-on-surface" maxlength="1" placeholder="-" type="text"/>
+<input aria-label="Digito 4" class="w-full h-14 md:h-16 text-center text-xl font-bold bg-surface-container-low border-0 rounded-xl focus:ring-2 focus:ring-primary focus:bg-surface-container-lowest transition-all otp-shadow text-on-surface" maxlength="1" placeholder="-" type="text"/>
+<input aria-label="Digito 5" class="w-full h-14 md:h-16 text-center text-xl font-bold bg-surface-container-low border-0 rounded-xl focus:ring-2 focus:ring-primary focus:bg-surface-container-lowest transition-all otp-shadow text-on-surface" maxlength="1" placeholder="-" type="text"/>
+<input aria-label="Digito 6" class="w-full h-14 md:h-16 text-center text-xl font-bold bg-surface-container-low border-0 rounded-xl focus:ring-2 focus:ring-primary focus:bg-surface-container-lowest transition-all otp-shadow text-on-surface border-2 border-error/20" maxlength="1" placeholder="-" type="text"/>
+</div>
+<div class="flex items-center justify-center space-x-2 text-error text-sm font-medium">
+<span class="material-symbols-outlined text-lg">error</span>
+<span>Código inválido ou expirado. Tente novamente.</span>
+</div>
+</section>
+<footer class="space-y-6 flex flex-col items-center">
+<button class="w-full py-4 rounded-xl bg-gradient-to-br from-primary to-primary-dim text-on-primary font-semibold text-base shadow-sm active:scale-95 transition-all duration-200">
+                Verificar
+            </button>
+<div class="text-center">
+<p class="text-on-surface-variant text-sm">
+                    Não recebeu o código? 
+                    <a class="text-primary font-semibold hover:underline underline-offset-4 decoration-2 transition-all" href="#">Reenviar</a>
+</p>
+</div>
+</footer>
+<div class="pt-8 flex justify-center">
+<div class="h-1 w-32 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full w-2/5 bg-primary rounded-full transition-all duration-500"></div>
+</div>
+</div>
+<div class="mt-12 text-center">
+<p class="text-[10px] text-outline uppercase tracking-widest font-medium opacity-60">
+                Seus dados estão protegidos sob a LGPD.
+            </p>
+</div>
+</main>
+<div class="fixed top-0 left-0 w-full h-full -z-10 overflow-hidden pointer-events-none">
+<div class="absolute -top-24 -right-24 w-96 h-96 bg-primary/5 rounded-full blur-3xl"></div>
+<div class="absolute -bottom-24 -left-24 w-96 h-96 bg-secondary/5 rounded-full blur-3xl"></div>
+</div>
+</body></html>

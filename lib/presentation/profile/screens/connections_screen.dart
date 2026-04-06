@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../../../core/design/app_tokens.dart';
 import '../../../core/di/service_locator.dart';
+import '../../../core/widgets/stitch_card.dart';
 import '../../../core/router/app_router.dart';
 import '../../../data/models/connection_model.dart';
 import '../../../domain/repositories/connection_repository.dart';
@@ -88,7 +90,7 @@ class _ConnectionsScreenState extends State<ConnectionsScreen>
     final course = user?.course;
     final institution = user?.institution?.name;
 
-    return Card(
+    return StitchCard(
       child: ListTile(
         leading: UserAvatar(name: name, imageUrl: user?.avatarUrl),
         title: Text(name, style: const TextStyle(fontWeight: FontWeight.w600)),
@@ -100,16 +102,20 @@ class _ConnectionsScreenState extends State<ConnectionsScreen>
         onTap: user != null
             ? () => context.push(AppRoutes.userProfile(user.id), extra: name)
             : null,
-        trailing: actions != null ? Row(mainAxisSize: MainAxisSize.min, children: actions) : null,
+        trailing: actions != null
+            ? Row(mainAxisSize: MainAxisSize.min, children: actions)
+            : null,
       ),
     );
   }
 
   Widget _buildEmptyState(String message) => Center(
         child: Column(mainAxisSize: MainAxisSize.min, children: [
-          Icon(Icons.people_outline, size: 64, color: Theme.of(context).colorScheme.outline),
+          const Icon(Icons.people_outline, size: 64, color: AppTokens.outline),
           const SizedBox(height: 16),
-          Text(message, textAlign: TextAlign.center),
+          Text(message,
+              textAlign: TextAlign.center,
+              style: const TextStyle(color: AppTokens.onSurfaceVariant)),
         ]),
       );
 
@@ -130,8 +136,8 @@ class _ConnectionsScreenState extends State<ConnectionsScreen>
                     margin: const EdgeInsets.only(left: 6),
                     padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                     decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.error,
-                      borderRadius: BorderRadius.circular(10),
+                      color: AppTokens.error,
+                      borderRadius: BorderRadius.circular(AppTokens.radiusFull),
                     ),
                     child: Text(
                       '${_received.length}',
@@ -149,11 +155,14 @@ class _ConnectionsScreenState extends State<ConnectionsScreen>
           : _error != null
               ? Center(
                   child: Column(mainAxisSize: MainAxisSize.min, children: [
-                    const Icon(Icons.error_outline, size: 48, color: Colors.red),
+                    const Icon(Icons.error_outline,
+                        size: 48, color: AppTokens.error),
                     const SizedBox(height: 8),
                     const Text('Erro ao carregar conexões.'),
                     const SizedBox(height: 8),
-                    ElevatedButton(onPressed: _load, child: const Text('Tentar novamente')),
+                    FilledButton(
+                        onPressed: _load,
+                        child: const Text('Tentar novamente')),
                   ]),
                 )
               : RefreshIndicator(

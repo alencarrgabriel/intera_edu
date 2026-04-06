@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import '../storage/secure_storage.dart';
 import '../../data/repositories/auth_repository_impl.dart';
@@ -14,6 +15,8 @@ class AuthNotifier extends ChangeNotifier {
 
   AuthStatus _status = AuthStatus.loading;
   AuthStatus get status => _status;
+  String? _userId;
+  String? get userId => _userId;
 
   bool get isLoading => _status == AuthStatus.loading;
   bool get isAuthenticated => _status == AuthStatus.authenticated;
@@ -34,6 +37,7 @@ class AuthNotifier extends ChangeNotifier {
     try {
       final accessToken = await _storage.getAccessToken();
       if (accessToken != null) {
+        _userId = _decodeUserId(accessToken);
         _setStatus(AuthStatus.authenticated);
         return;
       }
@@ -55,6 +59,8 @@ class AuthNotifier extends ChangeNotifier {
   /// Realiza o login e atualiza o estado para autenticado.
   Future<void> login(String email, String password) async {
     await _authRepo.login(email, password);
+    final token = await _storage.getAccessToken();
+    _userId = token != null ? _decodeUserId(token) : null;
     _setStatus(AuthStatus.authenticated);
   }
 
@@ -73,5 +79,21 @@ class AuthNotifier extends ChangeNotifier {
   void _setStatus(AuthStatus status) {
     _status = status;
     notifyListeners();
+  }
+
+  /// Decodes the JWT payload to extract the user ID (`sub` claim).
+  /// No signature verification needed — we already trust our own storage.
+  static String? _decodeUserId(String token) {
+    try {
+      final parts = token.split('.');
+      if (parts.length != 3) return null;
+      final payload = parts[1];
+      final normalized = base64.normalize(payload);
+      final decoded = utf8.decode(base64.decode(normalized));
+      final json = jsonDecode(decoded) as Map<String, dynamic>;
+      return json['sub'] as String?;
+    } catch (_) {
+      return null;
+    }
   }
 }

@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+
+<html class="light" lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-secondary-fixed-variant": "#5a5b63",
+              "surface-container-high": "#e9e7f0",
+              "secondary-fixed": "#e3e1ec",
+              "tertiary-fixed-dim": "#c3cfeb",
+              "on-secondary-container": "#515159",
+              "primary-fixed-dim": "#ccd2ff",
+              "error": "#9e3f4e",
+              "on-surface-variant": "#5e5e67",
+              "surface-variant": "#e3e1ec",
+              "outline": "#7a7a83",
+              "on-surface": "#31323a",
+              "surface-container-lowest": "#ffffff",
+              "background": "#fbf8fc",
+              "primary": "#4355b9",
+              "on-secondary-fixed": "#3e3f47",
+              "on-tertiary-container": "#434e66",
+              "primary-dim": "#3649ac",
+              "on-primary-fixed-variant": "#4052b6",
+              "inverse-primary": "#8596ff",
+              "on-tertiary-fixed": "#303c53",
+              "surface-bright": "#fbf8fc",
+              "secondary-dim": "#52525b",
+              "secondary": "#5e5e67",
+              "error-container": "#ff8b9a",
+              "primary-fixed": "#dee0ff",
+              "error-dim": "#4f0116",
+              "surface-container-low": "#f5f2f8",
+              "on-primary": "#f9f6ff",
+              "tertiary-dim": "#47536b",
+              "tertiary-fixed": "#d1ddfa",
+              "on-primary-fixed": "#203498",
+              "primary-container": "#dee0ff",
+              "on-tertiary": "#f8f8ff",
+              "on-error": "#fff7f7",
+              "on-tertiary-fixed-variant": "#4c5870",
+              "surface-container-highest": "#e3e1ec",
+              "outline-variant": "#b2b1bb",
+              "tertiary": "#535f78",
+              "on-background": "#31323a",
+              "on-primary-container": "#3648ac",
+              "inverse-surface": "#0e0e11",
+              "surface-container": "#efedf4",
+              "on-error-container": "#782232",
+              "inverse-on-surface": "#9e9ca0",
+              "surface": "#fbf8fc",
+              "surface-dim": "#dad9e5",
+              "secondary-container": "#e3e1ec",
+              "tertiary-container": "#d1ddfa",
+              "on-secondary": "#faf8ff",
+              "secondary-fixed-dim": "#d4d3dd",
+              "surface-tint": "#4355b9"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #b2b1bb;
+            border-radius: 10px;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background font-body text-on-surface min-h-screen flex flex-col">
+<!-- Header / Progress Indicator -->
+<header class="w-full px-6 py-8 flex flex-col items-center max-w-2xl mx-auto">
+<div class="w-full flex justify-between items-center mb-4">
+<span class="text-secondary font-label text-sm font-medium">Passo 4 de 5</span>
+<div class="flex gap-1.5">
+<div class="h-1.5 w-8 rounded-full bg-primary"></div>
+<div class="h-1.5 w-8 rounded-full bg-primary"></div>
+<div class="h-1.5 w-8 rounded-full bg-primary"></div>
+<div class="h-1.5 w-8 rounded-full bg-primary"></div>
+<div class="h-1.5 w-8 rounded-full bg-surface-container-highest"></div>
+</div>
+</div>
+</header>
+<main class="flex-grow w-full max-w-2xl mx-auto px-6 pb-32">
+<!-- Headline Section -->
+<section class="mb-10">
+<h1 class="font-headline font-extrabold text-3xl text-on-surface tracking-tight leading-tight mb-3">
+                Quais são suas principais habilidades?
+            </h1>
+<p class="font-body text-on-surface-variant text-base leading-relaxed">
+                Selecione entre 5 a 8 temas que você domina ou quer aprender para personalizar seu feed.
+            </p>
+</section>
+<!-- Search Bar -->
+<div class="relative mb-12">
+<div class="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-outline">search</span>
+</div>
+<input class="w-full bg-surface-container-lowest border border-outline-variant border-opacity-20 rounded-xl py-4 pl-12 pr-4 focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none text-on-surface placeholder:text-outline shadow-sm" placeholder="Buscar habilidade..." type="text"/>
+<div class="mt-2 text-[10px] text-secondary px-1 uppercase tracking-wider font-semibold">
+                Seus dados estão protegidos sob a LGPD.
+            </div>
+</div>
+<!-- Asymmetric Bento-style Skill Grid -->
+<div class="space-y-12">
+<!-- Section: Populares -->
+<div>
+<h2 class="font-headline font-bold text-lg text-on-surface mb-6 flex items-center gap-2">
+                    Populares no seu curso
+                    <span class="h-px flex-grow bg-surface-container-high ml-2"></span>
+</h2>
+<div class="flex flex-wrap gap-3">
+<button class="px-5 py-2.5 rounded-full bg-primary-container text-on-primary-container border-2 border-primary-dim border-opacity-10 font-medium text-sm transition-all active:scale-95 flex items-center gap-2">
+                        UI/UX <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</button>
+<button class="px-5 py-2.5 rounded-full bg-surface-container-high text-on-surface-variant hover:bg-secondary-fixed transition-colors font-medium text-sm active:scale-95">
+                        Flutter
+                    </button>
+<button class="px-5 py-2.5 rounded-full bg-surface-container-high text-on-surface-variant hover:bg-secondary-fixed transition-colors font-medium text-sm active:scale-95">
+                        Python
+                    </button>
+<button class="px-5 py-2.5 rounded-full bg-primary-container text-on-primary-container border-2 border-primary-dim border-opacity-10 font-medium text-sm transition-all active:scale-95 flex items-center gap-2">
+                        Gestão <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</button>
+<button class="px-5 py-2.5 rounded-full bg-surface-container-high text-on-surface-variant hover:bg-secondary-fixed transition-colors font-medium text-sm active:scale-95">
+                        Metodologias Ágeis
+                    </button>
+<button class="px-5 py-2.5 rounded-full bg-surface-container-high text-on-surface-variant hover:bg-secondary-fixed transition-colors font-medium text-sm active:scale-95">
+                        Figma
+                    </button>
+</div>
+</div>
+<!-- Section: Mais usadas -->
+<div class="relative">
+<div class="absolute -left-6 top-0 bottom-0 w-1 bg-surface-container-high rounded-full opacity-50"></div>
+<h2 class="font-headline font-bold text-lg text-on-surface mb-6 pl-6">
+                    Mais usadas pela rede
+                </h2>
+<div class="flex flex-wrap gap-3 pl-6">
+<button class="px-5 py-2.5 rounded-full bg-surface-container-high text-on-surface-variant hover:bg-secondary-fixed transition-colors font-medium text-sm active:scale-95">
+                        Data Science
+                    </button>
+<button class="px-5 py-2.5 rounded-full bg-primary-container text-on-primary-container border-2 border-primary-dim border-opacity-10 font-medium text-sm transition-all active:scale-95 flex items-center gap-2">
+                        React <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</button>
+<button class="px-5 py-2.5 rounded-full bg-surface-container-high text-on-surface-variant hover:bg-secondary-fixed transition-colors font-medium text-sm active:scale-95">
+                        Cibersegurança
+                    </button>
+<button class="px-5 py-2.5 rounded-full bg-surface-container-high text-on-surface-variant hover:bg-secondary-fixed transition-colors font-medium text-sm active:scale-95">
+                        Marketing Digital
+                    </button>
+<button class="px-5 py-2.5 rounded-full bg-surface-container-high text-on-surface-variant hover:bg-secondary-fixed transition-colors font-medium text-sm active:scale-95">
+                        Soft Skills
+                    </button>
+<button class="px-5 py-2.5 rounded-full bg-primary-container text-on-primary-container border-2 border-primary-dim border-opacity-10 font-medium text-sm transition-all active:scale-95 flex items-center gap-2">
+                        Inteligência Artificial <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</button>
+<button class="px-5 py-2.5 rounded-full bg-surface-container-high text-on-surface-variant hover:bg-secondary-fixed transition-colors font-medium text-sm active:scale-95">
+                        Liderança
+                    </button>
+<button class="px-5 py-2.5 rounded-full bg-surface-container-high text-on-surface-variant hover:bg-secondary-fixed transition-colors font-medium text-sm active:scale-95">
+                        SQL
+                    </button>
+</div>
+</div>
+<!-- Section: Editorial Insight (Silent UI) -->
+<div class="bg-surface-container-low rounded-2xl p-6 border border-outline-variant border-opacity-10">
+<div class="flex items-start gap-4">
+<div class="bg-primary-container p-3 rounded-xl">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+</div>
+<div>
+<h4 class="font-headline font-bold text-on-surface">Curadoria Inteligente</h4>
+<p class="text-on-surface-variant text-sm mt-1 leading-relaxed">
+                            InteraEdu utiliza estas escolhas para conectar você a pesquisadores com interesses similares e projetos colaborativos.
+                        </p>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Fixed Footer -->
+<footer class="fixed bottom-0 left-0 w-full bg-[#ffffffcc] backdrop-blur-xl z-40 px-6 py-6 flex justify-center items-center shadow-[0_-8px_24px_rgba(49,50,58,0.04)]">
+<div class="w-full max-w-2xl flex items-center justify-between">
+<div class="flex flex-col">
+<span class="text-xs font-semibold text-secondary uppercase tracking-tighter">Selecionadas</span>
+<span class="font-headline font-extrabold text-primary text-xl">4 / 8</span>
+</div>
+<button class="bg-gradient-to-br from-primary to-primary-dim text-on-primary font-bold py-4 px-12 rounded-xl shadow-lg hover:shadow-primary/20 active:scale-95 transition-all flex items-center gap-2">
+                Próximo
+                <span class="material-symbols-outlined">arrow_forward</span>
+</button>
+</div>
+</footer>
+</body></html>

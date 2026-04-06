@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+
+<html class="light" lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>InteraEdu - Onboarding</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-secondary-fixed-variant": "#5a5b63",
+              "surface-container-high": "#e9e7f0",
+              "secondary-fixed": "#e3e1ec",
+              "tertiary-fixed-dim": "#c3cfeb",
+              "on-secondary-container": "#515159",
+              "primary-fixed-dim": "#ccd2ff",
+              "error": "#9e3f4e",
+              "on-surface-variant": "#5e5e67",
+              "surface-variant": "#e3e1ec",
+              "outline": "#7a7a83",
+              "on-surface": "#31323a",
+              "surface-container-lowest": "#ffffff",
+              "background": "#fbf8fc",
+              "primary": "#4355b9",
+              "on-secondary-fixed": "#3e3f47",
+              "on-tertiary-container": "#434e66",
+              "primary-dim": "#3649ac",
+              "on-primary-fixed-variant": "#4052b6",
+              "inverse-primary": "#8596ff",
+              "on-tertiary-fixed": "#303c53",
+              "surface-bright": "#fbf8fc",
+              "secondary-dim": "#52525b",
+              "secondary": "#5e5e67",
+              "error-container": "#ff8b9a",
+              "primary-fixed": "#dee0ff",
+              "error-dim": "#4f0116",
+              "surface-container-low": "#f5f2f8",
+              "on-primary": "#f9f6ff",
+              "tertiary-dim": "#47536b",
+              "tertiary-fixed": "#d1ddfa",
+              "on-primary-fixed": "#203498",
+              "primary-container": "#dee0ff",
+              "on-tertiary": "#f8f8ff",
+              "on-error": "#fff7f7",
+              "on-tertiary-fixed-variant": "#4c5870",
+              "surface-container-highest": "#e3e1ec",
+              "outline-variant": "#b2b1bb",
+              "tertiary": "#535f78",
+              "on-background": "#31323a",
+              "on-primary-container": "#3648ac",
+              "inverse-surface": "#0e0e11",
+              "surface-container": "#efedf4",
+              "on-error-container": "#782232",
+              "inverse-on-surface": "#9e9ca0",
+              "surface": "#fbf8fc",
+              "surface-dim": "#dad9e5",
+              "secondary-container": "#e3e1ec",
+              "tertiary-container": "#d1ddfa",
+              "on-secondary": "#faf8ff",
+              "secondary-fixed-dim": "#d4d3dd",
+              "surface-tint": "#4355b9"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      .glass-effect {
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+      }
+      .custom-gradient-btn {
+        background: linear-gradient(135deg, #4355b9 0%, #3649ac 100%);
+      }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface font-body text-on-surface antialiased min-h-screen flex flex-col">
+<!-- TopAppBar Suppressed for Onboarding (Task-Focused Journey) -->
+<main class="flex-grow flex flex-col items-center justify-center px-6 py-12 md:py-24">
+<!-- Asymmetric Editorial Background Element (Abstract) -->
+<div class="fixed top-0 right-0 w-1/3 h-1/2 bg-primary-container/10 -z-10 blur-3xl rounded-full translate-x-1/2 -translate-y-1/4"></div>
+<div class="fixed bottom-0 left-0 w-1/4 h-1/3 bg-secondary-container/20 -z-10 blur-3xl rounded-full -translate-x-1/4 translate-y-1/4"></div>
+<div class="w-full max-w-md space-y-10">
+<!-- Progress Indicator -->
+<header class="space-y-4">
+<div class="flex items-center justify-between">
+<span class="text-secondary font-label text-sm font-medium tracking-wide">Passo 1 de 5</span>
+<div class="flex gap-1.5">
+<div class="h-1.5 w-8 rounded-full bg-primary"></div>
+<div class="h-1.5 w-8 rounded-full bg-surface-container-high"></div>
+<div class="h-1.5 w-8 rounded-full bg-surface-container-high"></div>
+<div class="h-1.5 w-8 rounded-full bg-surface-container-high"></div>
+<div class="h-1.5 w-8 rounded-full bg-surface-container-high"></div>
+</div>
+</div>
+</header>
+<!-- Headline Section (Editorial Style) -->
+<div class="space-y-3">
+<h1 class="font-headline text-4xl font-extrabold tracking-tight text-on-surface leading-tight">
+                    Bem-vindo ao InteraEdu.
+                </h1>
+<p class="text-on-surface-variant text-lg leading-relaxed font-body">
+                    Para começar, insira seu e-mail da universidade (.edu).
+                </p>
+</div>
+<!-- Content Canvas -->
+<div class="space-y-8">
+<div class="relative group">
+<!-- Ghost Border Input Field -->
+<label class="block text-xs font-semibold uppercase tracking-widest text-secondary mb-2 px-1" for="email">E-mail Institucional</label>
+<div class="relative">
+<input class="w-full bg-surface-container-low border-outline-variant/15 border-2 rounded-xl py-4 px-5 text-on-surface placeholder:text-outline-variant focus:border-primary-dim focus:ring-0 focus:outline-none transition-all duration-300 shadow-[0_8px_24px_rgba(49,50,58,0.02)]" id="email" placeholder="seuemail@faculdade.edu" type="email"/>
+<div class="absolute right-4 top-1/2 -translate-y-1/2 text-outline-variant group-focus-within:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="school">school</span>
+</div>
+</div>
+<p class="mt-3 text-[11px] text-secondary/70 italic px-1 flex items-center gap-1">
+<span class="material-symbols-outlined text-xs" data-icon="lock">lock</span>
+                        Seus dados estão protegidos sob a LGPD.
+                    </p>
+</div>
+<!-- Bento-style Feature Highlight (Soft Minimal) -->
+<div class="grid grid-cols-1 gap-4">
+<div class="bg-surface-container-lowest p-5 rounded-2xl flex items-start gap-4 border border-outline-variant/10 shadow-sm">
+<div class="p-3 bg-primary-container/30 rounded-xl text-primary-dim">
+<span class="material-symbols-outlined" data-icon="verified">verified</span>
+</div>
+<div class="space-y-1">
+<h3 class="font-headline font-bold text-sm text-on-surface">Acesso Exclusivo</h3>
+<p class="text-xs text-on-surface-variant leading-relaxed">Conectamos apenas pesquisadores e estudantes verificados de instituições de ensino superior.</p>
+</div>
+</div>
+</div>
+<!-- Primary Action -->
+<div class="pt-4">
+<button class="w-full custom-gradient-btn text-on-primary font-headline font-bold py-4 rounded-xl shadow-[0_8px_24px_rgba(67,85,185,0.15)] active:scale-95 transition-all duration-200 flex justify-center items-center gap-2 group">
+                        Próximo
+                        <span class="material-symbols-outlined text-lg group-hover:translate-x-1 transition-transform" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Footer Meta -->
+<footer class="text-center">
+<p class="text-sm text-secondary">
+                    Já possui uma conta? <a class="text-primary font-semibold hover:underline decoration-2 underline-offset-4 transition-all" href="#">Fazer login</a>
+</p>
+</footer>
+</div>
+</main>
+<!-- BottomNavBar Suppressed for Onboarding (Focus State) -->
+<!-- Decorative Image (Editorial Asymmetry) -->
+<div class="hidden lg:block fixed bottom-12 right-12 w-64 h-64 opacity-20 pointer-events-none">
+<img alt="Minimalist geometric architectural patterns" class="w-full h-full object-cover rounded-3xl rotate-6" data-alt="Minimalist abstract geometric architectural pattern with soft shadows" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAY32neKfPa_k4BCW9_mfJwlSMxyEvtmZQHyy62DEyTUMCQLtJTSN5jHyYWY3vZBCmb2m01hppw7oldLuYRWU_qq9lUDdNcdwTIMXVvV44-kP7Uxgc0cN3CosGZEE52YeNfUV6M-7wGP_z4O2N1xszW_5F__1WGgi03w8geTbBSojrO6za9Uer0gSofUCk41MzI4g9zdrzV6gPGk8vLm3Dg6dyIKiXvDECHq9CguatU6me3rzG1kCjD2BZ_EsQAAoVhcpd8dBdl9A0"/>
+</div>
+</body></html>

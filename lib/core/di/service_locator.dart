@@ -3,10 +3,12 @@ import '../storage/secure_storage.dart';
 import '../../data/repositories/auth_repository_impl.dart';
 import '../../data/repositories/connection_repository_impl.dart';
 import '../../data/repositories/feed_repository_impl.dart';
+import '../../data/repositories/messaging_repository_impl.dart';
 import '../../data/repositories/profile_repository_impl.dart';
 import '../../domain/repositories/auth_repository.dart';
 import '../../domain/repositories/connection_repository.dart';
 import '../../domain/repositories/feed_repository.dart';
+import '../../domain/repositories/messaging_repository.dart';
 import '../../domain/repositories/profile_repository.dart';
 
 /// Service locator minimalista para instanciar dependências compartilhadas
@@ -22,6 +24,7 @@ class ServiceLocator {
   ProfileRepository? _profileRepo;
   FeedRepository? _feedRepo;
   ConnectionRepository? _connRepo;
+  MessagingRepository? _messagingRepo;
 
   SecureStorageService get storage => _storage ??= SecureStorageService();
   ApiClient get apiClient => _apiClient ??= ApiClient();
@@ -34,6 +37,8 @@ class ServiceLocator {
       _feedRepo ??= FeedRepositoryImpl(api: apiClient);
   ConnectionRepository get connRepo =>
       _connRepo ??= ConnectionRepositoryImpl(api: apiClient);
+  MessagingRepository get messagingRepo =>
+      _messagingRepo ??= MessagingRepositoryImpl(api: apiClient);
 
   /// Substitui instâncias para testes. Chame `reset()` no `tearDown`.
   void registerOverrides({
@@ -59,6 +64,7 @@ class ServiceLocator {
     _profileRepo = null;
     _feedRepo = null;
     _connRepo = null;
+    _messagingRepo = null;
   }
 }
 

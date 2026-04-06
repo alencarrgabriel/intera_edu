@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+
+<html class="light" lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Mensagens - InteraEdu</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-secondary-fixed-variant": "#5a5b63",
+              "surface-container-high": "#e9e7f0",
+              "secondary-fixed": "#e3e1ec",
+              "tertiary-fixed-dim": "#c3cfeb",
+              "on-secondary-container": "#515159",
+              "primary-fixed-dim": "#ccd2ff",
+              "error": "#9e3f4e",
+              "on-surface-variant": "#5e5e67",
+              "surface-variant": "#e3e1ec",
+              "outline": "#7a7a83",
+              "on-surface": "#31323a",
+              "surface-container-lowest": "#ffffff",
+              "background": "#fbf8fc",
+              "primary": "#4355b9",
+              "on-secondary-fixed": "#3e3f47",
+              "on-tertiary-container": "#434e66",
+              "primary-dim": "#3649ac",
+              "on-primary-fixed-variant": "#4052b6",
+              "inverse-primary": "#8596ff",
+              "on-tertiary-fixed": "#303c53",
+              "surface-bright": "#fbf8fc",
+              "secondary-dim": "#52525b",
+              "secondary": "#5e5e67",
+              "error-container": "#ff8b9a",
+              "primary-fixed": "#dee0ff",
+              "error-dim": "#4f0116",
+              "surface-container-low": "#f5f2f8",
+              "on-primary": "#f9f6ff",
+              "tertiary-dim": "#47536b",
+              "tertiary-fixed": "#d1ddfa",
+              "on-primary-fixed": "#203498",
+              "primary-container": "#dee0ff",
+              "on-tertiary": "#f8f8ff",
+              "on-error": "#fff7f7",
+              "on-tertiary-fixed-variant": "#4c5870",
+              "surface-container-highest": "#e3e1ec",
+              "outline-variant": "#b2b1bb",
+              "tertiary": "#535f78",
+              "on-background": "#31323a",
+              "on-primary-container": "#3648ac",
+              "inverse-surface": "#0e0e11",
+              "surface-container": "#efedf4",
+              "on-error-container": "#782232",
+              "inverse-on-surface": "#9e9ca0",
+              "surface": "#fbf8fc",
+              "surface-dim": "#dad9e5",
+              "secondary-container": "#e3e1ec",
+              "tertiary-container": "#d1ddfa",
+              "on-secondary": "#faf8ff",
+              "secondary-fixed-dim": "#d4d3dd",
+              "surface-tint": "#4355b9"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background font-body selection:bg-primary-container selection:text-on-primary-container">
+<!-- Top AppBar -->
+<header class="fixed top-0 w-full z-50 bg-[#ffffffcc] dark:bg-[#0e0e11cc] backdrop-blur-xl shadow-sm dark:shadow-none flex justify-between items-center px-6 h-16 w-full">
+<div class="flex items-center gap-4">
+<button class="text-[#3F51B5] dark:text-[#7986cb] active:scale-95 transition-transform duration-200">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<h1 class="font-['Manrope'] font-bold text-lg tracking-tight text-[#3F51B5] dark:text-[#7986cb]">InteraEdu</h1>
+</div>
+<div class="flex items-center gap-2">
+<button class="text-[#3F51B5] dark:text-[#7986cb] p-2 hover:bg-[#e3e1ec] dark:hover:bg-[#2b2930] transition-colors rounded-full active:scale-95 transition-transform duration-200">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+</div>
+</header>
+<main class="pt-20 pb-24 px-4 max-w-2xl mx-auto min-h-screen">
+<!-- Section Header -->
+<div class="mb-6 px-2">
+<h2 class="font-headline font-extrabold text-3xl tracking-tight text-on-surface mb-1">Mensagens</h2>
+<p class="text-on-surface-variant text-sm">Gerencie suas conexões e colaborações acadêmicas.</p>
+</div>
+<!-- Search Bar -->
+<div class="mb-8 px-2">
+<div class="relative group">
+<div class="absolute inset-y-0 left-4 flex items-center pointer-events-none text-outline">
+<span class="material-symbols-outlined text-[20px]">search</span>
+</div>
+<input class="w-full bg-surface-container-low border-none rounded-xl py-3.5 pl-12 pr-4 text-on-surface placeholder:text-outline focus:ring-2 focus:ring-primary-dim transition-all outline-none" placeholder="Buscar conversas..." type="text"/>
+</div>
+</div>
+<!-- Chat List -->
+<div class="space-y-1">
+<!-- Active Chat Item -->
+<div class="flex items-center gap-4 p-4 rounded-2xl hover:bg-surface-container-low transition-all cursor-pointer group active:scale-[0.98]">
+<div class="relative">
+<img alt="Avatar de Ana Clara" class="w-14 h-14 rounded-full object-cover shadow-sm" data-alt="Portrait of a female researcher smiling" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBuR5VlNAsz7yLaSbTCdv_a00OdwDbdqa7xqer8iZmhHmy6-ouG2UWlAPJedINSsZTj3wKqFVpVnZRY1u2mdIHtt2xYWpwpt1eNTJxEJ3hzq_b9SfCNWi-JmrI671rz9iYswo2B8_QKohGP1z9mdpxVCRLkuAk4wloXdKlHzigwx6-ZPhG83ri0HneWpNFLwPAG4t0g74pmc3b6BiIc8lbhHUL2BX18xCyOSkiikHc5eg8YJ85bA8oqHj6bWK2yMVizVK5-6XOsvh8"/>
+<div class="absolute bottom-0 right-0 w-3.5 h-3.5 bg-emerald-500 border-2 border-background rounded-full"></div>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-baseline mb-0.5">
+<h3 class="font-semibold text-on-surface truncate">Dra. Ana Clara</h3>
+<span class="text-[11px] font-medium text-primary uppercase tracking-wider">Agora</span>
+</div>
+<div class="flex justify-between items-center gap-2">
+<p class="text-sm text-on-surface font-medium truncate">Olá! Acabei de revisar o seu resumo do artigo sobre IA...</p>
+<div class="flex-shrink-0 w-5 h-5 bg-primary-dim text-[10px] font-bold text-on-primary flex items-center justify-center rounded-full shadow-sm">
+                            2
+                        </div>
+</div>
+</div>
+</div>
+<!-- Chat Item -->
+<div class="flex items-center gap-4 p-4 rounded-2xl hover:bg-surface-container-low transition-all cursor-pointer group active:scale-[0.98]">
+<div class="relative">
+<img alt="Avatar de Ricardo Silva" class="w-14 h-14 rounded-full object-cover shadow-sm" data-alt="Close up of a professional man in glasses" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAYrZuundSdR6dmgJuT6_NPeOqd1VIYfi7dwmV_yAoAsOno24FBvQRevCeJERaJw4b3QvGKsRq-OL-1TXSD3g9jUJdVR1h2izZlS49gsx9VHemcyHvI8tAP1gDabruu2xli3o14P6R5W1RwHiSLUNyG8Owra6HaDvu7yzIlCQtt-sW8o9rEI4wyUiwKyC4Gue1u4wqdOkgQYme1JltWQE1P2YtUUMwGnMn9pwiv184NQFp_jOhYQWPtvCbRFEegyPeVw3QBiNrMZJ0"/>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-baseline mb-0.5">
+<h3 class="font-semibold text-on-surface truncate">Prof. Ricardo Silva</h3>
+<span class="text-[11px] text-on-surface-variant">14:20</span>
+</div>
+<div class="flex justify-between items-center gap-2">
+<p class="text-sm text-on-surface-variant truncate">Obrigado pela indicação da bibliografia. Vou ler ainda hoje.</p>
+</div>
+</div>
+</div>
+<!-- Chat Item -->
+<div class="flex items-center gap-4 p-4 rounded-2xl hover:bg-surface-container-low transition-all cursor-pointer group active:scale-[0.98]">
+<div class="relative">
+<img alt="Avatar de Mariana Costa" class="w-14 h-14 rounded-full object-cover shadow-sm" data-alt="Professional woman looking at camera" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCu40pAIT9m011JDqBrtm9NCjfkGbX488Vks3zUE27d2AnvOxWyqDPE9brdaA1LBApew2sny264WS4bIyVYxvBT8uS9zFZ1DLAwB_kzh_NHoDfQvsfwc0JwefHA8tkYZ3-QbK6jnCponLTFEKq0Bi1uTgMruMUtmfDlvnKrzy5yR498_gQFgwgj-i9PHvizz22bgks8RhGz1ej9ITEB8ifFB0BChhFpAyobyOwHjapSE9dWev5IRVNtX1eAb-_IYI4oRUrzLY3gFss"/>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-baseline mb-0.5">
+<h3 class="font-semibold text-on-surface truncate">Mariana Costa</h3>
+<span class="text-[11px] text-on-surface-variant">Ontem</span>
+</div>
+<div class="flex justify-between items-center gap-2">
+<p class="text-sm text-on-surface-variant truncate">Você viu o novo edital de fomento da CAPES?</p>
+<div class="flex-shrink-0 w-2 h-2 bg-primary-dim rounded-full"></div>
+</div>
+</div>
+</div>
+<!-- Chat Item -->
+<div class="flex items-center gap-4 p-4 rounded-2xl hover:bg-surface-container-low transition-all cursor-pointer group active:scale-[0.98]">
+<div class="relative">
+<div class="w-14 h-14 rounded-full bg-surface-container-high flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-outline">group</span>
+</div>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-baseline mb-0.5">
+<h3 class="font-semibold text-on-surface truncate">Grupo de Pesquisa: Nanotec</h3>
+<span class="text-[11px] text-on-surface-variant">Segunda</span>
+</div>
+<div class="flex justify-between items-center gap-2">
+<p class="text-sm text-on-surface-variant truncate"><span class="font-medium text-on-surface">Lucas:</span> Pessoal, a reunião foi adiada para as 15h.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Empty State (Hidden for demo, but structurally correct) -->
+<div class="hidden flex flex-col items-center justify-center text-center py-20 px-6">
+<div class="w-20 h-20 bg-surface-container-low rounded-full flex items-center justify-center mb-6">
+<span class="material-symbols-outlined text-outline text-4xl">chat_bubble</span>
+</div>
+<h3 class="font-headline font-bold text-xl text-on-surface mb-2">Sua caixa de entrada está vazia.</h3>
+<p class="text-on-surface-variant text-sm max-w-xs mb-8 leading-relaxed">Comece uma conversa com suas conexões para colaborar em novos projetos!</p>
+<button class="bg-gradient-to-br from-primary to-primary-dim text-white px-6 py-3 rounded-full font-semibold text-sm shadow-lg shadow-primary/10 active:scale-95 transition-all">
+                Nova Mensagem
+            </button>
+</div>
+<!-- Compliance Hint -->
+<div class="mt-12 text-center">
+<p class="text-[10px] text-outline font-medium tracking-wide uppercase">Seus dados estão protegidos sob a LGPD.</p>
+</div>
+</main>
+<!-- Bottom Navigation Bar -->
+<nav class="fixed bottom-0 left-0 w-full h-20 bg-[#ffffffcc] dark:bg-[#0e0e11cc] backdrop-blur-xl flex justify-around items-center px-4 pb-safe z-50 shadow-[0_-8px_24px_rgba(49,50,58,0.04)] rounded-t-2xl">
+<a class="flex flex-col items-center justify-center text-[#5e5e67] dark:text-[#b2b1bb] px-3 py-1 hover:text-[#3F51B5] dark:hover:text-white active:scale-90 transition-all duration-200" href="#">
+<span class="material-symbols-outlined mb-1">home</span>
+<span class="font-['Inter'] font-medium text-[11px] leading-relaxed">Início</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#5e5e67] dark:text-[#b2b1bb] px-3 py-1 hover:text-[#3F51B5] dark:hover:text-white active:scale-90 transition-all duration-200" href="#">
+<span class="material-symbols-outlined mb-1">search</span>
+<span class="font-['Inter'] font-medium text-[11px] leading-relaxed">Explorar</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#5e5e67] dark:text-[#b2b1bb] px-3 py-1 hover:text-[#3F51B5] dark:hover:text-white active:scale-90 transition-all duration-200" href="#">
+<span class="material-symbols-outlined mb-1">group</span>
+<span class="font-['Inter'] font-medium text-[11px] leading-relaxed">Conexões</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-[#e3e1ec] dark:bg-[#3649ac33] text-[#3F51B5] dark:text-[#7986cb] rounded-xl px-3 py-1 active:scale-90 transition-all duration-200" href="#">
+<span class="material-symbols-outlined mb-1">chat_bubble</span>
+<span class="font-['Inter'] font-medium text-[11px] leading-relaxed">Mensagens</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#5e5e67] dark:text-[#b2b1bb] px-3 py-1 hover:text-[#3F51B5] dark:hover:text-white active:scale-90 transition-all duration-200" href="#">
+<span class="material-symbols-outlined mb-1">person</span>
+<span class="font-['Inter'] font-medium text-[11px] leading-relaxed">Perfil</span>
+</a>
+</nav>
+</body></html>
