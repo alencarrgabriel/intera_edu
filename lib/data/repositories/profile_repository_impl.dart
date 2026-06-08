@@ -1,5 +1,12 @@
+import 'dart:convert';
+
+import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
+
+import '../../core/config/app_config.dart';
 import '../../core/network/api_client.dart';
 import '../../core/network/api_endpoints.dart';
+import '../../core/storage/secure_storage.dart';
 import '../../domain/entities/user.dart';
 import '../../domain/repositories/feed_repository.dart';
 import '../../domain/repositories/profile_repository.dart';
@@ -8,7 +15,10 @@ import '../models/user_model.dart';
 
 class ProfileRepositoryImpl implements ProfileRepository {
   final ApiClient _api;
-  ProfileRepositoryImpl({ApiClient? api}) : _api = api ?? ApiClient();
+  final SecureStorageService _storage;
+  ProfileRepositoryImpl({ApiClient? api, SecureStorageService? storage})
+      : _api = api ?? ApiClient(),
+        _storage = storage ?? SecureStorageService();
 
   @override
   Future<User> getMyProfile() async {
@@ -48,6 +58,46 @@ class ProfileRepositoryImpl implements ProfileRepository {
       data: data,
       nextCursor: res['next_cursor'] as String?,
     );
+  }
+
+  @override
+  Future<String> uploadAvatar({
+    required List<int> bytes,
+    required String filename,
+    required String mimeType,
+  }) async {
+    final uri = Uri.parse('${AppConfig.profileDirectUrl}/users/me/avatar');
+    final token = await _storage.getAccessToken();
+    if (token == null) {
+      throw Exception('Sessão expirada — faça login novamente');
+    }
+
+    final mime = MediaType.parse(mimeType);
+    final req = http.MultipartRequest('POST', uri)
+      ..headers['Authorization'] = 'Bearer $token'
+      ..files.add(http.MultipartFile.fromBytes(
+        'file',
+        bytes,
+        filename: filename,
+        contentType: mime,
+      ));
+
+    final streamed = await req.send();
+    final body = await streamed.stream.bytesToString();
+    if (streamed.statusCode >= 200 && streamed.statusCode < 300) {
+      final json = jsonDecode(body) as Map<String, dynamic>;
+      return json['avatar_url'] as String;
+    }
+    String message;
+    try {
+      final err = jsonDecode(body);
+      message = err is Map && err['error'] is Map
+          ? (err['error']['message'] as String? ?? body)
+          : body;
+    } catch (_) {
+      message = body;
+    }
+    throw Exception('Falha no upload (${streamed.statusCode}): $message');
   }
 
   @override

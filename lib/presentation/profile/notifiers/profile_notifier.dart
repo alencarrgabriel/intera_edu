@@ -38,4 +38,20 @@ class ProfileNotifier extends ChangeNotifier {
     // Recarrega do servidor para garantir dados frescos
     await load(force: true);
   }
+
+  /// Faz upload de novo avatar e recarrega o perfil.
+  /// Retorna a nova URL ou lança em caso de erro.
+  Future<String> uploadAvatar({
+    required List<int> bytes,
+    required String filename,
+    required String mimeType,
+  }) async {
+    final url = await _repo.uploadAvatar(
+      bytes: bytes,
+      filename: filename,
+      mimeType: mimeType,
+    );
+    await load(force: true);
+    return url;
+  }
 }

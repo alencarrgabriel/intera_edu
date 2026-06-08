@@ -10,8 +10,15 @@ export class UserCredential {
   @Column({ type: 'varchar', length: 320, unique: true })
   email: string;
 
-  @Column({ name: 'password_hash', type: 'varchar', length: 255 })
-  passwordHash: string;
+  /// Hash bcrypt da senha. Nullable para contas criadas exclusivamente
+  /// via OAuth (Google) que ainda não definiram uma senha local.
+  @Column({ name: 'password_hash', type: 'varchar', length: 255, nullable: true })
+  passwordHash: string | null;
+
+  /// Identificador único do usuário no provedor Google (claim `sub` do ID token).
+  /// Único e nullable — só preenchido em contas vinculadas via OAuth.
+  @Column({ name: 'google_id', type: 'varchar', length: 64, nullable: true, unique: true })
+  googleId: string | null;
 
   @Column({ name: 'institution_id', type: 'uuid' })
   institutionId: string;

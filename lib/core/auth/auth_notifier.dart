@@ -64,6 +64,14 @@ class AuthNotifier extends ChangeNotifier {
     _setStatus(AuthStatus.authenticated);
   }
 
+  /// Realiza login com ID token Google e atualiza o estado.
+  Future<void> loginWithGoogleIdToken(String idToken) async {
+    await _authRepo.loginWithGoogleIdToken(idToken);
+    final token = await _storage.getAccessToken();
+    _userId = token != null ? _decodeUserId(token) : null;
+    _setStatus(AuthStatus.authenticated);
+  }
+
   /// Realiza o logout: invalida token no servidor e limpa estado local.
   Future<void> logout() async {
     await _authRepo.logout();

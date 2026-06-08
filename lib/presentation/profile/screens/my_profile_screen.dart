@@ -1,3 +1,4 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -18,6 +19,8 @@ class MyProfileScreen extends StatefulWidget {
 }
 
 class _MyProfileScreenState extends State<MyProfileScreen> {
+  bool _uploadingAvatar = false;
+
   @override
   void initState() {
     super.initState();
@@ -30,6 +33,50 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
   Future<void> _goToEdit(User profile) async {
     await context.push(AppRoutes.editProfile, extra: profile);
     // ProfileNotifier.update() já atualizou o cache — sem reload manual.
+  }
+
+  Future<void> _pickAndUploadAvatar() async {
+    if (_uploadingAvatar) return;
+    try {
+      final result = await FilePicker.platform.pickFiles(
+        type: FileType.image,
+        withData: true, // necessário no web — não há path
+      );
+      if (result == null || result.files.isEmpty) return;
+      final file = result.files.first;
+      final bytes = file.bytes;
+      if (bytes == null) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Não foi possível ler o arquivo')),
+        );
+        return;
+      }
+      final ext = (file.extension ?? '').toLowerCase();
+      final mime = switch (ext) {
+        'png' => 'image/png',
+        'webp' => 'image/webp',
+        _ => 'image/jpeg',
+      };
+
+      setState(() => _uploadingAvatar = true);
+      await context.read<ProfileNotifier>().uploadAvatar(
+            bytes: bytes,
+            filename: file.name,
+            mimeType: mime,
+          );
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Avatar atualizado')),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString())),
+      );
+    } finally {
+      if (mounted) setState(() => _uploadingAvatar = false);
+    }
   }
 
   String _privacyLabel(String? level) => switch (level) {
@@ -90,12 +137,9 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
             ),
             child: Column(
               children: [
-                // Avatar com ícone de câmera (affordance "em breve")
+                // Avatar com ícone de câmera — abre o file picker
                 GestureDetector(
-                  onTap: () => ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                        content: Text('Upload de foto em breve 📸')),
-                  ),
+                  onTap: _uploadingAvatar ? null : _pickAndUploadAvatar,
                   child: Stack(
                     children: [
                       UserAvatar(
@@ -115,11 +159,19 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                             border: Border.all(
                                 color: AppTokens.background, width: 2),
                           ),
-                          child: const Icon(
-                            Icons.camera_alt_rounded,
-                            size: 14,
-                            color: AppTokens.onPrimary,
-                          ),
+                          child: _uploadingAvatar
+                              ? const Padding(
+                                  padding: EdgeInsets.all(6),
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    color: AppTokens.onPrimary,
+                                  ),
+                                )
+                              : const Icon(
+                                  Icons.camera_alt_rounded,
+                                  size: 14,
+                                  color: AppTokens.onPrimary,
+                                ),
                         ),
                       ),
                     ],

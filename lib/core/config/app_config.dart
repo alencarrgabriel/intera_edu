@@ -15,7 +15,15 @@ class AppConfig {
     'WS_BASE_URL',
     defaultValue: 'http://localhost:3004',
   );
-  static const bool devMode = true;
+
+  /// URL direta do profile-service (3002). Usada para uploads multipart, já
+  /// que o gateway atual não encaminha multipart corretamente. Em produção
+  /// isso deve passar pelo gateway com um endpoint pré-assinado.
+  static const String profileDirectUrl = String.fromEnvironment(
+    'PROFILE_DIRECT_URL',
+    defaultValue: 'http://localhost:3002',
+  );
+  static const bool devMode = false;
 
   // Timeouts
   static const Duration connectTimeout = Duration(seconds: 10);

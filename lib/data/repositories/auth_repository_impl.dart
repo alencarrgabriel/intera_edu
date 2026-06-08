@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import '../../../core/config/app_config.dart';
 import '../../../core/network/api_client.dart';
 import '../../../core/network/api_endpoints.dart';
 import '../../../domain/repositories/auth_repository.dart';
@@ -51,10 +54,23 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<void> login(String email, String password) async {
+    if (AppConfig.devMode) {
+      await _saveDevTokens(email);
+      return;
+    }
     final response = await _api.post(ApiEndpoints.login, body: {
       'email': email,
       'password': password,
     });
+    await _saveTokens(response['tokens'] as Map<String, dynamic>);
+  }
+
+  @override
+  Future<void> loginWithGoogleIdToken(String idToken) async {
+    final response = await _api.post(
+      ApiEndpoints.google,
+      body: {'id_token': idToken},
+    );
     await _saveTokens(response['tokens'] as Map<String, dynamic>);
   }
 
@@ -90,5 +106,25 @@ class AuthRepositoryImpl implements AuthRepository {
       accessToken: tokens['access_token'] as String,
       refreshToken: tokens['refresh_token'] as String,
     );
+  }
+
+  /// Gera um JWT "sem assinatura" (alg=none) para uso exclusivo em devMode,
+  /// permitindo testar a UI sem o backend Docker no ar. Em produção este
+  /// caminho nunca é executado porque devMode é falso.
+  Future<void> _saveDevTokens(String email) async {
+    final exp = DateTime.now()
+            .add(const Duration(hours: 24))
+            .millisecondsSinceEpoch ~/
+        1000;
+    final sub = 'dev-${email.hashCode.abs()}';
+    final header = _b64Url({'alg': 'none', 'typ': 'JWT'});
+    final payload = _b64Url({'sub': sub, 'email': email, 'exp': exp});
+    final token = '$header.$payload.dev';
+    await _storage.saveTokens(accessToken: token, refreshToken: token);
+  }
+
+  String _b64Url(Map<String, dynamic> data) {
+    final bytes = utf8.encode(jsonEncode(data));
+    return base64Url.encode(bytes).replaceAll('=', '');
   }
 }

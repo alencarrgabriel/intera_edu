@@ -165,14 +165,16 @@ GoRouter createRouter(BuildContext context) {
       GoRoute(
         path: AppRoutes.profileSetup,
         builder: (_, state) {
-          final extra = state.extra as Map<String, String>?;
+          // No web o go_router pode restaurar `extra` como _JsonMap
+          // (Map<String, dynamic>) em vez do literal Map<String, String>.
+          final extra = (state.extra as Map?)?.cast<String, dynamic>();
           if (extra == null) {
             // Navegação direta sem dados — volta para register
             return const RegisterScreen();
           }
           return ProfileSetupScreen(
-            temporaryToken: extra['token']!,
-            email: extra['email']!,
+            temporaryToken: extra['token'] as String,
+            email: extra['email'] as String,
           );
         },
       ),

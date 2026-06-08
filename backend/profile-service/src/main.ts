@@ -4,7 +4,9 @@ import { AppModule } from './app.module';
 
 async function bootstrap() {
   const logger = new Logger('ProfileService');
-  const app = await NestFactory.create(AppModule);
+  // CORS habilitado para suportar upload direto do cliente (ex.: avatar
+  // multipart), que o gateway atual não consegue encaminhar.
+  const app = await NestFactory.create(AppModule, { cors: true });
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
   const port = process.env.SERVICE_PORT || 3002;
   await app.listen(port);
