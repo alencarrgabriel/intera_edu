@@ -1,6 +1,13 @@
-import { Injectable, Logger, NotFoundException, ForbiddenException } from '@nestjs/common';
+import {
+  Injectable,
+  Logger,
+  NotFoundException,
+  ForbiddenException,
+  BadRequestException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, In, IsNull, DataSource } from 'typeorm';
+import { v4 as uuidv4 } from 'uuid';
 import { JwtPayload } from '@interaedu/shared';
 import { UserProfile } from '../database/entities/user-profile.entity';
 import { UserSkill } from '../database/entities/user-skill.entity';
@@ -8,6 +15,10 @@ import { Skill } from '../database/entities/skill.entity';
 import { UserLink } from '../database/entities/user-link.entity';
 import { Connection } from '../database/entities/connection.entity';
 import { UpdateProfileDto } from './dto/update-profile.dto';
+import { S3Service } from './s3.service';
+
+const ALLOWED_AVATAR_MIME = new Set(['image/jpeg', 'image/png', 'image/webp']);
+const MAX_AVATAR_BYTES = 5 * 1024 * 1024; // 5 MB
 
 @Injectable()
 export class ProfileService {
@@ -25,7 +36,45 @@ export class ProfileService {
     @InjectRepository(Connection)
     private readonly connectionRepo: Repository<Connection>,
     private readonly dataSource: DataSource,
+    private readonly s3: S3Service,
   ) {}
+
+  /**
+   * Faz upload do avatar para o object storage e atualiza o perfil.
+   * Retorna a URL pública para uso no cliente.
+   */
+  async uploadAvatar(
+    userId: string,
+    file: { buffer: Buffer; mimetype: string; size: number },
+  ): Promise<{ avatar_url: string }> {
+    if (!file?.buffer) throw new BadRequestException('Arquivo ausente');
+    if (!ALLOWED_AVATAR_MIME.has(file.mimetype)) {
+      throw new BadRequestException(
+        'Formato inválido — use JPEG, PNG ou WebP',
+      );
+    }
+    if (file.size > MAX_AVATAR_BYTES) {
+      throw new BadRequestException('Imagem maior que 5 MB');
+    }
+
+    const user = await this.userRepo.findOne({
+      where: { id: userId, deletedAt: IsNull() },
+    });
+    if (!user) throw new NotFoundException('Profile not found');
+
+    const ext = file.mimetype === 'image/png'
+      ? 'png'
+      : file.mimetype === 'image/webp'
+        ? 'webp'
+        : 'jpg';
+    const key = `avatars/${userId}/${uuidv4()}.${ext}`;
+    const url = await this.s3.putObject(key, file.buffer, file.mimetype);
+
+    user.avatarUrl = url;
+    await this.userRepo.save(user);
+
+    return { avatar_url: url };
+  }
 
   /** Resolve institution name+slug via cross-schema query (all services share same DB). */
   private async getInstitution(institutionId: string): Promise<{ id: string; name: string; slug: string | null }> {

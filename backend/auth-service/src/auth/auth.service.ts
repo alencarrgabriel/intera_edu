@@ -165,7 +165,12 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials.');
     }
 
-    // 2. Verify password
+    // 2. Verify password (contas só-OAuth não têm hash local)
+    if (!user.passwordHash) {
+      throw new UnauthorizedException(
+        'Esta conta foi criada via Google. Use "Continuar com Google" para entrar.',
+      );
+    }
     const valid = await bcrypt.compare(dto.password, user.passwordHash);
     if (!valid) {
       throw new UnauthorizedException('Invalid credentials.');

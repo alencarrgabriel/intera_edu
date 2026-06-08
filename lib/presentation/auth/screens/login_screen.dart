@@ -1,7 +1,9 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../../core/auth/auth_notifier.dart';
+import '../../../core/auth/google_sign_in_web.dart';
 import '../../../core/design/app_tokens.dart';
 import '../../../core/router/app_router.dart';
 import '../../../core/utils/validators.dart';
@@ -20,6 +22,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final _passwordController = TextEditingController();
   bool _isLoading = false;
   bool _obscurePassword = true;
+  bool _googleLoading = false;
 
   @override
   void dispose() {
@@ -46,6 +49,39 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
+  Future<void> _handleGoogleSignIn() async {
+    if (!kIsWeb) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Login com Google só disponível na versão web.'),
+        ),
+      );
+      return;
+    }
+    setState(() => _googleLoading = true);
+    try {
+      final idToken = await fetchGoogleIdToken();
+      if (!mounted) return;
+      await context.read<AuthNotifier>().loginWithGoogleIdToken(idToken);
+    } on GoogleSignInCancelled {
+      // Usuário fechou o popup — silencioso
+    } on GoogleSignInNotConfigured catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.toString()),
+          duration: const Duration(seconds: 6),
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(e.toString())));
+    } finally {
+      if (mounted) setState(() => _googleLoading = false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -68,9 +104,11 @@ class _LoginScreenState extends State<LoginScreen> {
                       passwordController: _passwordController,
                       obscurePassword: _obscurePassword,
                       isLoading: _isLoading,
+                      googleLoading: _googleLoading,
                       onToggleObscure: () =>
                           setState(() => _obscurePassword = !_obscurePassword),
                       onSubmit: _handleLogin,
+                      onGoogleSignIn: _handleGoogleSignIn,
                     ),
                     const SizedBox(height: 24),
                     _CreateAccountFooter(),
@@ -141,16 +179,20 @@ class _LoginCard extends StatelessWidget {
     required this.passwordController,
     required this.obscurePassword,
     required this.isLoading,
+    required this.googleLoading,
     required this.onToggleObscure,
     required this.onSubmit,
+    required this.onGoogleSignIn,
   });
 
   final TextEditingController emailController;
   final TextEditingController passwordController;
   final bool obscurePassword;
   final bool isLoading;
+  final bool googleLoading;
   final VoidCallback onToggleObscure;
   final VoidCallback onSubmit;
+  final VoidCallback onGoogleSignIn;
 
   @override
   Widget build(BuildContext context) {
@@ -286,7 +328,10 @@ class _LoginCard extends StatelessWidget {
           const SizedBox(height: 16),
 
           // ── Google ─────────────────────────────────────────────────────
-          _GoogleButton(onPressed: () {}),
+          _GoogleButton(
+            onPressed: googleLoading ? null : onGoogleSignIn,
+            loading: googleLoading,
+          ),
         ],
       ),
     );
@@ -347,8 +392,9 @@ class _LoginCard extends StatelessWidget {
 }
 
 class _GoogleButton extends StatelessWidget {
-  const _GoogleButton({required this.onPressed});
-  final VoidCallback onPressed;
+  const _GoogleButton({required this.onPressed, this.loading = false});
+  final VoidCallback? onPressed;
+  final bool loading;
 
   @override
   Widget build(BuildContext context) {
@@ -368,10 +414,17 @@ class _GoogleButton extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const _GoogleGlyph(size: 16),
+            if (loading)
+              const SizedBox(
+                width: 16,
+                height: 16,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              )
+            else
+              const _GoogleGlyph(size: 16),
             const SizedBox(width: 12),
             Text(
-              'Continuar com Google',
+              loading ? 'Conectando...' : 'Continuar com Google',
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,

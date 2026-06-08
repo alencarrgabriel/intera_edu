@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import '../../../core/design/app_tokens.dart';
 import '../../../core/di/service_locator.dart';
 import '../../../domain/entities/user.dart';
 import '../../../domain/repositories/profile_repository.dart';
 import '../../../domain/repositories/connection_repository.dart';
+import '../../messages/notifiers/messages_notifier.dart';
 import '../../shared/error_retry_widget.dart';
 import '../../shared/profile_info_card.dart';
 import '../../shared/user_avatar.dart';
@@ -31,6 +34,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
   bool _isPrivate = false;
   String _connectionStatus = 'none'; // none | pending | accepted
   bool _connecting = false;
+  bool _startingChat = false;
 
   @override
   void initState() {
@@ -70,6 +74,31 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
           .showSnackBar(SnackBar(content: Text(e.toString())));
     } finally {
       if (mounted) setState(() => _connecting = false);
+    }
+  }
+
+  Future<void> _openChat() async {
+    if (_startingChat) return;
+    setState(() => _startingChat = true);
+    try {
+      final chat = await context
+          .read<MessagesNotifier>()
+          .createDirectChat(widget.userId);
+      if (!mounted) return;
+      if (chat == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Não foi possível iniciar a conversa')));
+        return;
+      }
+      context.push('/chat/${chat.id}', extra: {
+        'name': _profile?.fullName ?? widget.initialName ?? 'Conversa',
+      });
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(e.toString())));
+    } finally {
+      if (mounted) setState(() => _startingChat = false);
     }
   }
 
@@ -137,28 +166,50 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                         ),
                         const SizedBox(height: 16),
 
-                        // Botão Conectar
-                        if (_connectionStatus == 'none')
-                          FilledButton.icon(
-                            onPressed: _connecting ? null : _connect,
-                            icon: _connecting
-                                ? const SizedBox(width: 18, height: 18,
-                                    child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
-                                : const Icon(Icons.person_add_outlined),
-                            label: const Text('Conectar'),
-                          )
-                        else if (_connectionStatus == 'pending')
-                          OutlinedButton.icon(
-                            onPressed: null,
-                            icon: const Icon(Icons.hourglass_empty),
-                            label: const Text('Solicitação enviada'),
-                          )
-                        else if (_connectionStatus == 'accepted')
-                          OutlinedButton.icon(
-                            onPressed: null,
-                            icon: const Icon(Icons.check_circle_outline),
-                            label: const Text('Conectado'),
-                          ),
+                        // Botões de ação (Conectar + Mensagem)
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            if (_connectionStatus == 'none')
+                              FilledButton.icon(
+                                onPressed: _connecting ? null : _connect,
+                                icon: _connecting
+                                    ? const SizedBox(
+                                        width: 18,
+                                        height: 18,
+                                        child: CircularProgressIndicator(
+                                            strokeWidth: 2,
+                                            color: Colors.white))
+                                    : const Icon(Icons.person_add_outlined),
+                                label: const Text('Conectar'),
+                              )
+                            else if (_connectionStatus == 'pending')
+                              OutlinedButton.icon(
+                                onPressed: null,
+                                icon: const Icon(Icons.hourglass_empty),
+                                label: const Text('Solicitação enviada'),
+                              )
+                            else if (_connectionStatus == 'accepted')
+                              OutlinedButton.icon(
+                                onPressed: null,
+                                icon: const Icon(Icons.check_circle_outline),
+                                label: const Text('Conectado'),
+                              ),
+                            const SizedBox(width: 12),
+                            FilledButton.icon(
+                              onPressed: _startingChat ? null : _openChat,
+                              icon: _startingChat
+                                  ? const SizedBox(
+                                      width: 18,
+                                      height: 18,
+                                      child: CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                          color: Colors.white))
+                                  : const Icon(Icons.chat_bubble_outline),
+                              label: const Text('Mensagem'),
+                            ),
+                          ],
+                        ),
 
                         const SizedBox(height: 16),
 

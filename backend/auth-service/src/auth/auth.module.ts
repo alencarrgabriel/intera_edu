@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
+import { GoogleAuthService } from './google-auth.service';
 import { UserCredential } from '../database/entities/user-credential.entity';
 import { RefreshToken } from '../database/entities/refresh-token.entity';
 import { ConsentRecord } from '../database/entities/consent-record.entity';
@@ -31,7 +32,7 @@ import { JwtStrategy } from '@interaedu/shared';
     InstitutionModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy],
+  providers: [AuthService, GoogleAuthService, JwtStrategy],
   exports: [AuthService],
 })
 export class AuthModule {}

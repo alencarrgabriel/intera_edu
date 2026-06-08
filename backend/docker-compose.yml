@@ -103,6 +103,9 @@ services:
       JWT_REFRESH_EXPIRATION: 7d
       SMTP_HOST: mailhog
       SMTP_PORT: 1025
+      # Configurar em .env (ver docs/walkthrough-sessao.md §B-03) — opcional.
+      # Sem GOOGLE_CLIENT_ID, o endpoint /auth/google responde 503.
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
     depends_on:
       postgres:
         condition: service_healthy
@@ -130,6 +133,12 @@ services:
       REDIS_HOST: redis
       REDIS_PORT: 6379
       JWT_ACCESS_SECRET: change-me-to-a-random-64-char-string-in-production
+      S3_ENDPOINT: http://minio:9000
+      S3_PUBLIC_ENDPOINT: http://localhost:9000
+      S3_BUCKET: interaedu
+      S3_ACCESS_KEY: minioadmin
+      S3_SECRET_KEY: minioadmin
+      S3_REGION: us-east-1
     depends_on:
       postgres:
         condition: service_healthy

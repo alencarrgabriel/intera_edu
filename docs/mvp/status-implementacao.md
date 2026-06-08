@@ -1,6 +1,6 @@
 # Status de Implementação MVP — InteraEdu
 
-**Versão:** 2.0 | **Data:** Março 2026
+**Versão:** 2.1 | **Data:** Junho 2026
 
 Este documento acompanha o progresso técnico do MVP do InteraEdu — a rede social acadêmica restrita. O app mobile é desenvolvido em Flutter e o backend opera como microsserviços em NestJS.
 
@@ -23,29 +23,34 @@ Este documento acompanha o progresso técnico do MVP do InteraEdu — a rede soc
 | Comentar em post | ✅ Completo | ✅ CommentsSheet | ✅ Pronto |
 | Ver meu perfil | ✅ Completo | ✅ MyProfileScreen | ✅ Pronto |
 | Editar perfil | ✅ Completo | ✅ EditProfileScreen c/ Chips | ✅ Pronto |
+| **Upload de avatar (MinIO)** | ✅ Completo | ✅ FilePicker + spinner | ✅ Pronto |
 | Buscar usuários | ✅ Completo | ✅ SearchScreen c/ Debounce | ✅ Pronto |
 | Ver perfil de outro usuário | ✅ Completo | ✅ UserProfileScreen restrito | ✅ Pronto |
 | Enviar/Aceitar/Rejeitar conexão | ✅ Completo | ✅ ConnectionsScreen abas | ✅ Pronto |
-| Listar chats | ✅ Completo | ❌ UI Pendente | ❌ Falta |
-| Chat em tempo real (WebSocket) | ✅ Completo | ❌ Integração WebSockets | ❌ Falta |
+| **Iniciar chat direto a partir do perfil** | ✅ Completo | ✅ Botão "Mensagem" no UserProfileScreen | ✅ Pronto |
+| Listar chats | ✅ Completo | ✅ ChatsListScreen | ✅ Pronto |
+| **Chat em tempo real (WebSocket)** | ✅ Completo | ✅ SocketService auto-conecta após login | ✅ Pronto |
+| **Rate limiting no gateway** | ✅ Completo (100/min default, 10/min /auth) | — | ✅ Pronto |
+| **Login com Google OAuth** | ⏳ Endpoint /auth/google | ⏳ Botão visual no Login | ❌ Pendente |
 
 ---
 
 ## 2. O que falta para o MVP estar completo
 
-### Mobile (prioridade alta):
-1. Telas de chat (listagem e conversa) (tarefa **M-07**)
-2. Integração WebSocket (tarefa **M-07**)
+> **MVP funcionalmente completo.** Os fluxos principais do produto (auth → feed → perfil → conexões → chat em tempo real) estão operacionais ponta a ponta com backend Docker rodando.
 
-### Backend (ajustes realizados e pendentes):
-1. ✅ `profile-service`: criar perfil automaticamente ao receber evento `user.registered` (B-01) - **Concluído**
-2. ✅ Rotas de pesquisa de Profile e Configurações de CORS do Gateway - **Concluído**
-3. ✅ Estrategia JWT nos microserviços Profile, Feed, Messaging - **Concluído**
-4. ⏳ Endpoint `POST /auth/google` — OAuth com Google (tarefa **B-03**)
-5. ⏳ Upload de avatar via MinIO (tarefa **B-02**)
-6. ⏳ `messaging-service`: validar integração WebSocket end-to-end
+### Pendente (não-bloqueante):
+1. ⏳ **B-03** — Endpoint `POST /auth/google` + integração do botão "Continuar com Google" no LoginScreen. Requer credenciais Google Cloud Console (clientID/clientSecret).
 
-> Para detalhes de implementação de cada tarefa, consulte [`docs/guias/tarefas-ia.md`](../guias/tarefas-ia.md).
+### Concluído nesta etapa de desenvolvimento:
+- ✅ **B-01** — Perfil criado automaticamente via evento `user.registered`
+- ✅ **B-02** — Upload de avatar via MinIO (endpoint `POST /users/me/avatar`)
+- ✅ **B-05** — Rate limiting no gateway com bucket por IP e namespace
+- ✅ **M-07** — Telas de chat funcionais + WebSocket conectando após login
+- ✅ Skin/tema visual aplicado em welcome/register/login conforme protótipos
+- ✅ Mock de devMode no `AuthRepositoryImpl` (toggle em `app_config.dart`)
+
+> Para detalhes de implementação de cada tarefa, consulte [`docs/guias/tarefas-ia.md`](../guias/tarefas-ia.md) e o [Walkthrough da Sessão](../walkthrough-sessao.md).
 
 ---
 
@@ -128,7 +133,8 @@ Este documento acompanha o progresso técnico do MVP do InteraEdu — a rede soc
 |---|---|
 | **M1 — Auth Completo** | ✅ Login, registro, OTP, refresh e logout concluídos |
 | **M2 — Feed Funcional** | ✅ Criar, ver, reagir e comentar posts no app |
-| **M3 — Perfis Completos** | ✅ Editar perfil, buscar usuários, conectar com outros |
-| **M4 — MVP Pronto** | ⏳ Todos os fluxos principais operacionais (**Apenas Chat falta**) |
-| **M5 — Chat** | ❌ Mensagens em tempo real (Próxima etapa) |
-| **M6 — Produção** | ❌ Deploy em nuvem, CI/CD, monitoramento |
+| **M3 — Perfis Completos** | ✅ Editar perfil, **upload de avatar**, buscar usuários, conectar com outros |
+| **M4 — MVP Pronto** | ✅ Todos os fluxos principais operacionais ponta-a-ponta |
+| **M5 — Chat** | ✅ Mensagens em tempo real via WebSocket (Socket.IO) |
+| **M6 — Hardening** | ⏳ Rate limiting ✅, Google OAuth ⏳, Observabilidade ❌ |
+| **M7 — Produção** | ❌ Deploy em nuvem, CI/CD, monitoramento |

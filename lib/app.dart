@@ -22,7 +22,28 @@ class InteraEduApp extends StatelessWidget {
           auth.checkSession();
           return auth;
         }),
-        ChangeNotifierProvider(create: (_) => SocketService()),
+        // Conecta/desconecta o WebSocket automaticamente conforme o
+        // estado de autenticação muda. Sem isso, o chat carrega o
+        // histórico via REST mas não recebe mensagens em tempo real.
+        ChangeNotifierProvider<SocketService>(
+          lazy: false,
+          create: (ctx) {
+            final socket = SocketService();
+            final auth = ctx.read<AuthNotifier>();
+            Future<void> sync() async {
+              if (auth.isAuthenticated) {
+                final token = await sl.storage.getAccessToken();
+                if (token != null) socket.connect(token);
+              } else {
+                socket.disconnect();
+              }
+            }
+            auth.addListener(sync);
+            // Sincroniza estado inicial (caso o app já volte autenticado).
+            sync();
+            return socket;
+          },
+        ),
         ChangeNotifierProvider(create: (_) => FeedNotifier(sl.feedRepo)),
         ChangeNotifierProvider(create: (_) => ProfileNotifier(sl.profileRepo)),
         ChangeNotifierProvider(create: (_) => MessagesNotifier(sl.messagingRepo)),

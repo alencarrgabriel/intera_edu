@@ -66,6 +66,15 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
+  Future<void> loginWithGoogleIdToken(String idToken) async {
+    final response = await _api.post(
+      ApiEndpoints.google,
+      body: {'id_token': idToken},
+    );
+    await _saveTokens(response['tokens'] as Map<String, dynamic>);
+  }
+
+  @override
   Future<void> refreshToken() async {
     final refreshToken = await _storage.getRefreshToken();
     if (refreshToken == null) throw Exception('Sem refresh token');

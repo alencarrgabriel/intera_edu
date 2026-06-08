@@ -31,6 +31,52 @@
 
   <title>intera_edu</title>
   <link rel="manifest" href="manifest.json">
+
+  <!--
+    Google Identity Services (B-03 — Login com Google).
+    Para ativar:
+      1. Crie um OAuth 2.0 Client ID em https://console.cloud.google.com/apis/credentials
+         tipo "Web application", com "Authorized JavaScript origins" = http://localhost:8090
+      2. Copie o Client ID e substitua o placeholder abaixo (mantenha o sufixo .apps.googleusercontent.com)
+      3. Configure também a variável GOOGLE_CLIENT_ID no docker-compose.yml do auth-service
+    Enquanto vazio, o botão "Continuar com Google" exibe um aviso ao usuário.
+  -->
+  <meta name="google-signin-client_id" content="">
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script>
+    // Inicializa GIS quando o script carrega e o Flutter chama window.interaeduInitGoogleSignIn().
+    // Resolve uma Promise com o credential (ID token) na primeira aprovação.
+    window.interaeduGoogleSignIn = function () {
+      return new Promise(function (resolve, reject) {
+        var meta = document.querySelector('meta[name="google-signin-client_id"]');
+        var clientId = meta ? meta.content : '';
+        if (!clientId) {
+          reject(new Error('NOT_CONFIGURED'));
+          return;
+        }
+        if (!window.google || !window.google.accounts || !window.google.accounts.id) {
+          reject(new Error('GIS_NOT_LOADED'));
+          return;
+        }
+        window.google.accounts.id.initialize({
+          client_id: clientId,
+          callback: function (response) {
+            if (response && response.credential) {
+              resolve(response.credential);
+            } else {
+              reject(new Error('NO_CREDENTIAL'));
+            }
+          },
+        });
+        window.google.accounts.id.prompt(function (notification) {
+          // Se o popup é fechado/skip, força fallback de exibição
+          if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+            reject(new Error('USER_DISMISSED'));
+          }
+        });
+      });
+    };
+  </script>
 </head>
 <body>
   <!--

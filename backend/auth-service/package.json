@@ -33,7 +33,8 @@
     "reflect-metadata": "^0.2.0",
     "rxjs": "^7.8.0",
     "typeorm": "^0.3.20",
-    "@interaedu/shared": "*"
+    "@interaedu/shared": "*",
+    "google-auth-library": "^9.10.0"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.0.0",
