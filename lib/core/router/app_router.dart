@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import '../../presentation/auth/screens/forgot_password_screen.dart';
 import '../../presentation/auth/screens/login_screen.dart';
 import '../../presentation/auth/screens/otp_screen.dart';
 import '../../presentation/auth/screens/register_screen.dart';
 import '../../presentation/feed/screens/create_post_screen.dart';
 import '../../presentation/main_screen.dart';
+import '../../presentation/admin/screens/admin_screen.dart';
+import '../../presentation/notifications/screens/notifications_screen.dart';
+import '../../presentation/settings/screens/settings_screen.dart';
 import '../../presentation/messages/screens/chat_room_screen.dart';
+import '../../presentation/messages/screens/create_group_screen.dart';
 import '../../presentation/onboarding/screens/profile_setup_screen.dart';
 import '../../presentation/onboarding/screens/welcome_screen.dart';
 import '../../presentation/profile/screens/connections_screen.dart';
@@ -44,6 +49,7 @@ abstract class AppRoutes {
   static const login = '/login';
   static const register = '/register';
   static const otp = '/otp';
+  static const forgotPassword = '/forgot-password';
   static const profileSetup = '/profile-setup';
   static const main = '/';
 
@@ -51,6 +57,10 @@ abstract class AppRoutes {
   static const createPost = '/create-post';
   static const editProfile = '/edit-profile';
   static const connections = '/connections';
+  static const notifications = '/notifications';
+  static const createGroup = '/create-group';
+  static const settings = '/settings';
+  static const admin = '/admin';
 
   static String userProfile(String userId) => '/user/$userId';
   static String chatRoom(String chatId) => '/chat/$chatId';
@@ -74,6 +84,7 @@ GoRouter createRouter(BuildContext context) {
         AppRoutes.login,
         AppRoutes.register,
         AppRoutes.otp,
+        AppRoutes.forgotPassword,
         AppRoutes.profileSetup,
       };
       final isAuthPath = authPaths.contains(loc);
@@ -116,6 +127,26 @@ GoRouter createRouter(BuildContext context) {
                 context: ctx, state: state, child: const ConnectionsScreen()),
           ),
           GoRoute(
+            path: 'notifications',
+            pageBuilder: (ctx, state) => _slideTransition(
+                context: ctx, state: state, child: const NotificationsScreen()),
+          ),
+          GoRoute(
+            path: 'create-group',
+            pageBuilder: (ctx, state) => _slideTransition(
+                context: ctx, state: state, child: const CreateGroupScreen()),
+          ),
+          GoRoute(
+            path: 'settings',
+            pageBuilder: (ctx, state) => _slideTransition(
+                context: ctx, state: state, child: const SettingsScreen()),
+          ),
+          GoRoute(
+            path: 'admin',
+            pageBuilder: (ctx, state) => _slideTransition(
+                context: ctx, state: state, child: const AdminScreen()),
+          ),
+          GoRoute(
             path: 'user/:userId',
             pageBuilder: (ctx, state) {
               final userId = state.pathParameters['userId']!;
@@ -154,6 +185,10 @@ GoRouter createRouter(BuildContext context) {
       GoRoute(
         path: AppRoutes.register,
         builder: (_, __) => const RegisterScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.forgotPassword,
+        builder: (_, __) => const ForgotPasswordScreen(),
       ),
       GoRoute(
         path: AppRoutes.otp,

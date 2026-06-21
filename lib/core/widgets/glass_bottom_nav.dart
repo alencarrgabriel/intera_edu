@@ -15,8 +15,9 @@ class GlassBottomNav extends StatelessWidget {
   final ValueChanged<int> onTap;
 
   static const _items = [
-    _NavItem(icon: Icons.home_outlined, activeIcon: Icons.home_rounded, label: 'Feed'),
-    _NavItem(icon: Icons.search_outlined, activeIcon: Icons.search_rounded, label: 'Buscar'),
+    _NavItem(icon: Icons.home_outlined, activeIcon: Icons.home_rounded, label: 'Início'),
+    _NavItem(icon: Icons.explore_outlined, activeIcon: Icons.explore_rounded, label: 'Explorar'),
+    _NavItem(icon: Icons.people_outline_rounded, activeIcon: Icons.people_rounded, label: 'Conexões'),
     _NavItem(icon: Icons.chat_bubble_outline_rounded, activeIcon: Icons.chat_bubble_rounded, label: 'Mensagens'),
     _NavItem(icon: Icons.person_outline_rounded, activeIcon: Icons.person_rounded, label: 'Perfil'),
   ];

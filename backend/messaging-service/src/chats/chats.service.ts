@@ -200,6 +200,7 @@ export class ChatsService {
       chat_id: message.chatId,
       sender_id: message.senderId,
       content: message.content,
+      file_url: message.fileUrl,
       created_at: message.createdAt.toISOString(),
     };
   }

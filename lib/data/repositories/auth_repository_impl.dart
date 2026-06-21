@@ -99,6 +99,24 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
+  Future<void> forgotPassword(String email) async {
+    await _api.post(ApiEndpoints.forgotPassword, body: {'email': email});
+  }
+
+  @override
+  Future<void> resetPassword({
+    required String email,
+    required String code,
+    required String newPassword,
+  }) async {
+    await _api.post(ApiEndpoints.resetPassword, body: {
+      'email': email,
+      'code': code,
+      'new_password': newPassword,
+    });
+  }
+
+  @override
   bool get isAuthenticated => _storage.isAuthenticated;
 
   Future<void> _saveTokens(Map<String, dynamic> tokens) async {

@@ -47,6 +47,7 @@ class ChatMessageModel extends ChatMessage {
     required super.senderId,
     super.senderName,
     required super.content,
+    super.fileUrl,
     required super.createdAt,
   });
 
@@ -57,6 +58,7 @@ class ChatMessageModel extends ChatMessage {
       senderId: json['sender_id'] as String? ?? '',
       senderName: json['sender_name'] as String?,
       content: json['content'] as String? ?? '',
+      fileUrl: json['file_url'] as String?,
       createdAt: DateTime.parse(
           json['created_at'] as String? ?? DateTime.now().toIso8601String()),
     );

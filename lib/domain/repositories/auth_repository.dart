@@ -20,4 +20,14 @@ abstract class AuthRepository {
   Future<void> refreshToken();
   Future<void> logout();
   bool get isAuthenticated;
+
+  /// RF-06 — solicita OTP de recuperação de senha.
+  Future<void> forgotPassword(String email);
+
+  /// RF-06 — confirma OTP e define nova senha.
+  Future<void> resetPassword({
+    required String email,
+    required String code,
+    required String newPassword,
+  });
 }

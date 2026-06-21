@@ -1,0 +1,20 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    monitor: interaedu-dev
+
+scrape_configs:
+  - job_name: prometheus
+    static_configs:
+      - targets: ['localhost:9090']
+
+  # Gateway é o primeiro serviço com /metrics habilitado (B-06 — Observabilidade).
+  # À medida que outros serviços ganham `@willsoto/nestjs-prometheus`, basta
+  # adicionar abaixo: auth-service:3001, profile-service:3002, etc.
+  - job_name: gateway
+    metrics_path: /metrics
+    static_configs:
+      - targets: ['gateway:3000']
+        labels:
+          service: gateway

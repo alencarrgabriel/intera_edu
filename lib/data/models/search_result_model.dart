@@ -6,6 +6,7 @@ class SearchResult {
   final String? course;
   final String? avatarUrl;
   final Institution? institution;
+  final List<Skill> skills;
 
   SearchResult({
     required this.id,
@@ -13,10 +14,12 @@ class SearchResult {
     this.course,
     this.avatarUrl,
     this.institution,
+    this.skills = const [],
   });
 
   factory SearchResult.fromJson(Map<String, dynamic> json) {
     final inst = json['institution'] as Map<String, dynamic>?;
+    final skillsRaw = json['skills'] as List<dynamic>? ?? [];
 
     return SearchResult(
       id: json['id'].toString(),
@@ -30,6 +33,13 @@ class SearchResult {
               slug: inst['slug']?.toString(),
             )
           : null,
+      skills: skillsRaw
+          .map((s) => Skill(
+                id: (s as Map<String, dynamic>)['id']?.toString() ?? '',
+                name: s['name']?.toString() ?? '',
+                category: s['category']?.toString() ?? '',
+              ))
+          .toList(),
     );
   }
 }

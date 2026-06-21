@@ -4,6 +4,7 @@ import { DatabaseModule, RedisModule, JwtAuthGuard, JwtStrategy } from '@interae
 import { APP_GUARD } from '@nestjs/core';
 import { ChatsModule } from './chats/chats.module';
 import { WebsocketModule } from './websocket/websocket.module';
+import { NotificationsModule } from './notifications/notifications.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { WebsocketModule } from './websocket/websocket.module';
     RedisModule,
     ChatsModule,
     WebsocketModule,
+    NotificationsModule,
   ],
   providers: [
     {

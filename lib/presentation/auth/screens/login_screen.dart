@@ -9,6 +9,11 @@ import '../../../core/router/app_router.dart';
 import '../../../core/utils/validators.dart';
 import '../../../core/widgets/gradient_button.dart';
 
+/// Quando `false`, a tela de login esconde o bloco "OU / Continuar com Google".
+/// Coloque em `true` depois de configurar o Client ID em `web/index.html` e
+/// a env `GOOGLE_CLIENT_ID` no auth-service.
+const bool _showGoogleSignIn = false;
+
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -262,7 +267,7 @@ class _LoginCard extends StatelessWidget {
             child: Align(
               alignment: Alignment.centerRight,
               child: GestureDetector(
-                onTap: () {},
+                onTap: () => context.push(AppRoutes.forgotPassword),
                 child: Text(
                   'Esqueci minha senha',
                   style: Theme.of(context).textTheme.labelSmall?.copyWith(
@@ -298,40 +303,42 @@ class _LoginCard extends StatelessWidget {
                     ),
                   ),
           ),
-          const SizedBox(height: 20),
+          if (_showGoogleSignIn) ...[
+            const SizedBox(height: 20),
 
-          // ── Divider OU ─────────────────────────────────────────────────
-          Row(
-            children: [
-              Expanded(
-                child: Container(
-                    height: 1, color: AppTokens.surfaceContainerHigh),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Text(
-                  'OU',
-                  style: TextStyle(
-                    fontSize: 10,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 1.5,
-                    color: AppTokens.outlineVariant,
+            // ── Divider OU ─────────────────────────────────────────────
+            Row(
+              children: [
+                Expanded(
+                  child: Container(
+                      height: 1, color: AppTokens.surfaceContainerHigh),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Text(
+                    'OU',
+                    style: TextStyle(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 1.5,
+                      color: AppTokens.outlineVariant,
+                    ),
                   ),
                 ),
-              ),
-              Expanded(
-                child: Container(
-                    height: 1, color: AppTokens.surfaceContainerHigh),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
+                Expanded(
+                  child: Container(
+                      height: 1, color: AppTokens.surfaceContainerHigh),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
 
-          // ── Google ─────────────────────────────────────────────────────
-          _GoogleButton(
-            onPressed: googleLoading ? null : onGoogleSignIn,
-            loading: googleLoading,
-          ),
+            // ── Google ────────────────────────────────────────────────
+            _GoogleButton(
+              onPressed: googleLoading ? null : onGoogleSignIn,
+              loading: googleLoading,
+            ),
+          ],
         ],
       ),
     );

@@ -1,6 +1,6 @@
 import { Injectable, ConflictException, NotFoundException, ForbiddenException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, IsNull } from 'typeorm';
+import { Repository, IsNull, In, DataSource } from 'typeorm';
 import { Connection } from '../database/entities/connection.entity';
 import { UserProfile } from '../database/entities/user-profile.entity';
 import { CreateConnectionDto } from './dto/create-connection.dto';
@@ -13,6 +13,7 @@ export class ConnectionsService {
     private readonly connectionRepo: Repository<Connection>,
     @InjectRepository(UserProfile)
     private readonly userRepo: Repository<UserProfile>,
+    private readonly dataSource: DataSource,
   ) {}
 
   async list(userId: string, status?: string, direction?: string) {
@@ -29,7 +30,64 @@ export class ConnectionsService {
     }
 
     const connections = await this.connectionRepo.find({ where, order: { requestedAt: 'DESC' }, take: 200 });
-    return { data: connections };
+
+    // Enriquece com dados do "outro usuário" para que o cliente possa
+    // renderizar nome / curso / avatar sem N+1 requests.
+    const otherIds = Array.from(
+      new Set(
+        connections.map((c) =>
+          c.requesterId === userId ? c.addresseeId : c.requesterId,
+        ),
+      ),
+    );
+
+    const profiles =
+      otherIds.length > 0
+        ? await this.userRepo.find({
+            where: { id: In(otherIds), deletedAt: IsNull() },
+          })
+        : [];
+    const profileById = new Map(profiles.map((p) => [p.id, p]));
+
+    // Carrega nomes de instituições em uma única query (cross-schema OK).
+    const institutionIds = Array.from(
+      new Set(profiles.map((p) => p.institutionId).filter(Boolean)),
+    );
+    const institutions: Array<{ id: string; name: string; slug: string | null }> =
+      institutionIds.length === 0
+        ? []
+        : await this.dataSource.query(
+            `SELECT id, name, slug FROM auth.institutions WHERE id = ANY($1::uuid[])`,
+            [institutionIds],
+          );
+    const instById = new Map(institutions.map((i) => [i.id, i]));
+
+    const data = connections.map((c) => {
+      const otherId = c.requesterId === userId ? c.addresseeId : c.requesterId;
+      const dir = c.requesterId === userId ? 'sent' : 'received';
+      const p = profileById.get(otherId);
+      const inst = p ? instById.get(p.institutionId) : null;
+      return {
+        id: c.id,
+        status: c.status,
+        direction: dir,
+        created_at: c.requestedAt,
+        responded_at: c.respondedAt,
+        other_user: p
+          ? {
+              id: p.id,
+              full_name: p.fullName,
+              course: p.course,
+              avatar_url: p.avatarUrl,
+              institution: inst
+                ? { id: inst.id, name: inst.name, slug: inst.slug }
+                : null,
+            }
+          : null,
+      };
+    });
+
+    return { data };
   }
 
   async create(requesterId: string, dto: CreateConnectionDto) {

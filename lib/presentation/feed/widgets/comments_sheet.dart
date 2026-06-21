@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../../core/di/service_locator.dart';
 import '../../../domain/entities/post.dart';
 import '../../../domain/repositories/feed_repository.dart';
 import '../../shared/relative_time_text.dart';
 import '../../shared/user_avatar.dart';
+import '../notifiers/feed_notifier.dart';
 
 /// Bottom sheet com lista de comentários e campo para adicionar novos comentários.
 class CommentsSheet extends StatefulWidget {
@@ -24,10 +26,14 @@ class _CommentsSheetState extends State<CommentsSheet> {
   final FeedRepository _feedRepo = sl.feedRepo;
   final _controller = TextEditingController();
   final _scrollController = ScrollController();
+  final _composerFocus = FocusNode();
   bool _loading = true;
   bool _sending = false;
   String? _error;
   List<Comment> _comments = [];
+  // RF-22 — quando setado, o próximo envio será uma resposta a esse comentário.
+  String? _replyTo;
+  String? _replyToName;
 
   @override
   void initState() {
@@ -39,7 +45,17 @@ class _CommentsSheetState extends State<CommentsSheet> {
   void dispose() {
     _controller.dispose();
     _scrollController.dispose();
+    _composerFocus.dispose();
     super.dispose();
+  }
+
+  /// RF-22 — Agrupa comentários em (root, replies). Limita a 1 nível.
+  Map<String?, List<Comment>> _byParent() {
+    final out = <String?, List<Comment>>{};
+    for (final c in _comments) {
+      out.putIfAbsent(c.parentCommentId, () => []).add(c);
+    }
+    return out;
   }
 
   Future<void> _loadComments() async {
@@ -59,9 +75,19 @@ class _CommentsSheetState extends State<CommentsSheet> {
     if (content.isEmpty) return;
 
     setState(() => _sending = true);
+    final feedNotifier = context.read<FeedNotifier>();
     try {
-      await _feedRepo.addComment(widget.postId, content);
+      await _feedRepo.addComment(
+        widget.postId,
+        content,
+        parentCommentId: _replyTo,
+      );
       _controller.clear();
+      setState(() {
+        _replyTo = null;
+        _replyToName = null;
+      });
+      feedNotifier.incrementCommentCount(widget.postId);
       await _loadComments();
       // Rolar para o fim após novo comentário
       if (_scrollController.hasClients) {
@@ -155,65 +181,36 @@ class _CommentsSheetState extends State<CommentsSheet> {
                           ],
                         ),
                       )
-                    : ListView.separated(
-                        controller: _scrollController,
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 8),
-                        itemCount: _comments.length,
-                        separatorBuilder: (_, __) =>
-                            const SizedBox(height: 12),
-                        itemBuilder: (_, i) {
-                          final c = _comments[i];
-                          final authorName = c.authorName ?? 'Usuário';
-
-                          return Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              UserAvatar(
-                                  name: authorName,
-                                  imageUrl: c.authorAvatarUrl,
-                                  radius: 16),
-                              const SizedBox(width: 8),
-                              Expanded(
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 12, vertical: 8),
-                                  decoration: BoxDecoration(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .surfaceContainerHighest,
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          Text(
-                                            authorName,
-                                            style: const TextStyle(
-                                                fontWeight: FontWeight.w600,
-                                                fontSize: 13),
-                                          ),
-                                          const Spacer(),
-                                          RelativeTimeText(
-                                              date: c.createdAt, compact: true),
-                                        ],
-                                      ),
-                                      const SizedBox(height: 4),
-                                      Text(c.content),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ],
-                          );
-                        },
-                      ),
+                    : _buildThreadedList(context),
           ),
 
-          // Campo de texto para novo comentário
+          // RF-22 — Banner "respondendo a X" quando há replyTo ativo.
+          if (_replyTo != null)
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              color: Theme.of(context).colorScheme.primaryContainer
+                  .withValues(alpha: 0.4),
+              child: Row(
+                children: [
+                  Icon(Icons.subdirectory_arrow_right_rounded,
+                      size: 16,
+                      color: Theme.of(context).colorScheme.primary),
+                  const SizedBox(width: 6),
+                  Expanded(
+                    child: Text('Respondendo a $_replyToName',
+                        style: Theme.of(context).textTheme.labelMedium),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.close_rounded, size: 16),
+                    onPressed: () => setState(() {
+                      _replyTo = null;
+                      _replyToName = null;
+                    }),
+                  ),
+                ],
+              ),
+            ),
+
           const Divider(height: 1),
           SafeArea(
             child: Padding(
@@ -228,8 +225,11 @@ class _CommentsSheetState extends State<CommentsSheet> {
                   Expanded(
                     child: TextField(
                       controller: _controller,
+                      focusNode: _composerFocus,
                       decoration: InputDecoration(
-                        hintText: 'Escreva um comentário...',
+                        hintText: _replyTo == null
+                            ? 'Escreva um comentário...'
+                            : 'Escreva sua resposta...',
                         isDense: true,
                         contentPadding: const EdgeInsets.symmetric(
                             horizontal: 16, vertical: 10),
@@ -261,6 +261,118 @@ class _CommentsSheetState extends State<CommentsSheet> {
           ),
         ],
       ),
+    );
+  }
+
+  /// RF-22 — Lista hierárquica com root + replies indentadas. 1 nível.
+  Widget _buildThreadedList(BuildContext context) {
+    final byParent = _byParent();
+    final roots = byParent[null] ?? [];
+
+    return ListView.separated(
+      controller: _scrollController,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      itemCount: roots.length,
+      separatorBuilder: (_, __) => const SizedBox(height: 14),
+      itemBuilder: (_, i) {
+        final root = roots[i];
+        final replies = byParent[root.id] ?? const <Comment>[];
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _CommentTile(
+              comment: root,
+              onReply: () {
+                setState(() {
+                  _replyTo = root.id;
+                  _replyToName = root.authorName ?? 'Usuário';
+                });
+                _composerFocus.requestFocus();
+              },
+            ),
+            if (replies.isNotEmpty) ...[
+              const SizedBox(height: 10),
+              for (final r in replies)
+                Padding(
+                  padding:
+                      const EdgeInsets.only(left: 36, bottom: 8),
+                  child: _CommentTile(comment: r),
+                ),
+            ],
+          ],
+        );
+      },
+    );
+  }
+}
+
+class _CommentTile extends StatelessWidget {
+  const _CommentTile({required this.comment, this.onReply});
+  final Comment comment;
+  final VoidCallback? onReply;
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    final authorName = comment.authorName ?? 'Usuário';
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        UserAvatar(
+            name: authorName,
+            imageUrl: comment.authorAvatarUrl,
+            radius: 16),
+        const SizedBox(width: 8),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 12, vertical: 8),
+                decoration: BoxDecoration(
+                  color: cs.surfaceContainerHighest,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Text(authorName,
+                            style: const TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 13)),
+                        const Spacer(),
+                        RelativeTimeText(
+                            date: comment.createdAt, compact: true),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    Text(comment.content),
+                  ],
+                ),
+              ),
+              if (onReply != null)
+                Padding(
+                  padding: const EdgeInsets.only(top: 4, left: 6),
+                  child: GestureDetector(
+                    onTap: onReply,
+                    child: Text(
+                      'Responder',
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: cs.primary,
+                      ),
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

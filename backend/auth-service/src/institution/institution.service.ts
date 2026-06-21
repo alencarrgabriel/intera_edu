@@ -112,4 +112,40 @@ export class InstitutionService implements OnModuleInit {
   async findAll(): Promise<Institution[]> {
     return this.institutionRepo.find({ where: { isVerified: true } });
   }
+
+  /// RF-37 — Cadastro de nova IES (admin).
+  async create(dto: { name: string; slug: string; domains: string[] }) {
+    const institution = await this.institutionRepo.save({
+      name: dto.name,
+      slug: dto.slug,
+      domains: dto.domains.map((d) => d.toLowerCase()),
+      isVerified: true,
+    });
+    await this.invalidateDomainCache(institution.domains);
+    return institution;
+  }
+
+  /// RF-38 — Adiciona/remove domínios de uma IES.
+  async patchDomains(
+    id: string,
+    add: string[] = [],
+    remove: string[] = [],
+  ) {
+    const inst = await this.institutionRepo.findOne({ where: { id } });
+    if (!inst) return null;
+    const lower = (xs: string[]) => xs.map((d) => d.toLowerCase());
+    const set = new Set(inst.domains.map((d) => d.toLowerCase()));
+    for (const d of lower(add)) set.add(d);
+    for (const d of lower(remove)) set.delete(d);
+    inst.domains = Array.from(set);
+    const saved = await this.institutionRepo.save(inst);
+    await this.invalidateDomainCache([...add, ...remove, ...saved.domains]);
+    return saved;
+  }
+
+  private async invalidateDomainCache(domains: string[]) {
+    for (const d of domains) {
+      await this.redis.del(`institution:domain:${d.toLowerCase()}`);
+    }
+  }
 }

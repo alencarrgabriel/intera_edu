@@ -68,30 +68,34 @@ class FeedNotifier extends ChangeNotifier {
   }
 
   /// Toggle de reação com atualização otimista + rollback em falha.
-  Future<void> toggleReaction(Post post) async {
+  /// [type] é o tipo de reação: `like` (default), `insightful` ou `support`.
+  Future<void> toggleReaction(Post post, {String type = 'like'}) async {
     final index = posts.indexWhere((p) => p.id == post.id);
     if (index == -1) return;
 
     final wasReacted = post.userReaction != null;
+    final sameType = post.userReaction == type;
 
-    // Atualização otimista
+    // Se já tinha o mesmo tipo → remove. Se tinha outro → troca. Se não tinha → adiciona.
+    final shouldRemove = sameType;
+
     posts = List.from(posts)
       ..[index] = _copyPostWithReaction(post,
-          reacted: !wasReacted,
-          delta: wasReacted ? -1 : 1);
+          reactionType: shouldRemove ? null : type,
+          delta: shouldRemove ? -1 : (wasReacted ? 0 : 1));
     notifyListeners();
 
     try {
-      if (wasReacted) {
+      if (shouldRemove) {
         await _repo.removeReaction(post.id);
       } else {
-        await _repo.addReaction(post.id, 'like');
+        await _repo.addReaction(post.id, type);
       }
     } catch (_) {
       // Rollback se a chamada falhar
       posts = List.from(posts)
         ..[index] = _copyPostWithReaction(post,
-            reacted: wasReacted,
+            reactionType: post.userReaction,
             delta: 0);
       notifyListeners();
     }
@@ -107,7 +111,32 @@ class FeedNotifier extends ChangeNotifier {
   /// Adiciona novo post no topo após criação.
   void onPostCreated() => load();
 
-  Post _copyPostWithReaction(Post p, {required bool reacted, required int delta}) {
+  /// Atualiza localmente o contador de comentários após envio bem-sucedido
+  /// pela CommentsSheet, sem precisar recarregar o feed inteiro.
+  void incrementCommentCount(String postId, [int delta = 1]) {
+    final idx = posts.indexWhere((p) => p.id == postId);
+    if (idx == -1) return;
+    final p = posts[idx];
+    posts = List.of(posts);
+    posts[idx] = Post(
+      id: p.id,
+      authorId: p.authorId,
+      content: p.content,
+      scope: p.scope,
+      mediaUrls: p.mediaUrls,
+      reactionCount: p.reactionCount,
+      commentCount: (p.commentCount + delta).clamp(0, 999999),
+      userReaction: p.userReaction,
+      createdAt: p.createdAt,
+      authorName: p.authorName,
+      authorAvatarUrl: p.authorAvatarUrl,
+      authorCourse: p.authorCourse,
+      authorInstitutionName: p.authorInstitutionName,
+    );
+    notifyListeners();
+  }
+
+  Post _copyPostWithReaction(Post p, {String? reactionType, required int delta}) {
     return Post(
       id: p.id,
       authorId: p.authorId,
@@ -116,7 +145,7 @@ class FeedNotifier extends ChangeNotifier {
       mediaUrls: p.mediaUrls,
       reactionCount: (p.reactionCount + delta).clamp(0, 999999),
       commentCount: p.commentCount,
-      userReaction: reacted ? 'like' : null,
+      userReaction: reactionType,
       createdAt: p.createdAt,
       authorName: p.authorName,
       authorAvatarUrl: p.authorAvatarUrl,

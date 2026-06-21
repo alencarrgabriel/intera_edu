@@ -25,6 +25,12 @@ import { JwtPayload, RedisService } from '@interaedu/shared';
 const BCRYPT_ROUNDS = 12;
 const EVENTS_CHANNEL = 'interaedu.events';
 
+/// RN-09 — Versões correntes dos termos legais. Quando incrementadas,
+/// o login retorna `requires_consent_update=true` e o app força o aceite
+/// antes de prosseguir.
+export const CURRENT_TERMS_VERSION = 'v1.0';
+export const CURRENT_PRIVACY_VERSION = 'v1.0';
+
 @Injectable()
 export class AuthService {
   private readonly logger = new Logger(AuthService.name);
@@ -183,7 +189,103 @@ export class AuthService {
     // 4. Issue tokens
     const tokens = await this.issueTokens(user, user.institutionId);
 
-    return { tokens };
+    // 5. RN-09 — Checa se o usuário precisa reaceitar termos atualizados.
+    const requiresConsentUpdate = await this.needsConsentUpdate(user.id);
+
+    return { tokens, requires_consent_update: requiresConsentUpdate };
+  }
+
+  /// RN-09 — Retorna `true` se a última versão aceita pelo usuário é
+  /// diferente da `CURRENT_TERMS_VERSION` ou `CURRENT_PRIVACY_VERSION`.
+  async needsConsentUpdate(userId: string): Promise<boolean> {
+    const latest = await this.consentRepo.find({
+      where: { userId },
+      order: { acceptedAt: 'DESC' },
+      take: 10,
+    });
+    const acceptedTerms = latest.find(
+      (c) => c.consentType === 'terms_of_service' && !c.revokedAt,
+    );
+    const acceptedPrivacy = latest.find(
+      (c) => c.consentType === 'privacy_policy' && !c.revokedAt,
+    );
+    return (
+      acceptedTerms?.version !== CURRENT_TERMS_VERSION ||
+      acceptedPrivacy?.version !== CURRENT_PRIVACY_VERSION
+    );
+  }
+
+  /// RN-09 — Registra novo aceite após mudança de termos.
+  async acceptTerms(userId: string) {
+    await this.consentRepo.save({
+      userId,
+      consentType: 'terms_of_service',
+      version: CURRENT_TERMS_VERSION,
+    });
+    await this.consentRepo.save({
+      userId,
+      consentType: 'privacy_policy',
+      version: CURRENT_PRIVACY_VERSION,
+    });
+    return { ok: true };
+  }
+
+  /// RF-32 — Revoga consentimento e dispara exclusão. Em produção isso
+  /// notifica o profile-service via evento; aqui apenas marca e cliente
+  /// chama DELETE /users/me em seguida.
+  async revokeConsent(userId: string) {
+    const records = await this.consentRepo.find({
+      where: { userId, revokedAt: IsNull() },
+    });
+    const now = new Date();
+    for (const r of records) {
+      r.revokedAt = now;
+    }
+    await this.consentRepo.save(records);
+
+    await this.redis.publish(
+      EVENTS_CHANNEL,
+      JSON.stringify({
+        type: 'user.consent_revoked',
+        payload: { userId, revokedAt: now.toISOString() },
+        occurredAt: now.toISOString(),
+      }),
+    );
+
+    return {
+      message:
+        'Consentimento revogado. A conta será excluída e os dados anonimizados conforme a LGPD.',
+    };
+  }
+
+  /// RF-06 — Inicia recuperação de senha enviando OTP para o e-mail.
+  async forgotPassword(email: string) {
+    // Não revela se o e-mail existe (anti-enumeração).
+    const user = await this.userRepo.findOne({ where: { email, status: 'active' } });
+    if (user) {
+      await this.otpService.generateAndSend(email, 'password_reset');
+    }
+    return { message: 'Se o e-mail existir, um código foi enviado.', expires_in_seconds: 600 };
+  }
+
+  /// RF-06 — Confirma OTP e redefine senha; revoga refresh tokens existentes.
+  async resetPassword(email: string, code: string, newPassword: string) {
+    const valid = await this.otpService.verify(email, code, 'password_reset');
+    if (!valid) throw new UnauthorizedException('Código inválido ou expirado.');
+
+    const user = await this.userRepo.findOne({ where: { email, status: 'active' } });
+    if (!user) throw new UnauthorizedException('Usuário não encontrado.');
+
+    user.passwordHash = await bcrypt.hash(newPassword, BCRYPT_ROUNDS);
+    await this.userRepo.save(user);
+
+    // Invalida todas as sessões ativas — força re-login.
+    await this.refreshTokenRepo.update(
+      { userId: user.id, revokedAt: IsNull() },
+      { revokedAt: new Date() },
+    );
+
+    return { message: 'Senha redefinida com sucesso.' };
   }
 
   async refreshToken(dto: RefreshTokenDto) {

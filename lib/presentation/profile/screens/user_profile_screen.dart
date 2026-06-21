@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../../core/design/app_tokens.dart';
 import '../../../core/di/service_locator.dart';
+import '../../../core/theme/app_theme.dart';
 import '../../../domain/entities/user.dart';
 import '../../../domain/repositories/profile_repository.dart';
 import '../../../domain/repositories/connection_repository.dart';
@@ -105,8 +106,69 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.initialName ?? 'Perfil'),
+      backgroundColor: AppTokens.background,
+      extendBodyBehindAppBar: true,
+      appBar: AppTheme.glassAppBar(
+        context: context,
+        title: Text(
+          widget.initialName ?? 'Perfil',
+          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.w700,
+              ),
+        ),
+        actions: [
+          PopupMenuButton<String>(
+            icon: const Icon(Icons.more_vert,
+                color: AppTokens.onSurface),
+            onSelected: (v) async {
+              if (v == 'block') {
+                await sl.profileRepo.blockUser(widget.userId);
+                if (!mounted) return;
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Usuário bloqueado.')),
+                );
+                if (mounted) Navigator.of(context).maybePop();
+              } else if (v == 'report') {
+                try {
+                  await sl.apiClient.post('/reports', body: {
+                    'target_type': 'user',
+                    'target_id': widget.userId,
+                    'reason': 'abuse',
+                  });
+                  if (!mounted) return;
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                        content: Text('Denúncia enviada para revisão.')),
+                  );
+                } catch (e) {
+                  if (!mounted) return;
+                  ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(e.toString())));
+                }
+              }
+            },
+            itemBuilder: (_) => const [
+              PopupMenuItem(
+                value: 'block',
+                child: Row(children: [
+                  Icon(Icons.block, size: 18),
+                  SizedBox(width: 8),
+                  Text('Bloquear usuário'),
+                ]),
+              ),
+              PopupMenuItem(
+                value: 'report',
+                child: Row(children: [
+                  Icon(Icons.flag_outlined,
+                      size: 18, color: AppTokens.error),
+                  SizedBox(width: 8),
+                  Text('Denunciar',
+                      style: TextStyle(color: AppTokens.error)),
+                ]),
+              ),
+            ],
+          ),
+        ],
       ),
       body: _loading
           ? const Center(child: CircularProgressIndicator())
@@ -127,7 +189,13 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
               : _error != null
                   ? ErrorRetryWidget(message: _error!, onRetry: _load)
                   : ListView(
-                      padding: const EdgeInsets.all(16),
+                      padding: EdgeInsets.fromLTRB(
+                          16,
+                          MediaQuery.of(context).padding.top +
+                              kToolbarHeight +
+                              4,
+                          16,
+                          24),
                       children: [
                         // ── Header ──────────────────────────────────────
                         Container(

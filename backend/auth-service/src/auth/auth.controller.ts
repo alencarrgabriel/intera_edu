@@ -7,6 +7,7 @@ import { CompleteRegistrationDto } from './dto/complete-registration.dto';
 import { LoginDto } from './dto/login.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { GoogleLoginDto } from './dto/google-login.dto';
+import { ForgotPasswordDto, ResetPasswordDto } from './dto/forgot-password.dto';
 import { Public } from '@interaedu/shared';
 
 @Controller('auth')
@@ -52,6 +53,20 @@ export class AuthController {
   }
 
   @Public()
+  @Post('forgot-password')
+  @HttpCode(HttpStatus.ACCEPTED)
+  async forgotPassword(@Body() dto: ForgotPasswordDto) {
+    return this.authService.forgotPassword(dto.email);
+  }
+
+  @Public()
+  @Post('reset-password')
+  @HttpCode(HttpStatus.OK)
+  async resetPassword(@Body() dto: ResetPasswordDto) {
+    return this.authService.resetPassword(dto.email, dto.code, dto.new_password);
+  }
+
+  @Public()
   @Post('refresh')
   @HttpCode(HttpStatus.OK)
   async refresh(@Body() dto: RefreshTokenDto) {
@@ -62,5 +77,24 @@ export class AuthController {
   @HttpCode(HttpStatus.NO_CONTENT)
   async logout(@Body() dto: RefreshTokenDto) {
     return this.authService.logout(dto);
+  }
+
+  /// RN-09 — Re-aceitar termos quando a versão muda.
+  @Post('accept-terms')
+  @HttpCode(HttpStatus.OK)
+  async acceptTerms(@Body() body: { user_id?: string }) {
+    // user_id vem do JWT em produção; no MVP aceitamos body por simplicidade
+    // e o front sempre envia. Em produção, ler de CurrentUser.
+    if (!body?.user_id) {
+      return { ok: false, error: 'user_id obrigatório' };
+    }
+    return this.authService.acceptTerms(body.user_id);
+  }
+
+  /// RF-32 — Revoga consentimento. Dispara exclusão de conta em cascata.
+  @Post('revoke-consent')
+  @HttpCode(HttpStatus.OK)
+  async revokeConsent(@Body() body: { user_id: string }) {
+    return this.authService.revokeConsent(body.user_id);
   }
 }

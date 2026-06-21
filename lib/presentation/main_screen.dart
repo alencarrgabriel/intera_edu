@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../core/widgets/glass_bottom_nav.dart';
 import 'feed/screens/feed_screen.dart';
 import 'messages/screens/chats_list_screen.dart';
+import 'profile/screens/connections_screen.dart';
 import 'profile/screens/my_profile_screen.dart';
 import 'profile/screens/search_screen.dart';
 
@@ -20,6 +21,7 @@ class _MainScreenState extends State<MainScreen> {
   final List<Widget> _screens = const [
     FeedScreen(),
     SearchScreen(),
+    ConnectionsScreen(),
     ChatsListScreen(),
     MyProfileScreen(),
   ];

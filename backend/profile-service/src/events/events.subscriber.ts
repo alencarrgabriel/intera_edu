@@ -55,6 +55,26 @@ export class EventsSubscriber implements OnModuleInit, OnModuleDestroy {
     if (parsed.type === 'user.registered') {
       await this.onUserRegistered(parsed as UserRegisteredEvent);
     }
+    if (parsed.type === 'user.deletion_requested') {
+      const userId = (parsed.payload as any)?.userId;
+      if (userId) await this.onUserDeletionRequested(userId);
+    }
+  }
+
+  /// RN-10 — Anonimiza o perfil sem apagar o registro (mantém referências
+  /// em comentários/posts antigos para integridade histórica do feed).
+  private async onUserDeletionRequested(userId: string) {
+    const user = await this.userRepo.findOne({ where: { id: userId } });
+    if (!user || user.fullName === '[usuário removido]') return;
+    user.fullName = '[usuário removido]';
+    user.bio = null;
+    user.course = null;
+    user.period = null;
+    user.privacyLevel = 'private';
+    user.avatarUrl = null;
+    user.deletedAt = new Date();
+    await this.userRepo.save(user);
+    this.logger.log(`Anonymized profile for user ${userId}`);
   }
 
   private async onUserRegistered(evt: UserRegisteredEvent) {

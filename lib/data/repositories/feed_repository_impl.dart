@@ -1,5 +1,12 @@
+import 'dart:convert';
+
+import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
+
+import '../../core/config/app_config.dart';
 import '../../core/network/api_client.dart';
 import '../../core/network/api_endpoints.dart';
+import '../../core/storage/secure_storage.dart';
 import '../../domain/entities/post.dart';
 import '../../domain/repositories/feed_repository.dart';
 import '../models/post_model.dart';
@@ -7,7 +14,10 @@ import '../models/comment_model.dart';
 
 class FeedRepositoryImpl implements FeedRepository {
   final ApiClient _api;
-  FeedRepositoryImpl({ApiClient? api}) : _api = api ?? ApiClient();
+  final SecureStorageService _storage;
+  FeedRepositoryImpl({ApiClient? api, SecureStorageService? storage})
+      : _api = api ?? ApiClient(),
+        _storage = storage ?? SecureStorageService();
 
   @override
   Future<PaginatedResult<Post>> getFeed({
@@ -33,12 +43,43 @@ class FeedRepositoryImpl implements FeedRepository {
   }
 
   @override
-  Future<String> createPost({required String content, String scope = 'global'}) async {
-    final res = await _api.post(ApiEndpoints.posts, body: {
-      'content': content,
-      'scope': scope,
-    });
-    return res['id'] as String;
+  Future<String> createPost({
+    required String content,
+    String scope = 'global',
+    List<int>? fileBytes,
+    String? filename,
+    String? mimeType,
+  }) async {
+    if (fileBytes == null || fileBytes.isEmpty) {
+      final res = await _api.post(ApiEndpoints.posts, body: {
+        'content': content,
+        'scope': scope,
+      });
+      return res['id'] as String;
+    }
+    // RF-16 — Caminho multipart quando há arquivo. Vai pelo gateway via
+    // multipart middleware stream-friendly.
+    final uri = Uri.parse('${AppConfig.apiBaseUrl}${ApiEndpoints.posts}');
+    final token = await _storage.getAccessToken();
+    if (token == null) throw Exception('Sessão expirada — faça login.');
+    final mime = MediaType.parse(mimeType ?? 'application/octet-stream');
+    final req = http.MultipartRequest('POST', uri)
+      ..headers['Authorization'] = 'Bearer $token'
+      ..fields['content'] = content
+      ..fields['scope'] = scope
+      ..files.add(http.MultipartFile.fromBytes(
+        'file',
+        fileBytes,
+        filename: filename ?? 'arquivo',
+        contentType: mime,
+      ));
+    final streamed = await req.send();
+    final body = await streamed.stream.bytesToString();
+    if (streamed.statusCode >= 200 && streamed.statusCode < 300) {
+      final json = jsonDecode(body) as Map<String, dynamic>;
+      return json['id'] as String;
+    }
+    throw Exception('Falha ao publicar (${streamed.statusCode}): $body');
   }
 
   @override

@@ -14,7 +14,14 @@ abstract class FeedRepository {
     int limit = 20,
   });
 
-  Future<String> createPost({required String content, String scope = 'global'});
+  /// RF-16 — Cria post com texto e (opcionalmente) um arquivo (PDF/img ≤10MB).
+  Future<String> createPost({
+    required String content,
+    String scope = 'global',
+    List<int>? fileBytes,
+    String? filename,
+    String? mimeType,
+  });
 
   Future<void> deletePost(String postId);
 

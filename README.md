@@ -2,6 +2,8 @@
 
 > **Rede social acadêmica** exclusiva para universitários, com identidade verificada por e-mail institucional.
 
+**Cobertura atual do SRS:** 45 de 50 requisitos funcionais (90%) — veja o [Resumo de Implementação](./IMPLEMENTACAO.md) para o quadro completo do que foi entregue.
+
 ---
 
 ## 📑 Documentação do Projeto
@@ -13,9 +15,11 @@ Este projeto possui documentação técnica completa e organizada na pasta `/doc
 👉 **[Acesse o Índice Central de Documentação](./docs/README.md)** 👈
 
 Atalhos rápidos:
+- 📋 [**Resumo de Implementação**](./IMPLEMENTACAO.md) — Tudo que foi construído + como rodar + roteiro de demo
 - 📐 [Padrões e Convenções de Desenvolvimento](./docs/guias/padroes-desenvolvimento.md)
 - 🏗️ [Arquitetura do Sistema](./docs/arquitetura/sistema.md)
 - 📊 [Status de Implementação do MVP](./docs/mvp/status-implementacao.md)
+- 📜 [Walkthrough da Sessão de Implementação](./docs/walkthrough-sessao.md)
 
 ---
 

@@ -43,17 +43,25 @@ class ProfileRepositoryImpl implements ProfileRepository {
     String query, {
     String? skillId,
     String? institutionId,
+    String? course,
     String? cursor,
   }) async {
     final res = await _api.get(ApiEndpoints.searchUsers, queryParams: {
       'q': query,
-      if (skillId != null) 'skill_id': skillId,
-      if (institutionId != null) 'institution_id': institutionId,
+      // Backend reads `institution` (não `institution_id`) e `course`.
+      // `skill_id` é filtrado no cliente até o backend ganhar esse filtro.
+      if (institutionId != null) 'institution': institutionId,
+      if (course != null) 'course': course,
       if (cursor != null) 'cursor': cursor,
     });
-    final data = (res['data'] as List<dynamic>? ?? [])
+    var data = (res['data'] as List<dynamic>? ?? [])
         .map((e) => SearchResult.fromJson(e as Map<String, dynamic>))
         .toList();
+    if (skillId != null) {
+      data = data
+          .where((r) => r.skills.any((s) => s.id == skillId))
+          .toList(growable: false);
+    }
     return PaginatedResult(
       data: data,
       nextCursor: res['next_cursor'] as String?,
@@ -66,7 +74,9 @@ class ProfileRepositoryImpl implements ProfileRepository {
     required String filename,
     required String mimeType,
   }) async {
-    final uri = Uri.parse('${AppConfig.profileDirectUrl}/users/me/avatar');
+    // O gateway agora encaminha multipart corretamente via
+    // MultipartProxyMiddleware (stream raw), então usamos a URL pública.
+    final uri = Uri.parse('${AppConfig.apiBaseUrl}/users/me/avatar');
     final token = await _storage.getAccessToken();
     if (token == null) {
       throw Exception('Sessão expirada — faça login novamente');
@@ -98,6 +108,21 @@ class ProfileRepositoryImpl implements ProfileRepository {
       message = body;
     }
     throw Exception('Falha no upload (${streamed.statusCode}): $message');
+  }
+
+  @override
+  Future<void> blockUser(String userId) =>
+      _api.post(ApiEndpoints.blockUser(userId));
+
+  @override
+  Future<void> unblockUser(String userId) =>
+      _api.delete(ApiEndpoints.blockUser(userId));
+
+  @override
+  Future<List<String>> listBlocked() async {
+    final res = await _api.get(ApiEndpoints.myBlocks);
+    final data = res['data'] as List<dynamic>? ?? [];
+    return data.map((e) => e.toString()).toList();
   }
 
   @override

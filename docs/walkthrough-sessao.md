@@ -224,6 +224,181 @@ Acesse http://localhost:8090.
 
 ---
 
-## 10. Próxima etapa
+## 10. B-03 — Login com Google OAuth
 
-**B-03 — Login com Google OAuth.** Veja a seção implementação nas seções subsequentes deste walkthrough quando concluída.
+Implementação completa do **back-end + front-end web**. Requer apenas que o operador crie um OAuth Client ID no Google Cloud Console e configure duas chaves para ativar.
+
+### Modelagem de dados
+
+| Arquivo | Mudança |
+|---|---|
+| `backend/auth-service/src/database/entities/user-credential.entity.ts` | `passwordHash` virou nullable (contas só-OAuth não têm senha local). Coluna nova `googleId` (varchar(64), nullable, unique). Como `synchronize=true` em dev, a coluna é criada automaticamente no postgres ao subir o auth-service. |
+
+### Backend
+
+| Arquivo | Mudança |
+|---|---|
+| `backend/auth-service/package.json` | + `google-auth-library` ^9.10.0 (verifica ID tokens com as chaves públicas do Google). |
+| `backend/auth-service/src/auth/google-auth.service.ts` | **Novo.** `GoogleAuthService.loginWithGoogle(idToken)` verifica audience contra `GOOGLE_CLIENT_ID`, extrai email/sub/email_verified, valida domínio contra `InstitutionService.findByEmailDomain()`, busca user por `googleId` ou `email`, vincula ou cria, publica `user.registered` no Redis se for novo, devolve par de JWT (mesma estrutura do login local). Se `GOOGLE_CLIENT_ID` não estiver setado, throw `ServiceUnavailableException` → 503 com formato canônico. |
+| `backend/auth-service/src/auth/dto/google-login.dto.ts` | **Novo.** DTO com `id_token: string` (class-validator). |
+| `backend/auth-service/src/auth/auth.controller.ts` | + `POST /auth/google` (público) delegando para `GoogleAuthService`. |
+| `backend/auth-service/src/auth/auth.module.ts` | + `GoogleAuthService` como provider. |
+| `backend/auth-service/src/auth/auth.service.ts` | `login()` ajustado para tratar `passwordHash === null` — retorna mensagem orientando o usuário a usar "Continuar com Google". |
+| `backend/docker-compose.yml` | + `GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}` no auth-service. Lê de `.env` ou do shell. Vazio é OK — endpoint só fica indisponível. |
+| `backend/package-lock.json` | Regenerado para incluir `google-auth-library` na cadeia transitiva. |
+
+### Frontend (web)
+
+| Arquivo | Mudança |
+|---|---|
+| `web/index.html` | + `<meta name="google-signin-client_id" content="">` (placeholder a ser preenchido pelo operador). + tag `<script src="https://accounts.google.com/gsi/client" async defer>`. + função JS global `window.interaeduGoogleSignIn()` que inicializa GIS, faz `prompt()` e devolve uma `Promise<credential>`. Erros são sinalizados como `NOT_CONFIGURED` (meta vazio) ou `USER_DISMISSED` (popup fechado). |
+| `lib/core/auth/google_sign_in_web.dart` | **Novo.** Ponte Dart→JS via `dart:js_interop`. `fetchGoogleIdToken()` aguarda a Promise e devolve `Future<String>` com o ID token. Lança `GoogleSignInNotConfigured` ou `GoogleSignInCancelled` (typed errors). |
+| `lib/domain/repositories/auth_repository.dart` | + `Future<void> loginWithGoogleIdToken(String idToken)`. |
+| `lib/data/repositories/auth_repository_impl.dart` | + `loginWithGoogleIdToken` faz `POST /auth/google` com `{ id_token }` e grava o par de tokens no `SecureStorage`. |
+| `lib/core/auth/auth_notifier.dart` | + `loginWithGoogleIdToken(idToken)` que delega ao repo e atualiza `AuthStatus`. |
+| `lib/core/network/api_endpoints.dart` | + `static const String google = '/auth/google';` |
+| `lib/presentation/auth/screens/login_screen.dart` | Botão "Continuar com Google" passou de `onPressed: () {}` (visual) para `_handleGoogleSignIn`: chama `fetchGoogleIdToken()`, depois `AuthNotifier.loginWithGoogleIdToken(idToken)`. Spinner + texto "Conectando..." enquanto roda. Tratamento amigável das exceptions tipadas. Em plataformas que não são web (`kIsWeb == false`) mostra um aviso. |
+
+### Como ativar (operador)
+
+1. Em [Google Cloud Console → APIs & Services → Credentials](https://console.cloud.google.com/apis/credentials), criar um **OAuth 2.0 Client ID** do tipo **Web application**.
+2. Em **Authorized JavaScript origins**, adicionar `http://localhost:8090` (ou o host efetivo do app).
+3. Copiar o Client ID gerado e colá-lo em **dois lugares**:
+   - `web/index.html`: `<meta name="google-signin-client_id" content="SEU_CLIENT_ID.apps.googleusercontent.com">`
+   - Variável de ambiente `GOOGLE_CLIENT_ID` antes de subir o auth-service (ex.: arquivo `backend/.env` ou export no shell).
+4. `cd backend && docker compose up -d --build auth-service` para o backend pegar o novo env.
+5. Recarregar o app web. O botão "Continuar com Google" passa a abrir o popup do Google. Domínios fora das instituições aprovadas continuam sendo rejeitados pelo backend.
+
+### Como o backend devolve quando não está configurado
+
+```http
+POST /api/v1/auth/google
+{ "id_token": "..." }
+
+HTTP/1.1 503 Service Unavailable
+{
+  "error": {
+    "code": "SERVICE_UNAVAILABLE",
+    "message": "Login com Google não está configurado neste ambiente.",
+    "status": 503,
+    "timestamp": "..."
+  }
+}
+```
+
+O front-end traduz isso para um SnackBar orientando o passo a passo.
+
+---
+
+## 11. Multipart proxying no gateway (eliminando bypass de B-02)
+
+A solução pragmática original do B-02 era pular o gateway e atacar `localhost:3002` direto, porque o `ProxyService` baseado em axios não consegue encaminhar `multipart/form-data` (o body-parser nunca toca em multipart, mas o controller envia `req.body` vazio para o downstream).
+
+**Solução adotada:** middleware Express puro registrado em `main.ts` *antes* do roteador NestJS.
+
+| Arquivo | Mudança |
+|---|---|
+| `backend/gateway/src/proxy/multipart-proxy.middleware.ts` | **Novo.** Função `createMultipartProxy(urls)` devolve middleware Express. Detecta `Content-Type` começando com `multipart/`, resolve serviço pelo path (mesma tabela do `ProxyController`), abre `http.request` para o upstream e pipea `req → upstreamReq` e `upstreamRes → res`. Headers (incluindo o boundary do multipart) são propagados intactos; apenas `host` é reescrito para o upstream. Falhas viram 502 no formato canônico. |
+| `backend/gateway/src/main.ts` | `app.use(createMultipartProxy(...))` instalado antes de `setGlobalPrefix`, garantindo que o stream chegue intacto. |
+| `lib/data/repositories/profile_repository_impl.dart` | URL do avatar voltou a usar `AppConfig.apiBaseUrl` (gateway), eliminando o bypass. |
+| `lib/core/config/app_config.dart` | Removida constante `profileDirectUrl` (não usada mais). |
+
+**Validação:**
+```
+$ curl -X POST http://localhost:3000/api/v1/users/me/avatar -H "Authorization: Bearer ..." -F "file=@test.png"
+{"avatar_url":"http://localhost:9000/interaedu/avatars/<userId>/<uuid>.png"}
+HTTP 201
+```
+
+Multipart agora trafega via gateway → profile-service. Rate limit (path-aware) e logs centralizados continuam funcionando.
+
+---
+
+## 12. Observabilidade (Prometheus + Grafana) — B-06
+
+Stack completa no compose, com Gateway expondo `/metrics` em formato Prometheus e Grafana auto-provisionado.
+
+### Backend (gateway)
+
+| Arquivo | Mudança |
+|---|---|
+| `backend/gateway/package.json` | + `@willsoto/nestjs-prometheus` ^6.0.0, `prom-client` ^15.0.0 |
+| `backend/gateway/src/metrics/metrics.module.ts` | **Novo.** `PrometheusModule` (defaultMetrics on) + provider `http_request_duration_seconds` (Histogram, labels: method/route/status_code, buckets 10ms→10s). |
+| `backend/gateway/src/metrics/metrics.middleware.ts` | **Novo.** Mede `hrtime.bigint()` no início e finaliza no `res.on('finish')`. Sanitiza route (UUID/inteiro → `:id`) pra controlar cardinalidade. Ignora `/metrics` para não inflar contadores. |
+| `backend/gateway/src/app.module.ts` | + import do `MetricsModule`; `configure()` registra `MetricsMiddleware` em `'*'`. |
+
+### Infra (Docker Compose)
+
+| Arquivo | Mudança |
+|---|---|
+| `backend/docker-compose.yml` | + serviços `prometheus` (porta 9090) e `grafana` (porta 3030 → 3000 interno). Grafana com `GF_AUTH_ANONYMOUS_ENABLED=true` para acesso somente leitura sem login. Volumes `prometheus_data`, `grafana_data`. |
+| `backend/observability/prometheus.yml` | **Novo.** Scrape config — `gateway:3000/api/v1/metrics` (15s interval). Pronto para receber novos jobs (auth, profile, etc.) à medida que instrumentação for adicionada. |
+| `backend/observability/grafana/provisioning/datasources/datasource.yml` | **Novo.** Datasource `Prometheus` apontando para `http://prometheus:9090`, default. |
+| `backend/observability/grafana/provisioning/dashboards/dashboards.yml` | **Novo.** Provider que carrega JSONs de `/var/lib/grafana/dashboards`. |
+| `backend/observability/grafana/dashboards/gateway-saude.json` | **Novo.** Dashboard inicial "InteraEdu — Saúde do Gateway" com 4 painéis: req/s por status, latência p50/p95/p99, taxa de erro 5xx (stat), throughput por método. |
+
+### Como acessar
+
+| Recurso | URL |
+|---|---|
+| Prometheus | http://localhost:9090 |
+| Métricas raw | http://localhost:3000/api/v1/metrics |
+| Grafana | http://localhost:3030 (login `admin/admin` ou visualização anônima) |
+| Dashboard | http://localhost:3030/d/interaedu-gateway/interaedu-saude-do-gateway |
+
+### Roadmap de instrumentação
+
+Para expandir, basta replicar o `MetricsModule` + `MetricsMiddleware` nos demais serviços NestJS e adicionar o respectivo job em `prometheus.yml`. As métricas que o roadmap (`docs/arquitetura/devops.md §5.1`) lista — `auth_login_attempts_total`, `feed_cache_hits_total`, `active_websocket_connections` etc. — são contadores/gauges adicionais que cada serviço cria localmente.
+
+---
+
+## 13. Seed de dados de demonstração + polish visual
+
+Em preparação à apresentação, fizemos um sprint focado em "viabilidade de demo".
+
+### Seed
+
+`backend/scripts/seed-demo.sql` — populando 5 usuários demo (`ana@aluno.ufmg.br`, `pedro@aluno.ufmg.br`, `julia@ufmg.br`, `carla@usp.br`, `lucas@alumni.usp.br`), todos com senha `Demo@1234`, perfis completos (nome, bio, curso, período, avatar pravatar, skills), 9 posts (mix local/global com conteúdo crível), 5 conexões aceitas + 2 pedidos pendentes para `joao`. Idempotente (ON CONFLICT / DELETE+INSERT). Para rodar:
+
+```
+cat backend/scripts/seed-demo.sql | docker exec -i interaedu-postgres psql -U interaedu -d interaedu
+```
+
+### Polish visual de telas demo
+
+| Tela | Mudança |
+|---|---|
+| `lib/presentation/messages/screens/chat_room_screen.dart` | Reescrita com `glassAppBar`, avatar+nome no header, indicador WebSocket "Conectado em tempo real" reativo via `Consumer<SocketService>`, empty state com ícone `waving_hand`, composer com pílula arredondada e botão circular gradiente. |
+| `lib/presentation/profile/screens/user_profile_screen.dart` | `glassAppBar` no lugar da AppBar default; padding ajustado para conteúdo respeitar a área transparente. |
+| `lib/presentation/profile/screens/connections_screen.dart` | `glassAppBar` com `TabBar` estilizado (primary color, indicator weight 3). |
+| `lib/presentation/auth/screens/login_screen.dart` | Bloco "OU / Continuar com Google" escondido atrás do const `_showGoogleSignIn = false`. Evita SnackBar de "GOOGLE_CLIENT_ID não configurado" durante a demo. Re-ativação: flipar o const + configurar GIS (ver §10). |
+
+### Roteiro de demo recomendado (5 min)
+
+1. Login com `joao@ufmg.br` (sua senha) → vai pro Feed populado
+2. Feed Local (posts UFMG) → trocar pra Global (posts USP aparecem)
+3. Reagir + comentar em algum post (Profa. Júlia ou Carla são bons gatilhos)
+4. Aba Perfil: ver avatar, skills, clicar no avatar e upload uma imagem nova
+5. Aba Buscar: digitar "Carla" → ver perfil → clicar "Mensagem" → chat abre
+6. Mandar uma mensagem
+7. Em outra janela anônima: login `carla@usp.br` / `Demo@1234` → ver chat e mensagem em tempo real
+8. (Técnico, opcional) http://localhost:3030 — dashboard Grafana
+9. (Técnico, opcional) http://localhost:9001 — MinIO com avatar uploadado
+
+---
+
+## 14. Estado final do MVP
+
+- ✅ M-01 a M-08 (mobile) — completos
+- ✅ B-01, B-02, B-04, B-05, B-06 (backend) — completos
+- ✅ B-03 código pronto, ativação requer credencial Google Cloud do operador
+- ✅ Gateway com proxy multipart correto (sem mais bypass do `localhost:3002`)
+- ✅ Observabilidade básica (Prometheus + Grafana com dashboard de gateway)
+
+Próximas frentes (pós-MVP):
+- Instrumentar `auth-service`, `profile-service`, `feed-service`, `messaging-service` com `/metrics`
+- Dashboards adicionais (Auth, Feed, Mensageria, Conexões PostgreSQL)
+- Tracing distribuído (OpenTelemetry + Jaeger)
+- Logs estruturados em JSON via Pino
+- FCM push notifications
+- Deploy cloud + CI/CD

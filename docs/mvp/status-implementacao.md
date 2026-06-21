@@ -31,7 +31,9 @@ Este documento acompanha o progresso técnico do MVP do InteraEdu — a rede soc
 | Listar chats | ✅ Completo | ✅ ChatsListScreen | ✅ Pronto |
 | **Chat em tempo real (WebSocket)** | ✅ Completo | ✅ SocketService auto-conecta após login | ✅ Pronto |
 | **Rate limiting no gateway** | ✅ Completo (100/min default, 10/min /auth) | — | ✅ Pronto |
-| **Login com Google OAuth** | ⏳ Endpoint /auth/google | ⏳ Botão visual no Login | ❌ Pendente |
+| **Proxy multipart no gateway** | ✅ Stream raw via middleware Express | — | ✅ Pronto |
+| **Observabilidade (Prometheus + Grafana)** | ✅ Gateway /metrics + dashboard inicial | — | ✅ Pronto (parcial — restantes serviços a instrumentar) |
+| **Login com Google OAuth** | ✅ Endpoint /auth/google verificando ID token | ✅ Botão funcional via GIS web | ⏳ Aguardando credencial Google Cloud do operador |
 
 ---
 
@@ -39,12 +41,34 @@ Este documento acompanha o progresso técnico do MVP do InteraEdu — a rede soc
 
 > **MVP funcionalmente completo.** Os fluxos principais do produto (auth → feed → perfil → conexões → chat em tempo real) estão operacionais ponta a ponta com backend Docker rodando.
 
+### Concluído na rodada de "sprint de funcionalidades" (Jun 2026):
+
+| ID | Funcionalidade | Status |
+|---|---|---|
+| **RF-06** | Esqueci minha senha (OTP + redefinir) | ✅ Backend + Frontend (tela `ForgotPasswordScreen`) |
+| **RF-15** | Bloquear usuário | ✅ Tabela `profile.user_blocks` + endpoints `/users/me/blocks` + menu 3-dots no perfil |
+| **RF-21** | Reações `curtir`, `perspicaz`, `apoio` | ✅ Long-press abre `_ReactionPicker` com as 3 opções |
+| **RF-22** | Respostas aninhadas (1 nível) em comentários | ✅ CommentsSheet agrupa por `parent_comment_id`, exibe replies indentadas + "Responder" |
+| **RF-24** | Criar grupo de estudos (≤50 membros) | ✅ Tela `CreateGroupScreen` lista conexões aceitas + nome do grupo |
+| **RF-25** | Mensagens em grupo | ✅ Backend valida membro; UI reusa `ChatRoomScreen` |
+| **RF-27** | Arquivos em chat (PDF/imagem ≤10MB) | ✅ `S3Service` no messaging + endpoint multipart + `FilePicker` no composer + `_AttachmentChip` renderiza imagem ou ícone PDF |
+| **RF-35** | Central de notificações in-app | ✅ Tabela `messaging.notifications` + endpoints + tela `NotificationsScreen` (sino abre lista) |
+| **RF-37** | Cadastro de IES (admin) | ✅ Endpoint `POST /institutions` (role check inline) |
+| **RF-38** | Gerenciamento de domínios (admin) | ✅ `PATCH /institutions/:id/domains` (add/remove) + cache invalidation |
+| **RF-39** | Fila de moderação de denúncias | ✅ `GET /reports` lista abertas, `PATCH /reports/:id` resolve/descarta |
+| **RF-40** | Botão "Denunciar" no Feed e Perfil | ✅ Menu 3-dots do post e no perfil de outro usuário → `POST /reports` |
+
 ### Pendente (não-bloqueante):
-1. ⏳ **B-03** — Endpoint `POST /auth/google` + integração do botão "Continuar com Google" no LoginScreen. Requer credenciais Google Cloud Console (clientID/clientSecret).
+1. ⏳ **B-03 — Ativação do Login Google** — Código implementado (backend + frontend web). Falta apenas o operador criar o OAuth Client ID no Google Cloud Console e configurar:
+   - `web/index.html` → meta `google-signin-client_id`
+   - `backend/docker-compose.yml` → env `GOOGLE_CLIENT_ID`
+2. ⏳ **RF-34 — Push notifications via Firebase FCM** — Mobile-only por design; web não tem service worker configurado.
+3. ⏳ **Admin UI** — Endpoints `/institutions` existem mas não há tela mobile. Em produção uma SPA admin separada faz mais sentido.
 
 ### Concluído nesta etapa de desenvolvimento:
 - ✅ **B-01** — Perfil criado automaticamente via evento `user.registered`
 - ✅ **B-02** — Upload de avatar via MinIO (endpoint `POST /users/me/avatar`)
+- ✅ **B-03** — Backend + frontend web do login com Google (aguardando credencial Google Cloud)
 - ✅ **B-05** — Rate limiting no gateway com bucket por IP e namespace
 - ✅ **M-07** — Telas de chat funcionais + WebSocket conectando após login
 - ✅ Skin/tema visual aplicado em welcome/register/login conforme protótipos

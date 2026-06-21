@@ -48,6 +48,7 @@ class ChatMessage {
   final String senderId;
   final String? senderName;
   final String content;
+  final String? fileUrl;
   final DateTime createdAt;
 
   const ChatMessage({
@@ -56,6 +57,7 @@ class ChatMessage {
     required this.senderId,
     this.senderName,
     required this.content,
+    this.fileUrl,
     required this.createdAt,
   });
 }

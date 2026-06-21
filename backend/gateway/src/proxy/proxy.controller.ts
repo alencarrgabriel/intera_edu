@@ -31,6 +31,7 @@ export class ProxyController {
   private resolveService(path: string): { service: string; servicePath: string } | null {
     const routes: Array<{ prefix: string; service: string }> = [
       { prefix: '/auth', service: 'auth' },
+      { prefix: '/institutions', service: 'auth' },
       { prefix: '/users', service: 'profile' },
       { prefix: '/connections', service: 'profile' },
       { prefix: '/skills', service: 'profile' },

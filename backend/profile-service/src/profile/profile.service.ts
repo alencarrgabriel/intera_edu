@@ -172,20 +172,106 @@ export class ProfileService {
     };
   }
 
+  /// RF-31 — Marca conta para exclusão. Anonymizaçao em 30 dias é executada
+  /// pelos subscribers do evento `user.deletion_requested` em cada serviço.
   async requestDeletion(userId: string): Promise<any> {
-    // TODO: Emit user.deleted event, schedule anonymization
-    this.logger.log(`Deletion requested: ${userId}`);
+    const user = await this.userRepo.findOne({ where: { id: userId } });
+    if (!user) throw new NotFoundException('User not found');
+
+    // 1. Marca soft delete imediato no profile-service.
+    user.deletedAt = new Date();
+    await this.userRepo.save(user);
+
+    // 2. Limpa relações ativas — RN-10.
+    await this.connectionRepo.delete({ requesterId: userId });
+    await this.connectionRepo.delete({ addresseeId: userId });
+
+    // 3. Publica evento para os outros serviços anonimizarem em cascata.
+    const eventChannel = 'interaedu.events';
+    await this.dataSource.query(
+      `SELECT pg_notify($1, $2)`,
+      [
+        eventChannel,
+        JSON.stringify({
+          type: 'user.deletion_requested',
+          payload: { userId, requestedAt: new Date().toISOString() },
+          occurredAt: new Date().toISOString(),
+        }),
+      ],
+    );
+
+    this.logger.log(`Deletion requested + cascade triggered: ${userId}`);
     return {
-      message: 'Account deletion scheduled. Data will be anonymized within 30 days.',
-      deletion_scheduled_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+      message:
+        'Conta marcada para exclusão. Anonimização em até 30 dias conforme LGPD.',
+      deletion_scheduled_at: new Date(
+        Date.now() + 30 * 24 * 60 * 60 * 1000,
+      ).toISOString(),
     };
   }
 
+  /// RF-30 — Coleta dados do usuário e devolve JSON inline. Para volumes
+  /// grandes seria empurrado para um worker BullMQ + upload no MinIO; no
+  /// MVP cabe inline por estarmos abaixo do limite de 1MB por usuário.
   async requestDataExport(userId: string): Promise<any> {
-    // TODO: Queue data export job via BullMQ
-    this.logger.log(`Data export requested: ${userId}`);
+    const user = await this.userRepo.findOne({ where: { id: userId } });
+    if (!user) throw new NotFoundException('User not found');
+
+    const skills = await this.userSkillRepo.find({ where: { userId } });
+    const skillIds = skills.map((s) => s.skillId);
+    const skillRows = skillIds.length
+      ? await this.skillRepo.find({ where: { id: In(skillIds) } })
+      : [];
+
+    const connections = await this.connectionRepo.find({
+      where: [{ requesterId: userId }, { addresseeId: userId }],
+    });
+
+    const institution = await this.getInstitution(user.institutionId);
+
+    // Cross-schema: pega posts e mensagens.
+    const posts = await this.dataSource.query(
+      `SELECT id, content, scope, reaction_count, comment_count, created_at FROM feed.posts WHERE author_id = $1 AND deleted_at IS NULL`,
+      [userId],
+    );
+    const comments = await this.dataSource.query(
+      `SELECT id, post_id, content, created_at FROM feed.comments WHERE user_id = $1 AND deleted_at IS NULL`,
+      [userId],
+    );
+    const messages = await this.dataSource.query(
+      `SELECT id, chat_id, content, created_at FROM messaging.messages WHERE sender_id = $1`,
+      [userId],
+    );
+
+    this.logger.log(`Data export generated: ${userId}`);
     return {
-      message: 'Data export is being generated. You will receive a download link via email within 48 hours.',
+      generated_at: new Date().toISOString(),
+      message:
+        'Pacote LGPD gerado inline. Em produção, link expirável via MinIO/S3.',
+      data: {
+        profile: {
+          id: user.id,
+          email: user.email,
+          full_name: user.fullName,
+          bio: user.bio,
+          course: user.course,
+          period: user.period,
+          privacy_level: user.privacyLevel,
+          institution,
+          skills: skillRows.map((s) => ({ id: s.id, name: s.name })),
+          created_at: user.createdAt,
+        },
+        connections: connections.map((c) => ({
+          id: c.id,
+          requester_id: c.requesterId,
+          addressee_id: c.addresseeId,
+          status: c.status,
+          requested_at: c.requestedAt,
+        })),
+        posts,
+        comments,
+        messages,
+      },
     };
   }
 

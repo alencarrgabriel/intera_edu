@@ -24,4 +24,9 @@ export class ConsentRecord {
 
   @Column({ name: 'user_agent', type: 'text', nullable: true })
   userAgent: string;
+
+  /// RF-32 — Quando o usuário revoga o consentimento, marcamos com data.
+  /// Revogação dispara automaticamente a solicitação de deleção (RN-10).
+  @Column({ name: 'revoked_at', type: 'timestamptz', nullable: true })
+  revokedAt: Date | null;
 }

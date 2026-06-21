@@ -4,6 +4,7 @@ import { ConfigModule } from '@nestjs/config';
 import { DatabaseModule, RedisModule, JwtAuthGuard, JwtStrategy } from '@interaedu/shared';
 import { PostsModule } from './posts/posts.module';
 import { FeedModule } from './feed/feed.module';
+import { ReportsModule } from './reports/reports.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { FeedModule } from './feed/feed.module';
     RedisModule,
     PostsModule,
     FeedModule,
+    ReportsModule,
   ],
   providers: [
     {

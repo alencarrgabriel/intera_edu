@@ -1,3 +1,4 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/design/app_tokens.dart';
@@ -16,7 +17,36 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   final FeedRepository _feedRepo = sl.feedRepo;
   String _scope = 'local';
   bool _isLoading = false;
+  PlatformFile? _attachment;
+  String? _attachmentMime;
   static const int _maxChars = 1000;
+
+  Future<void> _pickAttachment() async {
+    final result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      withData: true,
+      allowedExtensions: ['pdf', 'jpg', 'jpeg', 'png', 'webp'],
+    );
+    if (result == null || result.files.isEmpty) return;
+    final f = result.files.first;
+    if (f.size > 10 * 1024 * 1024) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Arquivo maior que 10 MB.')),
+      );
+      return;
+    }
+    final ext = (f.extension ?? '').toLowerCase();
+    setState(() {
+      _attachment = f;
+      _attachmentMime = switch (ext) {
+        'png' => 'image/png',
+        'webp' => 'image/webp',
+        'pdf' => 'application/pdf',
+        _ => 'image/jpeg',
+      };
+    });
+  }
 
   @override
   void dispose() {
@@ -30,7 +60,13 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
 
     setState(() => _isLoading = true);
     try {
-      await _feedRepo.createPost(content: content, scope: _scope);
+      await _feedRepo.createPost(
+        content: content,
+        scope: _scope,
+        fileBytes: _attachment?.bytes,
+        filename: _attachment?.name,
+        mimeType: _attachmentMime,
+      );
       if (!mounted) return;
       // Retorna true para que o FeedScreen saiba que deve recarregar
       context.pop(true);
@@ -123,12 +159,48 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
               ),
             ),
 
-            // Contador de caracteres
+            // Anexo (RF-16)
+            if (_attachment != null)
+              Container(
+                margin: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                decoration: BoxDecoration(
+                  color: AppTokens.surfaceContainerLow,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.attach_file_rounded,
+                        size: 18, color: AppTokens.primary),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        _attachment!.name,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.close_rounded, size: 18),
+                      onPressed: () => setState(() {
+                        _attachment = null;
+                        _attachmentMime = null;
+                      }),
+                    ),
+                  ],
+                ),
+              ),
+
+            // Toolbar: anexar + contador
             Padding(
-              padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
+              padding: const EdgeInsets.fromLTRB(8, 4, 16, 8),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
                 children: [
+                  TextButton.icon(
+                    onPressed: _isLoading ? null : _pickAttachment,
+                    icon: const Icon(Icons.attach_file_rounded, size: 18),
+                    label: const Text('Anexar'),
+                  ),
+                  const Spacer(),
                   Text(
                     '$remaining',
                     style: TextStyle(

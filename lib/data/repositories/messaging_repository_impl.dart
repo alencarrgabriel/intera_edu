@@ -1,12 +1,22 @@
+import 'dart:convert';
+
+import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
+
+import '../../core/config/app_config.dart';
 import '../../core/network/api_client.dart';
 import '../../core/network/api_endpoints.dart';
+import '../../core/storage/secure_storage.dart';
 import '../../domain/entities/chat.dart';
 import '../../domain/repositories/messaging_repository.dart';
 import '../models/chat_model.dart';
 
 class MessagingRepositoryImpl implements MessagingRepository {
   final ApiClient _api;
-  MessagingRepositoryImpl({ApiClient? api}) : _api = api ?? ApiClient();
+  final SecureStorageService _storage;
+  MessagingRepositoryImpl({ApiClient? api, SecureStorageService? storage})
+      : _api = api ?? ApiClient(),
+        _storage = storage ?? SecureStorageService();
 
   @override
   Future<List<Chat>> listChats() async {
@@ -48,5 +58,47 @@ class MessagingRepositoryImpl implements MessagingRepository {
       body: {'type': 'direct', 'member_ids': [targetUserId]},
     );
     return ChatModel.fromJson(res);
+  }
+
+  @override
+  Future<Chat> createGroupChat({
+    required String name,
+    required List<String> memberIds,
+  }) async {
+    final res = await _api.post(
+      ApiEndpoints.chats,
+      body: {'type': 'group', 'name': name, 'member_ids': memberIds},
+    );
+    return ChatModel.fromJson(res);
+  }
+
+  @override
+  Future<ChatMessage> sendAttachment({
+    required String chatId,
+    required List<int> bytes,
+    required String filename,
+    required String mimeType,
+  }) async {
+    // RF-27 — Upload multipart vai pelo gateway (multipart proxy stream-friendly).
+    final uri = Uri.parse(
+        '${AppConfig.apiBaseUrl}${ApiEndpoints.chatMessages(chatId)}');
+    final token = await _storage.getAccessToken();
+    if (token == null) throw Exception('Sessão expirada — faça login.');
+
+    final mime = MediaType.parse(mimeType);
+    final req = http.MultipartRequest('POST', uri)
+      ..headers['Authorization'] = 'Bearer $token'
+      ..files.add(http.MultipartFile.fromBytes(
+        'file',
+        bytes,
+        filename: filename,
+        contentType: mime,
+      ));
+    final streamed = await req.send();
+    final body = await streamed.stream.bytesToString();
+    if (streamed.statusCode >= 200 && streamed.statusCode < 300) {
+      return ChatMessageModel.fromJson(jsonDecode(body) as Map<String, dynamic>);
+    }
+    throw Exception('Upload falhou (${streamed.statusCode}): $body');
   }
 }

@@ -1,11 +1,12 @@
 import { Module } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
 import { ConfigModule } from '@nestjs/config';
-import { DatabaseModule, RedisModule, JwtAuthGuard, JwtStrategy } from '@interaedu/shared';
+import { DatabaseModule, RedisModule, JwtAuthGuard, JwtStrategy, AuditModule } from '@interaedu/shared';
 import { ProfileModule } from './profile/profile.module';
 import { SkillsModule } from './skills/skills.module';
 import { ConnectionsModule } from './connections/connections.module';
 import { EventsModule } from './events/events.module';
+import { BlocksModule } from './blocks/blocks.module';
 
 @Module({
   imports: [
@@ -16,6 +17,8 @@ import { EventsModule } from './events/events.module';
     SkillsModule,
     ConnectionsModule,
     EventsModule,
+    BlocksModule,
+    AuditModule,
   ],
   controllers: [],
   providers: [

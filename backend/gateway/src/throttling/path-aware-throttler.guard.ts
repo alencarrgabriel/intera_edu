@@ -48,7 +48,9 @@ export class PathAwareThrottlerGuard extends ThrottlerGuard {
   ): Promise<boolean> {
     const req = context.switchToHttp().getRequest();
     const path: string = req?.path ?? '';
-    const effectiveLimit = this.isAuthPath(path) ? 10 : limit;
+    // Demo: /auth = 60/min, demais = 600/min (vem do default).
+    // Em produção, voltar para 10 em /auth.
+    const effectiveLimit = this.isAuthPath(path) ? 60 : limit;
     return super.handleRequest(
       context,
       effectiveLimit,

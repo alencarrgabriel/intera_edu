@@ -238,6 +238,10 @@ export class PostsService {
     };
   }
 
+  /// RN-03 — Exploração Forçada: garante que ≥20% do feed global vem de
+  /// instituições diferentes da do viewer, mesmo que haja conteúdo local
+  /// "mais novo". É o algoritmo que sustenta a tese central do produto
+  /// (quebrar silos institucionais).
   private async getGlobalFeed(user: JwtPayload, cursorDate: Date | null, limit: number, authToken: string) {
     const externalCount = Math.max(1, Math.ceil(limit * 0.2));
     const localCount = Math.max(0, limit - externalCount);

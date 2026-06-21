@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 /// Avatar circular com inicial do nome como fallback.
-/// Centraliza o padrão `CircleAvatar + initials` duplicado em múltiplas telas.
+/// Se a [imageUrl] falha em carregar, automaticamente mostra a inicial.
 class UserAvatar extends StatelessWidget {
   final String? name;
   final String? imageUrl;
@@ -21,21 +21,24 @@ class UserAvatar extends StatelessWidget {
         ? name!.trim()[0].toUpperCase()
         : '?';
 
+    final initialsChild = Text(
+      initial,
+      style: TextStyle(
+        color: colors.onPrimaryContainer,
+        fontWeight: FontWeight.bold,
+        fontSize: radius * 0.8,
+      ),
+    );
+
+    final hasUrl = imageUrl != null && imageUrl!.isNotEmpty;
     return CircleAvatar(
       radius: radius,
       backgroundColor: colors.primaryContainer,
-      backgroundImage:
-          (imageUrl != null && imageUrl!.isNotEmpty) ? NetworkImage(imageUrl!) : null,
-      child: (imageUrl == null || imageUrl!.isEmpty)
-          ? Text(
-              initial,
-              style: TextStyle(
-                color: colors.onPrimaryContainer,
-                fontWeight: FontWeight.bold,
-                fontSize: radius * 0.8,
-              ),
-            )
-          : null,
+      // `foregroundImage` permite ter o initials como fallback automático
+      // quando o NetworkImage falha em carregar (vs `backgroundImage` que
+      // deixa o círculo vazio em caso de erro).
+      foregroundImage: hasUrl ? NetworkImage(imageUrl!) : null,
+      child: initialsChild,
     );
   }
 }
