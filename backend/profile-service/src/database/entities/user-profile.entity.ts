@@ -4,6 +4,7 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
+  Index,
 } from 'typeorm';
 
 export type PrivacyLevel = 'public' | 'local_only' | 'private';
@@ -18,6 +19,10 @@ export class UserProfile {
 
   @Column({ name: 'email', type: 'varchar', length: 255, nullable: true })
   email?: string | null;
+
+  @Index({ unique: true, where: '"handle" IS NOT NULL' })
+  @Column({ name: 'handle', type: 'varchar', length: 48, nullable: true })
+  handle?: string | null;
 
   @Column({ name: 'full_name', type: 'varchar', length: 255 })
   fullName: string;

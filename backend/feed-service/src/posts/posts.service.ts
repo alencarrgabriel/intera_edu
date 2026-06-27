@@ -1,11 +1,16 @@
 import { Injectable, Logger, NotFoundException, ForbiddenException, ConflictException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, IsNull } from 'typeorm';
+import { Repository, IsNull, In } from 'typeorm';
 import { JwtPayload, RedisService } from '@interaedu/shared';
 import { PostEntity } from '../database/entities/post.entity';
 import { ReactionEntity, ReactionType } from '../database/entities/reaction.entity';
 import { CommentEntity } from '../database/entities/comment.entity';
 import { CreatePostDto } from './dto/create-post.dto';
+import { TagsService } from '../tags/tags.service';
+import { MentionsService } from '../mentions/mentions.service';
+import { BookmarksService } from '../bookmarks/bookmarks.service';
+import { GroupsService } from '../groups/groups.service';
+import { extractHashtags } from '../tags/tag-utils';
 
 const PROFILE_SERVICE_URL = process.env.PROFILE_SERVICE_URL ?? 'http://profile-service:3002';
 
@@ -29,6 +34,10 @@ export class PostsService {
     @InjectRepository(CommentEntity)
     private readonly commentRepo: Repository<CommentEntity>,
     private readonly redis: RedisService,
+    private readonly tagsService: TagsService,
+    private readonly mentionsService: MentionsService,
+    private readonly bookmarksService: BookmarksService,
+    private readonly groupsService: GroupsService,
   ) {}
 
   /** Batch-fetch author profiles from profile-service. Returns id→profile map. */
@@ -70,18 +79,44 @@ export class PostsService {
     return response;
   }
 
-  async create(dto: CreatePostDto, user: JwtPayload) {
+  async create(dto: CreatePostDto, user: JwtPayload, authToken = '') {
+    const groupId = (dto as any).group_id ?? null;
+    if (groupId) {
+      await this.groupsService.assertMember(groupId, user.sub);
+    }
     const post = await this.postRepo.save({
       authorId: user.sub,
       institutionId: user.institution_id,
+      groupId,
       content: dto.content,
       scope: dto.scope ?? 'global',
       mediaUrls: dto.media_urls ?? null,
     });
 
-    // Best-effort cache invalidation
-    await this.invalidateFeedCaches(user.institution_id);
+    // Parse hashtags + mentions (best-effort, async-ish)
+    const slugs = extractHashtags(dto.content ?? '');
+    if (slugs.length) {
+      this.tagsService.attachToPost(post.id, slugs).catch((e) =>
+        this.logger.warn(`Tag attach failed: ${(e as Error).message}`),
+      );
+    }
+    this.mentionsService.process(
+      'post',
+      post.id,
+      dto.content ?? '',
+      {
+        authorId: user.sub,
+        excerpt: (dto.content ?? '').slice(0, 100),
+        link: `/posts/${post.id}`,
+      },
+      authToken,
+    );
 
+    if (groupId) {
+      await this.groupsService.incrementPostCount(groupId, 1);
+    }
+
+    await this.invalidateFeedCaches(user.institution_id);
     return { id: post.id };
   }
 
@@ -176,7 +211,7 @@ export class PostsService {
     };
   }
 
-  async addComment(postId: string, dto: any, userId: string) {
+  async addComment(postId: string, dto: any, userId: string, authToken = '') {
     const post = await this.postRepo.findOne({ where: { id: postId, deletedAt: IsNull() } });
     if (!post) throw new NotFoundException('Post not found');
 
@@ -193,6 +228,18 @@ export class PostsService {
     post.commentCount += 1;
     await this.postRepo.save(post);
 
+    this.mentionsService.process(
+      'comment',
+      comment.id,
+      content,
+      {
+        authorId: userId,
+        excerpt: content.slice(0, 100),
+        link: `/posts/${postId}#comment-${comment.id}`,
+      },
+      authToken,
+    );
+
     await this.invalidateFeedCaches(post.institutionId);
     return { id: comment.id };
   }
@@ -202,6 +249,7 @@ export class PostsService {
       .createQueryBuilder('p')
       .where('p.deleted_at IS NULL')
       .andWhere('p.institution_id = :inst', { inst: user.institution_id })
+      .andWhere('p.group_id IS NULL')
       .orderBy('p.created_at', 'DESC')
       .take(limit + 1);
 
@@ -219,18 +267,56 @@ export class PostsService {
         .where('p.deleted_at IS NULL')
         .andWhere('p.scope = :scope', { scope: 'global' })
         .andWhere('p.institution_id <> :inst', { inst: user.institution_id })
+        .andWhere('p.group_id IS NULL')
         .orderBy('p.created_at', 'DESC')
         .take(5 - page.length)
         .getMany();
       finalPage = [...page, ...fill];
     }
 
-    const [viewerReactions, profiles] = await Promise.all([
-      this.fetchViewerReactions(finalPage.map((p) => p.id), user.sub),
+    const ids = finalPage.map((p) => p.id);
+    const [viewerReactions, profiles, bookmarks] = await Promise.all([
+      this.fetchViewerReactions(ids, user.sub),
       this.enrichWithProfiles(finalPage.map((p) => p.authorId), authToken),
+      this.bookmarksService.listIdsForViewer(ids, user.sub),
     ]);
     return {
-      data: finalPage.map((p) => this.toPostResponse(p, viewerReactions.get(p.id), profiles.get(p.authorId))),
+      data: finalPage.map((p) =>
+        this.toPostResponse(p, viewerReactions.get(p.id), profiles.get(p.authorId), bookmarks.has(p.id)),
+      ),
+      pagination: {
+        cursor: hasMore ? this.encodeCursor(page[page.length - 1]?.createdAt) : null,
+        has_more: hasMore,
+      },
+    };
+  }
+
+  /// Posts em escopo de um grupo específico.
+  async getGroupFeed(groupId: string, cursor: string, limit: number, user: JwtPayload, authToken: string) {
+    await this.groupsService.assertMember(groupId, user.sub);
+    const take = Math.min(Math.max(limit || 20, 1), 50);
+    const cursorDate = this.decodeCursor(cursor);
+    const qb = this.postRepo
+      .createQueryBuilder('p')
+      .where('p.deleted_at IS NULL')
+      .andWhere('p.group_id = :gid', { gid: groupId })
+      .orderBy('p.created_at', 'DESC')
+      .take(take + 1);
+    if (cursorDate) qb.andWhere('p.created_at < :cursor', { cursor: cursorDate.toISOString() });
+
+    const rows = await qb.getMany();
+    const hasMore = rows.length > take;
+    const page = rows.slice(0, take);
+    const ids = page.map((p) => p.id);
+    const [viewerReactions, profiles, bookmarks] = await Promise.all([
+      this.fetchViewerReactions(ids, user.sub),
+      this.enrichWithProfiles(page.map((p) => p.authorId), authToken),
+      this.bookmarksService.listIdsForViewer(ids, user.sub),
+    ]);
+    return {
+      data: page.map((p) =>
+        this.toPostResponse(p, viewerReactions.get(p.id), profiles.get(p.authorId), bookmarks.has(p.id)),
+      ),
       pagination: {
         cursor: hasMore ? this.encodeCursor(page[page.length - 1]?.createdAt) : null,
         has_more: hasMore,
@@ -284,7 +370,12 @@ export class PostsService {
     };
   }
 
-  private toPostResponse(p: PostEntity, viewerReaction?: string | null, profile?: ProfileSummary) {
+  private toPostResponse(
+    p: PostEntity,
+    viewerReaction?: string | null,
+    profile?: ProfileSummary,
+    isBookmarked = false,
+  ) {
     return {
       id: p.id,
       author: {
@@ -294,12 +385,14 @@ export class PostsService {
         avatar_url: profile?.avatar_url ?? null,
         course: profile?.course ?? null,
       },
+      group_id: p.groupId ?? null,
       content: p.content,
       scope: p.scope,
       media_urls: p.mediaUrls ?? [],
       reaction_count: p.reactionCount,
       comment_count: p.commentCount,
       user_reaction: viewerReaction ?? null,
+      is_bookmarked: isBookmarked,
       created_at: p.createdAt.toISOString(),
     };
   }

@@ -7,6 +7,7 @@ import '../../../core/router/app_router.dart';
 import '../../../core/utils/validators.dart';
 import '../../../core/widgets/gradient_button.dart';
 import '../../../domain/repositories/auth_repository.dart';
+import '../../../core/widgets/app_snackbar.dart';
 
 class OtpScreen extends StatefulWidget {
   final String email;
@@ -42,8 +43,7 @@ class _OtpScreenState extends State<OtpScreen> {
       });
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(e.toString())));
+      AppSnackbar.error(context, e);
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -58,8 +58,7 @@ class _OtpScreenState extends State<OtpScreen> {
       );
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(e.toString())));
+      AppSnackbar.error(context, e);
     }
   }
 

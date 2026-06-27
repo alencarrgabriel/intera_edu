@@ -6,6 +6,7 @@ import '../../../core/di/service_locator.dart';
 import '../../../domain/entities/user.dart';
 import '../../../domain/repositories/profile_repository.dart';
 import '../notifiers/profile_notifier.dart';
+import '../../../core/widgets/app_snackbar.dart';
 
 class EditProfileScreen extends StatefulWidget {
   final User profile;
@@ -21,6 +22,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   late final TextEditingController _nameCtrl;
   late final TextEditingController _bioCtrl;
   late final TextEditingController _courseCtrl;
+  late final TextEditingController _handleCtrl;
   int? _period;
   String _privacyLevel = 'local_only';
   bool _isLoading = false;
@@ -41,6 +43,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     _nameCtrl = TextEditingController(text: p.fullName);
     _bioCtrl = TextEditingController(text: p.bio ?? '');
     _courseCtrl = TextEditingController(text: p.course ?? '');
+    _handleCtrl = TextEditingController(text: p.handle ?? '');
     _period = p.period;
     _privacyLevel = p.privacyLevel;
     _selectedSkillIds = p.skills.map((s) => s.id).toSet();
@@ -53,6 +56,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     _nameCtrl.dispose();
     _bioCtrl.dispose();
     _courseCtrl.dispose();
+    _handleCtrl.dispose();
     super.dispose();
   }
 
@@ -76,6 +80,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     }
     setState(() => _isLoading = true);
     try {
+      final handle = _handleCtrl.text
+          .trim()
+          .toLowerCase()
+          .replaceAll(RegExp(r'[^a-z0-9_]'), '_');
       await context.read<ProfileNotifier>().update({
         'full_name': _nameCtrl.text.trim(),
         'bio': _bioCtrl.text.trim(),
@@ -83,13 +91,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         'period': _period,
         'privacy_level': _privacyLevel,
         'skill_ids': _selectedSkillIds.toList(),
+        if (handle.isNotEmpty) 'handle': handle,
       });
       if (!mounted) return;
       context.pop();
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(e.toString())));
+      AppSnackbar.error(context, e);
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -125,6 +133,19 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             ),
           ),
           const SizedBox(height: 16),
+
+          // Handle (@usuario) — usado em menções e busca por handle
+          TextFormField(
+            controller: _handleCtrl,
+            decoration: const InputDecoration(
+              labelText: 'Handle (@usuário)',
+              hintText: 'apenas letras, números e _',
+              prefixIcon: Icon(Icons.alternate_email),
+              helperText: 'É como te procuram em @menções.',
+            ),
+            maxLength: 32,
+          ),
+          const SizedBox(height: 8),
 
           // Bio
           TextFormField(

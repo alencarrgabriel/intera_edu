@@ -1,0 +1,11 @@
+name: file_picker
+description: Vendored stub of file_picker package — Android-only, no web support.
+version: 8.1.7
+environment:
+  sdk: ^3.10.0
+  flutter: ">=3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  image_picker: ^1.0.7

@@ -6,6 +6,7 @@ import '../../../core/router/app_router.dart';
 import '../../../core/utils/validators.dart';
 import '../../../core/widgets/gradient_button.dart';
 import '../../../domain/repositories/auth_repository.dart';
+import '../../../core/widgets/app_snackbar.dart';
 
 /// RF-06 — Tela "Esqueci minha senha" em 2 passos:
 /// 1. Pede e-mail → backend dispara OTP
@@ -46,8 +47,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       );
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(e.toString())));
+      AppSnackbar.error(context, e);
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -69,8 +69,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       context.go(AppRoutes.login);
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(e.toString())));
+      AppSnackbar.error(context, e);
     } finally {
       if (mounted) setState(() => _loading = false);
     }

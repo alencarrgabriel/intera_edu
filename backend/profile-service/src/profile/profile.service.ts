@@ -139,6 +139,13 @@ export class ProfileService {
     if (dto.period !== undefined) user.period = dto.period;
     if (dto.privacy_level !== undefined) user.privacyLevel = dto.privacy_level;
     if (dto.avatar_url !== undefined) user.avatarUrl = dto.avatar_url;
+    if (dto.handle !== undefined && dto.handle && dto.handle !== user.handle) {
+      const taken = await this.userRepo.findOne({ where: { handle: dto.handle } });
+      if (taken && taken.id !== user.id) {
+        throw new ForbiddenException('Handle já em uso');
+      }
+      user.handle = dto.handle;
+    }
 
     await this.userRepo.save(user);
 
@@ -165,11 +172,37 @@ export class ProfileService {
       data: users.map((u) => ({
         id: u.id,
         full_name: u.fullName,
+        handle: u.handle ?? null,
         avatar_url: u.avatarUrl ?? null,
         course: u.course ?? null,
         institution_id: u.institutionId,
       })),
     };
+  }
+
+  /// Resolve uma lista de handles ('@usuario') para ids.
+  /// Usado por feed-service para criar notificações de mention.
+  async findManyByHandles(handles: string[]): Promise<any> {
+    if (!handles.length) return { data: [] };
+    const users = await this.userRepo.find({
+      where: handles.map((h) => ({ handle: h, deletedAt: IsNull() })),
+    });
+    return {
+      data: users.map((u) => ({
+        id: u.id,
+        handle: u.handle ?? null,
+        full_name: u.fullName,
+        avatar_url: u.avatarUrl ?? null,
+      })),
+    };
+  }
+
+  async findByHandle(handle: string, viewer: JwtPayload): Promise<any> {
+    const target = await this.userRepo.findOne({
+      where: { handle: handle.toLowerCase(), deletedAt: IsNull() },
+    });
+    if (!target) throw new NotFoundException('Profile not found');
+    return this.findByIdWithPrivacy(target.id, viewer);
   }
 
   /// RF-31 — Marca conta para exclusão. Anonymizaçao em 30 dias é executada
@@ -339,10 +372,16 @@ export class ProfileService {
       ? await this.skillRepo.find({ where: { id: In(userSkills.map((us) => us.skillId)) } })
       : [];
 
+    if (!user.handle) {
+      user.handle = await this.generateUniqueHandle(user.fullName, user.id);
+      await this.userRepo.save(user);
+    }
+
     return {
       data: {
         id: user.id,
         email: user.email ?? '',
+        handle: user.handle ?? null,
         full_name: user.fullName,
         bio: user.bio ?? null,
         course: user.course ?? null,
@@ -368,11 +407,31 @@ export class ProfileService {
 
     return {
       id: user.id,
+      handle: user.handle ?? null,
       full_name: user.fullName,
       course: user.course ?? null,
       institution: { id: institution.id, name: institution.name, slug: institution.slug },
       skills: skills.map((s) => ({ id: s.id, name: s.name, category: s.category })),
       avatar_url: user.avatarUrl ?? null,
     };
+  }
+
+  /// Gera handle único a partir do nome (ex. "Maria Silva" -> "maria_silva").
+  /// Em caso de colisão acrescenta um sufixo curto do uuid.
+  private async generateUniqueHandle(fullName: string, userId: string): Promise<string> {
+    const base = fullName
+      .normalize('NFD')
+      .replace(/[̀-ͯ]/g, '')
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '_')
+      .replace(/^_+|_+$/g, '')
+      .slice(0, 32) || `user_${userId.slice(0, 6)}`;
+
+    for (let i = 0; i < 6; i++) {
+      const candidate = i === 0 ? base : `${base}_${userId.replace(/-/g, '').slice(0, 4 + i)}`;
+      const exists = await this.userRepo.findOne({ where: { handle: candidate } });
+      if (!exists) return candidate;
+    }
+    return `${base}_${userId.replace(/-/g, '').slice(0, 12)}`;
   }
 }

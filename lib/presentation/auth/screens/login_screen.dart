@@ -8,6 +8,7 @@ import '../../../core/design/app_tokens.dart';
 import '../../../core/router/app_router.dart';
 import '../../../core/utils/validators.dart';
 import '../../../core/widgets/gradient_button.dart';
+import '../../../core/widgets/app_snackbar.dart';
 
 /// Quando `false`, a tela de login esconde o bloco "OU / Continuar com Google".
 /// Coloque em `true` depois de configurar o Client ID em `web/index.html` e
@@ -47,8 +48,7 @@ class _LoginScreenState extends State<LoginScreen> {
           );
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(e.toString())));
+      AppSnackbar.error(context, e);
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -72,16 +72,10 @@ class _LoginScreenState extends State<LoginScreen> {
       // Usuário fechou o popup — silencioso
     } on GoogleSignInNotConfigured catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(e.toString()),
-          duration: const Duration(seconds: 6),
-        ),
-      );
+      AppSnackbar.warning(context, e.toString(), duration: const Duration(seconds: 6));
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(e.toString())));
+      AppSnackbar.error(context, e);
     } finally {
       if (mounted) setState(() => _googleLoading = false);
     }

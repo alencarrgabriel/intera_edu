@@ -6,6 +6,7 @@ import '../../../domain/repositories/feed_repository.dart';
 import '../../shared/relative_time_text.dart';
 import '../../shared/user_avatar.dart';
 import '../notifiers/feed_notifier.dart';
+import '../../../core/widgets/app_snackbar.dart';
 
 /// Bottom sheet com lista de comentários e campo para adicionar novos comentários.
 class CommentsSheet extends StatefulWidget {
@@ -99,8 +100,7 @@ class _CommentsSheetState extends State<CommentsSheet> {
       }
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(e.toString())));
+      AppSnackbar.error(context, e);
     } finally {
       if (mounted) setState(() => _sending = false);
     }

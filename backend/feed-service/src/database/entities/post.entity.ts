@@ -22,6 +22,10 @@ export class PostEntity {
   @Column({ name: 'institution_id', type: 'uuid' })
   institutionId: string;
 
+  @Index()
+  @Column({ name: 'group_id', type: 'uuid', nullable: true })
+  groupId?: string | null;
+
   @Column({ type: 'text' })
   content: string;
 

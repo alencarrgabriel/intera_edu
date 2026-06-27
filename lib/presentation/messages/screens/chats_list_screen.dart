@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../../core/design/app_tokens.dart';
 import '../../../core/router/app_router.dart';
+import '../../../core/widgets/app_drawer.dart';
 import '../../shared/user_avatar.dart';
 import '../notifiers/messages_notifier.dart';
 
@@ -43,6 +44,7 @@ class _ChatsListScreenState extends State<ChatsListScreen> {
     return Scaffold(
       backgroundColor: AppTokens.background,
       appBar: _StitchTopBar(),
+      drawer: const AppDrawer(),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => context.push(AppRoutes.createGroup),
         backgroundColor: AppTokens.primary,
@@ -174,9 +176,11 @@ class _StitchTopBar extends StatelessWidget implements PreferredSizeWidget {
       backgroundColor: AppTokens.background,
       surfaceTintColor: Colors.transparent,
       elevation: 0,
-      leading: IconButton(
-        onPressed: () {},
-        icon: const Icon(Icons.menu_rounded, color: AppTokens.onSurface),
+      leading: Builder(
+        builder: (ctx) => IconButton(
+          onPressed: () => Scaffold.of(ctx).openDrawer(),
+          icon: const Icon(Icons.menu_rounded, color: AppTokens.onSurface),
+        ),
       ),
       title: Text(
         'InteraEdu',

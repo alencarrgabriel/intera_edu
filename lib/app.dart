@@ -8,6 +8,12 @@ import 'core/theme/app_theme.dart';
 import 'presentation/feed/notifiers/feed_notifier.dart';
 import 'presentation/messages/notifiers/messages_notifier.dart';
 import 'presentation/profile/notifiers/profile_notifier.dart';
+import 'presentation/groups/notifiers/groups_notifier.dart';
+import 'presentation/groups/notifiers/group_detail_notifier.dart';
+import 'presentation/stories/notifiers/stories_notifier.dart';
+import 'presentation/bookmarks/notifiers/bookmarks_notifier.dart';
+import 'presentation/tags/notifiers/tags_notifier.dart';
+import 'presentation/suggestions/notifiers/suggestions_notifier.dart';
 
 class InteraEduApp extends StatelessWidget {
   const InteraEduApp({super.key});
@@ -47,6 +53,12 @@ class InteraEduApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => FeedNotifier(sl.feedRepo)),
         ChangeNotifierProvider(create: (_) => ProfileNotifier(sl.profileRepo)),
         ChangeNotifierProvider(create: (_) => MessagesNotifier(sl.messagingRepo)),
+        ChangeNotifierProvider(create: (_) => GroupsNotifier()),
+        ChangeNotifierProvider(create: (_) => GroupDetailNotifier()),
+        ChangeNotifierProvider(create: (_) => StoriesNotifier()),
+        ChangeNotifierProvider(create: (_) => BookmarksNotifier()),
+        ChangeNotifierProvider(create: (_) => TagsNotifier()),
+        ChangeNotifierProvider(create: (_) => SuggestionsNotifier()),
       ],
       // Builder necessário para que `createRouter` acesse os providers acima.
       child: Builder(

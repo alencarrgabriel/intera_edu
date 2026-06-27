@@ -5,6 +5,12 @@ import '../../data/repositories/connection_repository_impl.dart';
 import '../../data/repositories/feed_repository_impl.dart';
 import '../../data/repositories/messaging_repository_impl.dart';
 import '../../data/repositories/profile_repository_impl.dart';
+import '../../data/repositories/groups_repository.dart';
+import '../../data/repositories/materials_repository.dart';
+import '../../data/repositories/bookmarks_repository.dart';
+import '../../data/repositories/stories_repository.dart';
+import '../../data/repositories/tags_repository.dart';
+import '../../data/repositories/suggestions_repository.dart';
 import '../../domain/repositories/auth_repository.dart';
 import '../../domain/repositories/connection_repository.dart';
 import '../../domain/repositories/feed_repository.dart';
@@ -25,6 +31,12 @@ class ServiceLocator {
   FeedRepository? _feedRepo;
   ConnectionRepository? _connRepo;
   MessagingRepository? _messagingRepo;
+  GroupsRepository? _groupsRepo;
+  MaterialsRepository? _materialsRepo;
+  BookmarksRepository? _bookmarksRepo;
+  StoriesRepository? _storiesRepo;
+  TagsRepository? _tagsRepo;
+  SuggestionsRepository? _suggestionsRepo;
 
   SecureStorageService get storage => _storage ??= SecureStorageService();
   ApiClient get apiClient => _apiClient ??= ApiClient();
@@ -39,6 +51,18 @@ class ServiceLocator {
       _connRepo ??= ConnectionRepositoryImpl(api: apiClient);
   MessagingRepository get messagingRepo =>
       _messagingRepo ??= MessagingRepositoryImpl(api: apiClient);
+  GroupsRepository get groupsRepo =>
+      _groupsRepo ??= GroupsRepository(api: apiClient);
+  MaterialsRepository get materialsRepo =>
+      _materialsRepo ??= MaterialsRepository(api: apiClient, storage: storage);
+  BookmarksRepository get bookmarksRepo =>
+      _bookmarksRepo ??= BookmarksRepository(api: apiClient);
+  StoriesRepository get storiesRepo =>
+      _storiesRepo ??= StoriesRepository(api: apiClient, storage: storage);
+  TagsRepository get tagsRepo =>
+      _tagsRepo ??= TagsRepository(api: apiClient);
+  SuggestionsRepository get suggestionsRepo =>
+      _suggestionsRepo ??= SuggestionsRepository(api: apiClient);
 
   /// Substitui instâncias para testes. Chame `reset()` no `tearDown`.
   void registerOverrides({
@@ -65,6 +89,12 @@ class ServiceLocator {
     _feedRepo = null;
     _connRepo = null;
     _messagingRepo = null;
+    _groupsRepo = null;
+    _materialsRepo = null;
+    _bookmarksRepo = null;
+    _storiesRepo = null;
+    _tagsRepo = null;
+    _suggestionsRepo = null;
   }
 }
 

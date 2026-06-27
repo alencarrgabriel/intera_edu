@@ -60,6 +60,18 @@ export class ProfileController {
     return this.profileService.findManyByIds(idList);
   }
 
+  /** Internal lookup by handles — used to resolve @mentions. */
+  @Get('by-handles')
+  async byHandles(@Query('handles') handles: string) {
+    const list = (handles ?? '').split(',').map((h) => h.trim().toLowerCase()).filter(Boolean).slice(0, 50);
+    return this.profileService.findManyByHandles(list);
+  }
+
+  @Get('handle/:handle')
+  async getByHandle(@Param('handle') handle: string, @CurrentUser() user: JwtPayload) {
+    return this.profileService.findByHandle(handle, user);
+  }
+
   @Get(':id')
   async getProfile(@Param('id') id: string, @CurrentUser() user: JwtPayload) {
     return this.profileService.findByIdWithPrivacy(id, user);

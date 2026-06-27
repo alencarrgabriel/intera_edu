@@ -118,21 +118,18 @@ class FeedNotifier extends ChangeNotifier {
     if (idx == -1) return;
     final p = posts[idx];
     posts = List.of(posts);
-    posts[idx] = Post(
-      id: p.id,
-      authorId: p.authorId,
-      content: p.content,
-      scope: p.scope,
-      mediaUrls: p.mediaUrls,
-      reactionCount: p.reactionCount,
+    posts[idx] = p.copyWith(
       commentCount: (p.commentCount + delta).clamp(0, 999999),
-      userReaction: p.userReaction,
-      createdAt: p.createdAt,
-      authorName: p.authorName,
-      authorAvatarUrl: p.authorAvatarUrl,
-      authorCourse: p.authorCourse,
-      authorInstitutionName: p.authorInstitutionName,
     );
+    notifyListeners();
+  }
+
+  void toggleBookmarkLocal(String postId) {
+    final idx = posts.indexWhere((p) => p.id == postId);
+    if (idx < 0) return;
+    final p = posts[idx];
+    posts = List.of(posts);
+    posts[idx] = p.copyWith(isBookmarked: !p.isBookmarked);
     notifyListeners();
   }
 
@@ -142,10 +139,12 @@ class FeedNotifier extends ChangeNotifier {
       authorId: p.authorId,
       content: p.content,
       scope: p.scope,
+      groupId: p.groupId,
       mediaUrls: p.mediaUrls,
       reactionCount: (p.reactionCount + delta).clamp(0, 999999),
       commentCount: p.commentCount,
       userReaction: reactionType,
+      isBookmarked: p.isBookmarked,
       createdAt: p.createdAt,
       authorName: p.authorName,
       authorAvatarUrl: p.authorAvatarUrl,

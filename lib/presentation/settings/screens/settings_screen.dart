@@ -7,6 +7,7 @@ import '../../../core/auth/auth_notifier.dart';
 import '../../../core/design/app_tokens.dart';
 import '../../../core/di/service_locator.dart';
 import '../../../core/network/api_endpoints.dart';
+import '../../../core/widgets/app_snackbar.dart';
 
 /// RF-30, RF-31, RF-32 — Tela de Configurações com ações LGPD.
 class SettingsScreen extends StatefulWidget {
@@ -90,8 +91,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       );
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(e.toString())));
+      AppSnackbar.error(context, e);
     } finally {
       if (mounted) setState(() => _exporting = false);
     }
@@ -110,8 +110,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       );
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(e.toString())));
+      AppSnackbar.error(context, e);
     } finally {
       if (mounted) setState(() => _deleting = false);
     }
@@ -128,8 +127,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       await context.read<AuthNotifier>().logout();
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(e.toString())));
+      AppSnackbar.error(context, e);
     } finally {
       if (mounted) setState(() => _revoking = false);
     }

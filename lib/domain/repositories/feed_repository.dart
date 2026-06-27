@@ -15,9 +15,11 @@ abstract class FeedRepository {
   });
 
   /// RF-16 — Cria post com texto e (opcionalmente) um arquivo (PDF/img ≤10MB).
+  /// `groupId` torna o post visível apenas dentro do grupo (disciplina).
   Future<String> createPost({
     required String content,
     String scope = 'global',
+    String? groupId,
     List<int>? fileBytes,
     String? filename,
     String? mimeType,

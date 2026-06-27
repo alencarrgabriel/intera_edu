@@ -53,6 +53,7 @@ export class PostsController {
     @Body() dto: CreatePostDto,
     @UploadedFile() file: Express.Multer.File | undefined,
     @CurrentUser() user: JwtPayload,
+    @Headers('authorization') authToken: string,
   ) {
     if (file) {
       if (!ALLOWED_POST_MIME.has(file.mimetype)) {
@@ -65,7 +66,7 @@ export class PostsController {
       const url = await this.s3.putObject(key, file.buffer, file.mimetype);
       dto.media_urls = [...(dto.media_urls ?? []), url];
     }
-    return this.postsService.create(dto, user);
+    return this.postsService.create(dto, user, authToken ?? '');
   }
 
   @Get(':id')
@@ -98,7 +99,12 @@ export class PostsController {
   }
 
   @Post(':id/comments')
-  async addComment(@Param('id') id: string, @Body() dto: any, @CurrentUser() user: JwtPayload) {
-    return this.postsService.addComment(id, dto, user.sub);
+  async addComment(
+    @Param('id') id: string,
+    @Body() dto: any,
+    @CurrentUser() user: JwtPayload,
+    @Headers('authorization') authToken: string,
+  ) {
+    return this.postsService.addComment(id, dto, user.sub, authToken ?? '');
   }
 }

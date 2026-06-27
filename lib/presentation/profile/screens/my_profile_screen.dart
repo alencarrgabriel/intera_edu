@@ -5,6 +5,8 @@ import 'package:provider/provider.dart';
 import '../../../core/auth/auth_notifier.dart';
 import '../../../core/design/app_tokens.dart';
 import '../../../core/router/app_router.dart';
+import '../../../core/widgets/app_drawer.dart';
+import '../../../core/widgets/app_snackbar.dart';
 import '../../../domain/entities/post.dart';
 import '../../../domain/entities/user.dart';
 import '../../feed/notifiers/feed_notifier.dart';
@@ -65,9 +67,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
 
   Future<void> _pickAndUploadAvatar() async {
     if (_uploadingAvatar) return;
-    // Captura refs antes de awaits para sobreviver à mudança de aba.
     final notifier = context.read<ProfileNotifier>();
-    final messenger = ScaffoldMessenger.of(context);
     try {
       final result = await FilePicker.platform.pickFiles(
         type: FileType.image,
@@ -77,9 +77,11 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
       final file = result.files.first;
       final bytes = file.bytes;
       if (bytes == null) {
-        messenger.showSnackBar(
-          const SnackBar(content: Text('Não foi possível ler o arquivo')),
-        );
+        if (mounted) AppSnackbar.error(context, 'Não foi possível ler o arquivo.');
+        return;
+      }
+      if (bytes.length > 5 * 1024 * 1024) {
+        if (mounted) AppSnackbar.warning(context, 'Imagem maior que 5 MB. Escolha outra.');
         return;
       }
       final ext = (file.extension ?? '').toLowerCase();
@@ -95,13 +97,9 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
         filename: file.name,
         mimeType: mime,
       );
-      messenger.showSnackBar(
-        const SnackBar(content: Text('Avatar atualizado')),
-      );
+      if (mounted) AppSnackbar.success(context, 'Avatar atualizado!');
     } catch (e) {
-      messenger.showSnackBar(
-        SnackBar(content: Text(e.toString())),
-      );
+      if (mounted) AppSnackbar.error(context, e);
     } finally {
       if (mounted) setState(() => _uploadingAvatar = false);
     }
@@ -112,6 +110,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
     return Scaffold(
       backgroundColor: AppTokens.background,
       appBar: _ProfileTopBar(onSettings: () => context.push(AppRoutes.settings)),
+      drawer: const AppDrawer(),
       body: Consumer<ProfileNotifier>(
         builder: (_, notifier, __) {
           if (notifier.loading && notifier.profile == null) {
@@ -262,9 +261,11 @@ class _ProfileTopBar extends StatelessWidget implements PreferredSizeWidget {
       backgroundColor: AppTokens.background,
       surfaceTintColor: Colors.transparent,
       elevation: 0,
-      leading: IconButton(
-        onPressed: () {},
-        icon: const Icon(Icons.menu_rounded, color: AppTokens.onSurface),
+      leading: Builder(
+        builder: (ctx) => IconButton(
+          onPressed: () => Scaffold.of(ctx).openDrawer(),
+          icon: const Icon(Icons.menu_rounded, color: AppTokens.onSurface),
+        ),
       ),
       title: Center(
         child: Text(

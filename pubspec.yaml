@@ -19,7 +19,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+1
 
 environment:
-  sdk: ^3.11.0
+  sdk: ^3.10.0
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -41,8 +41,17 @@ dependencies:
   google_fonts: ^6.2.1
   shimmer: ^3.0.0
   socket_io_client: ^3.0.0
-  file_picker: ^8.1.7
+  file_picker: any
+  image_picker: ^1.0.7
   http_parser: ^4.0.2
+
+dependency_overrides:
+  file_picker:
+    path: vendor/file_picker
+  socket_io_client:
+    path: vendor/socket_io_client
+  socket_io_common:
+    path: vendor/socket_io_common
 
 dev_dependencies:
   flutter_test:

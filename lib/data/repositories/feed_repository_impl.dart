@@ -46,6 +46,7 @@ class FeedRepositoryImpl implements FeedRepository {
   Future<String> createPost({
     required String content,
     String scope = 'global',
+    String? groupId,
     List<int>? fileBytes,
     String? filename,
     String? mimeType,
@@ -54,11 +55,10 @@ class FeedRepositoryImpl implements FeedRepository {
       final res = await _api.post(ApiEndpoints.posts, body: {
         'content': content,
         'scope': scope,
+        if (groupId != null) 'group_id': groupId,
       });
       return res['id'] as String;
     }
-    // RF-16 — Caminho multipart quando há arquivo. Vai pelo gateway via
-    // multipart middleware stream-friendly.
     final uri = Uri.parse('${AppConfig.apiBaseUrl}${ApiEndpoints.posts}');
     final token = await _storage.getAccessToken();
     if (token == null) throw Exception('Sessão expirada — faça login.');
@@ -73,6 +73,7 @@ class FeedRepositoryImpl implements FeedRepository {
         filename: filename ?? 'arquivo',
         contentType: mime,
       ));
+    if (groupId != null) req.fields['group_id'] = groupId;
     final streamed = await req.send();
     final body = await streamed.stream.bytesToString();
     if (streamed.statusCode >= 200 && streamed.statusCode < 300) {

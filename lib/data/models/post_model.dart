@@ -6,10 +6,12 @@ class PostModel extends Post {
     required super.authorId,
     required super.content,
     super.scope,
+    super.groupId,
     super.mediaUrls,
     super.reactionCount,
     super.commentCount,
     super.userReaction,
+    super.isBookmarked,
     required super.createdAt,
     super.authorName,
     super.authorAvatarUrl,
@@ -25,6 +27,7 @@ class PostModel extends Post {
       authorId: (json['author_id'] ?? author?['id'] ?? '').toString(),
       content: (json['content'] ?? '').toString(),
       scope: (json['scope'] ?? 'global').toString(),
+      groupId: json['group_id'] as String?,
       mediaUrls: (json['media_urls'] as List<dynamic>?)
               ?.map((e) => e.toString())
               .toList() ??
@@ -32,6 +35,7 @@ class PostModel extends Post {
       reactionCount: (json['reaction_count'] as num?)?.toInt() ?? 0,
       commentCount: (json['comment_count'] as num?)?.toInt() ?? 0,
       userReaction: json['user_reaction'] as String?,
+      isBookmarked: json['is_bookmarked'] == true,
       createdAt: DateTime.parse(
           json['created_at'] as String? ?? DateTime.now().toIso8601String()),
       authorName: (author?['full_name'] ?? json['author_name'])?.toString(),
@@ -41,30 +45,6 @@ class PostModel extends Post {
       authorInstitutionName: (author?['institution']?['name'] ??
               json['institution_name'])
           ?.toString(),
-    );
-  }
-
-  PostModel copyWith({
-    bool? reacted,
-    int? reactionCount,
-    int? commentCount,
-  }) {
-    return PostModel(
-      id: id,
-      authorId: authorId,
-      content: content,
-      scope: scope,
-      mediaUrls: mediaUrls,
-      reactionCount: reactionCount ?? this.reactionCount,
-      commentCount: commentCount ?? this.commentCount,
-      userReaction: reacted != null
-          ? (reacted ? (userReaction ?? 'like') : null)
-          : userReaction,
-      createdAt: createdAt,
-      authorName: authorName,
-      authorAvatarUrl: authorAvatarUrl,
-      authorCourse: authorCourse,
-      authorInstitutionName: authorInstitutionName,
     );
   }
 }

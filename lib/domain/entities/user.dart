@@ -1,6 +1,7 @@
 class User {
   final String id;
   final String email;
+  final String? handle;
   final String fullName;
   final String? bio;
   final String? course;
@@ -14,6 +15,7 @@ class User {
   User({
     required this.id,
     required this.email,
+    this.handle,
     required this.fullName,
     this.bio,
     this.course,

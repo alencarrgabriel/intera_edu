@@ -4,12 +4,16 @@ import 'package:provider/provider.dart';
 import '../../../core/design/app_tokens.dart';
 import '../../../core/di/service_locator.dart';
 import '../../../core/router/app_router.dart';
+import '../../../core/widgets/app_drawer.dart';
 import '../../../domain/entities/post.dart';
 import '../notifiers/feed_notifier.dart';
 import '../widgets/post_card.dart';
 import '../widgets/post_card_skeleton.dart';
 import '../widgets/comments_sheet.dart';
 import '../../shared/error_retry_widget.dart';
+import '../../stories/notifiers/stories_notifier.dart';
+import '../../stories/widgets/stories_ring.dart';
+import '../../../core/widgets/app_snackbar.dart';
 
 /// Tela inicial "Início" no padrão Stitch: top bar com hamburger/marca/bell,
 /// segmented control Local/Global no corpo, lista de PostCards e FAB
@@ -33,6 +37,9 @@ class _FeedScreenState extends State<FeedScreen> {
     if (_notifier.posts.isEmpty && !_notifier.loading) {
       WidgetsBinding.instance.addPostFrameCallback((_) => _notifier.load());
     }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<StoriesNotifier>().load();
+    });
   }
 
   @override
@@ -77,7 +84,7 @@ class _FeedScreenState extends State<FeedScreen> {
         const SnackBar(content: Text('Denúncia enviada para revisão.')),
       );
     } catch (e) {
-      messenger.showSnackBar(SnackBar(content: Text(e.toString())));
+      AppSnackbar.error(context, e);
     }
   }
 
@@ -91,6 +98,7 @@ class _FeedScreenState extends State<FeedScreen> {
     return Scaffold(
       backgroundColor: AppTokens.background,
       appBar: const _StitchTopBar(),
+      drawer: const AppDrawer(),
       floatingActionButton: _GradientFab(onPressed: _goToCreatePost),
       body: Consumer<FeedNotifier>(
         builder: (_, notifier, __) {
@@ -98,6 +106,10 @@ class _FeedScreenState extends State<FeedScreen> {
             top: false,
             child: Column(
               children: [
+                const Padding(
+                  padding: EdgeInsets.only(top: 8),
+                  child: StoriesRing(),
+                ),
                 Padding(
                   padding:
                       const EdgeInsets.fromLTRB(20, 8, 20, 12),
@@ -198,9 +210,11 @@ class _StitchTopBar extends StatelessWidget implements PreferredSizeWidget {
       backgroundColor: AppTokens.background,
       surfaceTintColor: Colors.transparent,
       elevation: 0,
-      leading: IconButton(
-        onPressed: () {},
-        icon: const Icon(Icons.menu_rounded, color: AppTokens.onSurface),
+      leading: Builder(
+        builder: (ctx) => IconButton(
+          onPressed: () => Scaffold.of(ctx).openDrawer(),
+          icon: const Icon(Icons.menu_rounded, color: AppTokens.onSurface),
+        ),
       ),
       title: Text(
         'InteraEdu',

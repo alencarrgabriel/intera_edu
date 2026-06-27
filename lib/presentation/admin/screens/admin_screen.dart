@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../core/design/app_tokens.dart';
 import '../../../core/di/service_locator.dart';
 import '../../../core/network/api_endpoints.dart';
+import '../../../core/widgets/app_snackbar.dart';
 
 /// RF-37/38/39 — Tela de administração: cadastro de IES, gestão de domínios
 /// e fila de moderação. Acessível apenas se o usuário tem `role = 'admin'`.
@@ -45,8 +46,7 @@ class _AdminScreenState extends State<AdminScreen>
       });
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(e.toString())));
+      AppSnackbar.error(context, e);
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -106,8 +106,7 @@ class _AdminScreenState extends State<AdminScreen>
       await _load();
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(e.toString())));
+      AppSnackbar.error(context, e);
     }
   }
 
@@ -151,8 +150,7 @@ class _AdminScreenState extends State<AdminScreen>
       await _load();
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(e.toString())));
+      AppSnackbar.error(context, e);
     }
   }
 
@@ -163,8 +161,7 @@ class _AdminScreenState extends State<AdminScreen>
       await _load();
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(e.toString())));
+      AppSnackbar.error(context, e);
     }
   }
 

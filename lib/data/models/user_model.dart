@@ -4,6 +4,7 @@ class UserModel extends User {
   UserModel({
     required super.id,
     required super.email,
+    super.handle,
     required super.fullName,
     super.bio,
     super.course,
@@ -19,6 +20,7 @@ class UserModel extends User {
     return UserModel(
       id: json['id'] as String,
       email: json['email'] as String,
+      handle: json['handle'] as String?,
       fullName: json['full_name'] as String,
       bio: json['bio'] as String?,
       course: json['course'] as String?,
@@ -45,6 +47,7 @@ class UserModel extends User {
     return {
       'id': id,
       'email': email,
+      'handle': handle,
       'full_name': fullName,
       'bio': bio,
       'course': course,

@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:socket_io_client/socket_io_client.dart' as io;
-import '../config/app_config.dart';
+import '../config/server_config.dart';
 
 /// Manages the Socket.IO connection to the messaging-service WebSocket gateway.
 /// Exposes a broadcast stream of incoming messages so any listener can react.
@@ -18,7 +18,7 @@ class SocketService extends ChangeNotifier {
   void connect(String accessToken) {
     if (_socket != null && _connected) return;
 
-    final wsUrl = AppConfig.wsBaseUrl;
+    final wsUrl = ServerConfig.instance.wsBaseUrl;
 
     _socket = io.io(
       '$wsUrl/ws',

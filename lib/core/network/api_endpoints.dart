@@ -46,4 +46,42 @@ class ApiEndpoints {
   // Skills
   static const String skills = '/skills';
   static const String skillsSearch = '/skills/search';
+
+  // Grupos por disciplina
+  static const String disciplines = '/disciplines';
+  static const String groups = '/groups';
+  static String group(String id) => '/groups/$id';
+  static String groupJoin(String id) => '/groups/$id/join';
+  static String groupMembers(String id) => '/groups/$id/members';
+  static String groupFeed(String id) => '/groups/$id/feed';
+
+  // Banco de materiais
+  static String groupMaterials(String id) => '/groups/$id/materials';
+  static String materialDownload(String id) => '/materials/$id/download';
+  static String materialRate(String id) => '/materials/$id/rate';
+  static String material(String id) => '/materials/$id';
+
+  // Bookmarks
+  static const String bookmarks = '/bookmarks';
+  static String postBookmark(String id) => '/posts/$id/bookmark';
+
+  // Stories
+  static const String stories = '/stories';
+  static const String myStories = '/stories/mine';
+  static String storyView(String id) => '/stories/$id/view';
+  static String story(String id) => '/stories/$id';
+
+  // Tags
+  static const String tags = '/tags';
+  static const String trendingTags = '/tags/trending';
+  static const String myTags = '/tags/mine';
+  static String tag(String slug) => '/tags/$slug';
+  static String tagPosts(String slug) => '/tags/$slug/posts';
+  static String tagFollow(String slug) => '/tags/$slug/follow';
+
+  // Sugestões
+  static const String suggestions = '/users/me/suggestions';
+
+  // Mentions
+  static String userByHandle(String handle) => '/users/handle/$handle';
 }

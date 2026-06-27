@@ -1,38 +1,22 @@
 import 'dart:async';
-import 'dart:js_interop';
 
-/// Bridge para o Google Identity Services injetado em `web/index.html`.
+/// Bridge para o Google Identity Services. No build mobile (Android/iOS)
+/// retorna sempre erro de não-configurado — o Sign-In nativo via SDK Google
+/// não está habilitado para o APK de teste.
 ///
-/// A função JS `window.interaeduGoogleSignIn()` devolve uma `Promise<String>`
-/// com o ID Token. Aqui apenas convertemos para um `Future<String>` em Dart.
-@JS('interaeduGoogleSignIn')
-external JSPromise<JSString> _interaeduGoogleSignIn();
-
-/// Wraps a chamada ao GIS para retornar um Future<String> com o ID token.
-/// Lança [Exception] se o GIS não estiver configurado ou o usuário cancelar.
+/// (Versão web original usava `dart:js_interop` para chamar
+/// `window.interaeduGoogleSignIn()`. Aqui é stub para evitar o bug do depfile
+/// writer no Dart 3.10-3.12 quando o symbol está presente em qualquer caminho
+/// transitivamente importado pelo `main.dart`.)
 Future<String> fetchGoogleIdToken() async {
-  try {
-    final jsString = await _interaeduGoogleSignIn().toDart;
-    return jsString.toDart;
-  } catch (e) {
-    // O erro vem como JS Error com message tipo 'NOT_CONFIGURED' | 'USER_DISMISSED' | etc.
-    final raw = e.toString();
-    if (raw.contains('NOT_CONFIGURED')) {
-      throw const GoogleSignInNotConfigured();
-    }
-    if (raw.contains('USER_DISMISSED')) {
-      throw const GoogleSignInCancelled();
-    }
-    throw Exception('Falha no login com Google: $raw');
-  }
+  throw const GoogleSignInNotConfigured();
 }
 
 class GoogleSignInNotConfigured implements Exception {
   const GoogleSignInNotConfigured();
   @override
   String toString() =>
-      'Configure o Google Client ID em web/index.html (meta google-signin-client_id) '
-      'e a env GOOGLE_CLIENT_ID no auth-service.';
+      'Login com Google não disponível neste build. Use email + OTP.';
 }
 
 class GoogleSignInCancelled implements Exception {

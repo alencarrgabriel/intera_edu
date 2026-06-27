@@ -3,9 +3,11 @@ import 'package:go_router/go_router.dart';
 import '../../../core/design/app_tokens.dart';
 import '../../../core/di/service_locator.dart';
 import '../../../core/router/app_router.dart';
+import '../../../core/widgets/app_drawer.dart';
 import '../../../data/models/connection_model.dart';
 import '../../../domain/repositories/connection_repository.dart';
 import '../../shared/user_avatar.dart';
+import '../../../core/widgets/app_snackbar.dart';
 
 /// Tela "Suas Conexões" inspirada no protótipo Stitch:
 /// top bar centralizado, título grande + subtítulo, segmented control
@@ -59,8 +61,7 @@ class _ConnectionsScreenState extends State<ConnectionsScreen> {
       await _load();
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(e.toString())));
+      AppSnackbar.error(context, e);
     }
   }
 
@@ -70,8 +71,7 @@ class _ConnectionsScreenState extends State<ConnectionsScreen> {
       await _load();
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(e.toString())));
+      AppSnackbar.error(context, e);
     }
   }
 
@@ -80,6 +80,7 @@ class _ConnectionsScreenState extends State<ConnectionsScreen> {
     return Scaffold(
       backgroundColor: AppTokens.background,
       appBar: _StitchTopBar(),
+      drawer: const AppDrawer(),
       body: SafeArea(
         top: false,
         child: RefreshIndicator(
@@ -201,9 +202,11 @@ class _StitchTopBar extends StatelessWidget implements PreferredSizeWidget {
       backgroundColor: AppTokens.background,
       surfaceTintColor: Colors.transparent,
       elevation: 0,
-      leading: IconButton(
-        onPressed: () {},
-        icon: const Icon(Icons.menu_rounded, color: AppTokens.onSurface),
+      leading: Builder(
+        builder: (ctx) => IconButton(
+          onPressed: () => Scaffold.of(ctx).openDrawer(),
+          icon: const Icon(Icons.menu_rounded, color: AppTokens.onSurface),
+        ),
       ),
       title: Text(
         'InteraEdu',

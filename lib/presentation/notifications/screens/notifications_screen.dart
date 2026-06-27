@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../core/design/app_tokens.dart';
 import '../../../core/di/service_locator.dart';
 import '../../../core/network/api_endpoints.dart';
+import '../../../core/widgets/app_snackbar.dart';
 
 /// RF-35 — Central de notificações in-app.
 class NotificationsScreen extends StatefulWidget {
@@ -48,8 +49,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       await _load();
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(e.toString())));
+      AppSnackbar.error(context, e);
     }
   }
 

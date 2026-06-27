@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/services.dart';
+import 'package:go_router/go_router.dart';
 import '../../../core/design/app_tokens.dart';
+import '../../../core/di/service_locator.dart';
+import '../../../core/router/app_router.dart';
 import '../../../domain/entities/post.dart';
 import '../../shared/user_avatar.dart';
 
@@ -34,7 +38,7 @@ class _PostCardState extends State<PostCard>
     with SingleTickerProviderStateMixin {
   String? _reactionType; // null | 'like' | 'insightful' | 'support'
   late int _reactionCount;
-  bool _saved = false;
+  late bool _saved;
   late final AnimationController _likeController;
   late final Animation<double> _likeScale;
 
@@ -43,6 +47,7 @@ class _PostCardState extends State<PostCard>
     super.initState();
     _reactionType = widget.post.userReaction;
     _reactionCount = widget.post.reactionCount;
+    _saved = widget.post.isBookmarked;
     _likeController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 250),
@@ -60,6 +65,22 @@ class _PostCardState extends State<PostCard>
     if (oldWidget.post != widget.post) {
       _reactionType = widget.post.userReaction;
       _reactionCount = widget.post.reactionCount;
+      _saved = widget.post.isBookmarked;
+    }
+  }
+
+  Future<void> _toggleSave() async {
+    final wasSaved = _saved;
+    setState(() => _saved = !wasSaved);
+    HapticFeedback.lightImpact();
+    try {
+      if (wasSaved) {
+        await sl.bookmarksRepo.remove(widget.post.id);
+      } else {
+        await sl.bookmarksRepo.add(widget.post.id);
+      }
+    } catch (_) {
+      if (mounted) setState(() => _saved = wasSaved);
     }
   }
 
@@ -196,14 +217,8 @@ class _PostCardState extends State<PostCard>
           ),
           const SizedBox(height: 12),
 
-          // ── Conteúdo ────────────────────────────────────────────────────
-          Text(
-            post.content,
-            style: Theme.of(context)
-                .textTheme
-                .bodyMedium
-                ?.copyWith(height: 1.5, color: AppTokens.onSurface),
-          ),
+          // ── Conteúdo (com #tags e @mentions clicáveis) ─────────────────
+          _PostBody(content: post.content),
           const SizedBox(height: 14),
 
           // ── Ações: Curtir + Comentar (CTA) + Salvar ────────────────────
@@ -226,11 +241,62 @@ class _PostCardState extends State<PostCard>
               const SizedBox(width: 8),
               _SaveButton(
                 saved: _saved,
-                onTap: () => setState(() => _saved = !_saved),
+                onTap: _toggleSave,
               ),
             ],
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// Renderiza o texto do post realçando #tags e @mentions como links clicáveis.
+class _PostBody extends StatelessWidget {
+  const _PostBody({required this.content});
+  final String content;
+
+  static final _regex = RegExp(r'([#@][\p{L}\p{N}_.]{2,32})', unicode: true);
+
+  @override
+  Widget build(BuildContext context) {
+    final spans = <InlineSpan>[];
+    int last = 0;
+    for (final m in _regex.allMatches(content)) {
+      if (m.start > last) {
+        spans.add(TextSpan(text: content.substring(last, m.start)));
+      }
+      final token = m.group(0)!;
+      final isTag = token.startsWith('#');
+      spans.add(TextSpan(
+        text: token,
+        style: TextStyle(
+          color: AppTokens.primary,
+          fontWeight: FontWeight.w600,
+        ),
+        recognizer: TapGestureRecognizer()
+          ..onTap = () {
+            final rest = token.substring(1);
+            if (isTag) {
+              context.push(AppRoutes.tagDetail(rest.toLowerCase()));
+            } else {
+              // Resolve handle → user via push to /user/handle (resolves to user_id)
+              context.push('/u/${rest.toLowerCase()}');
+            }
+          },
+      ));
+      last = m.end;
+    }
+    if (last < content.length) {
+      spans.add(TextSpan(text: content.substring(last)));
+    }
+    return RichText(
+      text: TextSpan(
+        children: spans,
+        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              height: 1.5,
+              color: AppTokens.onSurface,
+            ),
       ),
     );
   }

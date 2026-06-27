@@ -6,6 +6,7 @@ import '../../../core/utils/validators.dart';
 import '../../../core/di/service_locator.dart';
 import '../../../core/widgets/gradient_button.dart';
 import '../../../domain/repositories/auth_repository.dart';
+import '../../../core/widgets/app_snackbar.dart';
 
 class ProfileSetupScreen extends StatefulWidget {
   final String temporaryToken;
@@ -66,7 +67,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
       await context.read<AuthNotifier>().checkSession();
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
+      AppSnackbar.error(context, e);
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }

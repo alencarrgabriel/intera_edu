@@ -7,6 +7,7 @@ import '../../../data/models/connection_model.dart';
 import '../../../domain/repositories/connection_repository.dart';
 import '../../shared/user_avatar.dart';
 import '../notifiers/messages_notifier.dart';
+import '../../../core/widgets/app_snackbar.dart';
 
 /// RF-24 — Criação de grupo de estudos com nome + seleção de membros
 /// a partir das conexões aceitas. Backend valida limite de 50 membros.
@@ -80,8 +81,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
       context.push('/chat/${chat.id}', extra: {'name': name, 'chatId': chat.id});
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(e.toString())));
+      AppSnackbar.error(context, e);
     } finally {
       if (mounted) setState(() => _creating = false);
     }

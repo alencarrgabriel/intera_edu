@@ -5,12 +5,14 @@ import 'package:provider/provider.dart';
 import '../../../core/design/app_tokens.dart';
 import '../../../core/di/service_locator.dart';
 import '../../../core/router/app_router.dart';
+import '../../../core/widgets/app_drawer.dart';
 import '../../../data/models/search_result_model.dart';
 import '../../../domain/entities/user.dart' show Skill;
 import '../../../domain/repositories/connection_repository.dart';
 import '../../../domain/repositories/profile_repository.dart';
 import '../../shared/user_avatar.dart';
 import '../notifiers/profile_notifier.dart';
+import '../../../core/widgets/app_snackbar.dart';
 
 /// Tela "Explorar" no padrão Stitch:
 /// top bar, busca pill, filtros visuais e seção "Pessoas sugeridas para você"
@@ -220,8 +222,7 @@ class _SearchScreenState extends State<SearchScreen> {
     } catch (e) {
       setState(() => _requesting.remove(userId));
       if (!mounted) return;
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(e.toString())));
+      AppSnackbar.error(context, e);
     }
   }
 
@@ -233,6 +234,7 @@ class _SearchScreenState extends State<SearchScreen> {
     return Scaffold(
       backgroundColor: AppTokens.background,
       appBar: _StitchTopBar(),
+      drawer: const AppDrawer(),
       body: SafeArea(
         top: false,
         child: RefreshIndicator(
@@ -373,9 +375,11 @@ class _StitchTopBar extends StatelessWidget implements PreferredSizeWidget {
       backgroundColor: AppTokens.background,
       surfaceTintColor: Colors.transparent,
       elevation: 0,
-      leading: IconButton(
-        onPressed: () {},
-        icon: const Icon(Icons.menu_rounded, color: AppTokens.onSurface),
+      leading: Builder(
+        builder: (ctx) => IconButton(
+          onPressed: () => Scaffold.of(ctx).openDrawer(),
+          icon: const Icon(Icons.menu_rounded, color: AppTokens.onSurface),
+        ),
       ),
       title: Text(
         'InteraEdu',

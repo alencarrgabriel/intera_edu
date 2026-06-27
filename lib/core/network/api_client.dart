@@ -4,22 +4,26 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import '../config/app_config.dart';
+import '../config/server_config.dart';
 import '../storage/secure_storage.dart';
 
 /// Callback chamado quando o refresh de token falha (ex: refresh expirado).
 typedef OnForceLogout = void Function();
 
 class ApiClient {
-  final String baseUrl;
+  /// Base URL fixa (passada na construção) — quando null, lemos sempre do
+  /// `ServerConfig.instance.apiBaseUrl` no momento da requisição. Isso permite
+  /// trocar de servidor em tempo de execução pelo `ServerSetupScreen`.
+  final String? _fixedBaseUrl;
   final SecureStorageService _storage = SecureStorageService();
   OnForceLogout? onForceLogout;
 
-  /// Completer para coordenar múltiplos refreshes simultâneos.
-  /// Garante que apenas uma chamada ao /auth/refresh ocorre por vez.
   Completer<bool>? _refreshCompleter;
 
-  ApiClient({String? baseUrl, this.onForceLogout})
-      : baseUrl = baseUrl ?? AppConfig.apiBaseUrl;
+  ApiClient({String? baseUrl, this.onForceLogout}) : _fixedBaseUrl = baseUrl;
+
+  String get baseUrl =>
+      _fixedBaseUrl ?? ServerConfig.instance.apiBaseUrl;
 
   Future<Map<String, String>> _headers({String? overrideToken}) async {
     final token = overrideToken ?? await _storage.getAccessToken();
@@ -133,9 +137,17 @@ class ApiClient {
     _log('${response.request?.method} ${response.request?.url} → ${response.statusCode}');
 
     if (response.statusCode >= 200 && response.statusCode < 300) {
-      if (response.body.isEmpty) return {};
+      // DELETE/PUT sem retorno: NestJS pode devolver "" (corpo vazio) ou
+      // "\"\"" (string vazia serializada). Ambos significam sucesso sem payload.
+      final body = response.body.trim();
+      if (body.isEmpty || body == '""') return {};
       try {
-        return jsonDecode(response.body) as Map<String, dynamic>;
+        final decoded = jsonDecode(body);
+        if (decoded == null) return {};
+        if (decoded is Map<String, dynamic>) return decoded;
+        // Resposta válida porém não é um objeto (ex.: lista raiz, string).
+        // Empacotamos sob a chave "result" para o chamador não quebrar.
+        return {'result': decoded};
       } on FormatException {
         throw ApiException(
             statusCode: 0,
@@ -267,6 +279,8 @@ class ApiException implements Exception {
   ApiException(
       {required this.statusCode, required this.message, required this.code});
 
+  /// `toString()` retorna apenas a mensagem amigável ao usuário,
+  /// pra ser seguro usar em SnackBars/Dialogs sem expor código interno.
   @override
-  String toString() => 'ApiException($statusCode): [$code] $message';
+  String toString() => message;
 }

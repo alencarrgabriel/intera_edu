@@ -1,10 +1,16 @@
-import { IsInt, IsOptional, IsString, IsUrl, MaxLength, Min, IsIn, IsArray } from 'class-validator';
+import { IsInt, IsOptional, IsString, IsUrl, MaxLength, Min, IsIn, IsArray, Matches } from 'class-validator';
 
 export class UpdateProfileDto {
   @IsOptional()
   @IsString()
   @MaxLength(255)
   full_name?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(48)
+  @Matches(/^[a-z0-9_]+$/, { message: 'handle só aceita a-z, 0-9 e _' })
+  handle?: string;
 
   @IsOptional()
   @IsString()

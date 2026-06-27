@@ -39,6 +39,23 @@ class ProfileRepositoryImpl implements ProfileRepository {
   }
 
   @override
+  Future<User> getUserByHandle(String handle) async {
+    final res = await _api.get(ApiEndpoints.userByHandle(handle));
+    return UserModel.fromJson(res['data'] as Map<String, dynamic>);
+  }
+
+  @override
+  Future<List<Map<String, dynamic>>> searchUsersByHandlePrefix(String prefix) async {
+    if (prefix.isEmpty) return const [];
+    final res = await _api.get(ApiEndpoints.searchUsers, queryParams: {
+      'q': prefix,
+    });
+    return ((res['data'] as List<dynamic>?) ?? const [])
+        .map((e) => Map<String, dynamic>.from(e as Map))
+        .toList();
+  }
+
+  @override
   Future<PaginatedResult<SearchResult>> searchUsers(
     String query, {
     String? skillId,

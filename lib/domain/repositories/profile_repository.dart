@@ -6,6 +6,8 @@ abstract class ProfileRepository {
   Future<User> getMyProfile();
   Future<User> updateProfile(Map<String, dynamic> data);
   Future<User> getUserProfile(String userId);
+  Future<User> getUserByHandle(String handle);
+  Future<List<Map<String, dynamic>>> searchUsersByHandlePrefix(String prefix);
   Future<PaginatedResult<SearchResult>> searchUsers(String query, {String? skillId, String? institutionId, String? course, String? cursor});
   Future<List<Skill>> getSkills({String? query});
 

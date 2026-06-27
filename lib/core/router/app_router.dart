@@ -10,6 +10,8 @@ import '../../presentation/main_screen.dart';
 import '../../presentation/admin/screens/admin_screen.dart';
 import '../../presentation/notifications/screens/notifications_screen.dart';
 import '../../presentation/settings/screens/settings_screen.dart';
+import '../../presentation/settings/screens/server_setup_screen.dart';
+import '../config/server_config.dart';
 import '../../presentation/messages/screens/chat_room_screen.dart';
 import '../../presentation/messages/screens/create_group_screen.dart';
 import '../../presentation/onboarding/screens/profile_setup_screen.dart';
@@ -17,8 +19,17 @@ import '../../presentation/onboarding/screens/welcome_screen.dart';
 import '../../presentation/profile/screens/connections_screen.dart';
 import '../../presentation/profile/screens/edit_profile_screen.dart';
 import '../../presentation/profile/screens/user_profile_screen.dart';
+import '../../presentation/profile/screens/handle_redirect_screen.dart';
+import '../../presentation/groups/screens/groups_list_screen.dart';
+import '../../presentation/groups/screens/group_detail_screen.dart';
+import '../../presentation/bookmarks/screens/bookmarks_screen.dart';
+import '../../presentation/tags/screens/tag_detail_screen.dart';
+import '../../presentation/stories/screens/story_viewer_screen.dart';
+import '../../presentation/stories/screens/create_story_screen.dart';
+import '../../presentation/suggestions/screens/suggestions_screen.dart';
 import '../auth/auth_notifier.dart';
 import '../../domain/entities/user.dart';
+import '../../domain/entities/story.dart';
 
 /// Transição padrão: fade + slide suave (250ms).
 CustomTransitionPage<T> _slideTransition<T>({
@@ -64,6 +75,17 @@ abstract class AppRoutes {
 
   static String userProfile(String userId) => '/user/$userId';
   static String chatRoom(String chatId) => '/chat/$chatId';
+
+  // Novas
+  static const groups = '/groups';
+  static const bookmarks = '/bookmarks';
+  static const suggestions = '/suggestions';
+  static const createStory = '/create-story';
+  static const serverSetup = '/server-setup';
+  static const initialServerSetup = '/welcome-server-setup';
+  static String groupDetail(String groupId) => '/group/$groupId';
+  static String tagDetail(String slug) => '/tag/$slug';
+  static String storyViewer(int initialIndex) => '/stories/view';
 }
 
 /// Cria o GoRouter com auth guard baseado no `AuthNotifier`.
@@ -74,10 +96,18 @@ GoRouter createRouter(BuildContext context) {
 
   return GoRouter(
     refreshListenable: auth,
-    initialLocation: AppRoutes.main,
+    initialLocation: ServerConfig.instance.needsSetup
+        ? AppRoutes.initialServerSetup
+        : AppRoutes.main,
     redirect: (ctx, state) {
       final status = auth.status;
       final loc = state.matchedLocation;
+
+      // Bloqueia tudo até o servidor ser configurado.
+      if (ServerConfig.instance.needsSetup &&
+          loc != AppRoutes.initialServerSetup) {
+        return AppRoutes.initialServerSetup;
+      }
 
       final authPaths = {
         AppRoutes.welcome,
@@ -89,10 +119,9 @@ GoRouter createRouter(BuildContext context) {
       };
       final isAuthPath = authPaths.contains(loc);
 
-      // Permite /profile-setup mesmo autenticado (etapa pós-registro)
       if (loc == AppRoutes.profileSetup) return null;
 
-      if (status == AuthStatus.loading) return null; // aguarda
+      if (status == AuthStatus.loading) return null;
       if (status == AuthStatus.unauthenticated && !isAuthPath) {
         return AppRoutes.welcome;
       }
@@ -108,8 +137,14 @@ GoRouter createRouter(BuildContext context) {
         routes: [
           GoRoute(
             path: 'create-post',
-            pageBuilder: (ctx, state) => _slideTransition(
-                context: ctx, state: state, child: const CreatePostScreen()),
+            pageBuilder: (ctx, state) {
+              final extra = state.extra as Map<String, dynamic>?;
+              final groupId = extra?['group_id'] as String?;
+              return _slideTransition(
+                  context: ctx,
+                  state: state,
+                  child: CreatePostScreen(groupId: groupId));
+            },
           ),
           GoRoute(
             path: 'edit-profile',
@@ -142,6 +177,11 @@ GoRouter createRouter(BuildContext context) {
                 context: ctx, state: state, child: const SettingsScreen()),
           ),
           GoRoute(
+            path: 'server-setup',
+            pageBuilder: (ctx, state) => _slideTransition(
+                context: ctx, state: state, child: const ServerSetupScreen()),
+          ),
+          GoRoute(
             path: 'admin',
             pageBuilder: (ctx, state) => _slideTransition(
                 context: ctx, state: state, child: const AdminScreen()),
@@ -159,6 +199,16 @@ GoRouter createRouter(BuildContext context) {
             },
           ),
           GoRoute(
+            path: 'u/:handle',
+            pageBuilder: (ctx, state) {
+              final handle = state.pathParameters['handle']!;
+              return _slideTransition(
+                  context: ctx,
+                  state: state,
+                  child: HandleRedirectScreen(handle: handle));
+            },
+          ),
+          GoRoute(
             path: 'chat/:chatId',
             pageBuilder: (ctx, state) {
               final chatId = state.pathParameters['chatId']!;
@@ -172,11 +222,63 @@ GoRouter createRouter(BuildContext context) {
                   ));
             },
           ),
+          GoRoute(
+            path: 'groups',
+            pageBuilder: (ctx, state) => _slideTransition(
+                context: ctx, state: state, child: const GroupsListScreen()),
+          ),
+          GoRoute(
+            path: 'group/:groupId',
+            pageBuilder: (ctx, state) {
+              final id = state.pathParameters['groupId']!;
+              return _slideTransition(
+                  context: ctx, state: state, child: GroupDetailScreen(groupId: id));
+            },
+          ),
+          GoRoute(
+            path: 'bookmarks',
+            pageBuilder: (ctx, state) => _slideTransition(
+                context: ctx, state: state, child: const BookmarksScreen()),
+          ),
+          GoRoute(
+            path: 'tag/:slug',
+            pageBuilder: (ctx, state) {
+              final slug = state.pathParameters['slug']!;
+              return _slideTransition(
+                  context: ctx, state: state, child: TagDetailScreen(slug: slug));
+            },
+          ),
+          GoRoute(
+            path: 'stories/view',
+            pageBuilder: (ctx, state) {
+              final extra = state.extra as Map<String, dynamic>?;
+              final groups = (extra?['groups'] as List<dynamic>?)?.cast<StoryGroup>() ?? const [];
+              final initial = (extra?['initialIndex'] as int?) ?? 0;
+              return _slideTransition(
+                  context: ctx,
+                  state: state,
+                  child: StoryViewerScreen(groups: groups, initialIndex: initial));
+            },
+          ),
+          GoRoute(
+            path: 'create-story',
+            pageBuilder: (ctx, state) => _slideTransition(
+                context: ctx, state: state, child: const CreateStoryScreen()),
+          ),
+          GoRoute(
+            path: 'suggestions',
+            pageBuilder: (ctx, state) => _slideTransition(
+                context: ctx, state: state, child: const SuggestionsScreen()),
+          ),
         ],
       ),
       GoRoute(
         path: AppRoutes.welcome,
         builder: (_, __) => const WelcomeScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.initialServerSetup,
+        builder: (_, __) => const ServerSetupScreen(isInitialSetup: true),
       ),
       GoRoute(
         path: AppRoutes.login,

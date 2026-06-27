@@ -9,6 +9,7 @@ import '../../../core/network/socket_service.dart';
 import '../../../domain/entities/chat.dart';
 import '../../shared/user_avatar.dart';
 import '../notifiers/chat_room_notifier.dart';
+import '../../../core/widgets/app_snackbar.dart';
 
 /// Tela de conversa no padrão Stitch:
 /// header com avatar + status online, separador de data, bolhas alinhadas
@@ -110,8 +111,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
       _scrollToBottom();
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(e.toString())));
+      AppSnackbar.error(context, e);
     }
   }
 

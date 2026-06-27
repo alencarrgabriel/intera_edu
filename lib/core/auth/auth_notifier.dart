@@ -17,9 +17,12 @@ class AuthNotifier extends ChangeNotifier {
   AuthStatus get status => _status;
   String? _userId;
   String? get userId => _userId;
+  List<String> _roles = const [];
+  List<String> get roles => _roles;
 
   bool get isLoading => _status == AuthStatus.loading;
   bool get isAuthenticated => _status == AuthStatus.authenticated;
+  bool get isAdmin => _roles.contains('admin');
 
   AuthNotifier({
     AuthRepository? authRepo,
@@ -38,6 +41,7 @@ class AuthNotifier extends ChangeNotifier {
       final accessToken = await _storage.getAccessToken();
       if (accessToken != null) {
         _userId = _decodeUserId(accessToken);
+        _roles = _decodeRoles(accessToken);
         _setStatus(AuthStatus.authenticated);
         return;
       }
@@ -61,6 +65,7 @@ class AuthNotifier extends ChangeNotifier {
     await _authRepo.login(email, password);
     final token = await _storage.getAccessToken();
     _userId = token != null ? _decodeUserId(token) : null;
+    _roles = token != null ? _decodeRoles(token) : const [];
     _setStatus(AuthStatus.authenticated);
   }
 
@@ -69,6 +74,7 @@ class AuthNotifier extends ChangeNotifier {
     await _authRepo.loginWithGoogleIdToken(idToken);
     final token = await _storage.getAccessToken();
     _userId = token != null ? _decodeUserId(token) : null;
+    _roles = token != null ? _decodeRoles(token) : const [];
     _setStatus(AuthStatus.authenticated);
   }
 
@@ -91,15 +97,23 @@ class AuthNotifier extends ChangeNotifier {
 
   /// Decodes the JWT payload to extract the user ID (`sub` claim).
   /// No signature verification needed — we already trust our own storage.
-  static String? _decodeUserId(String token) {
+  static String? _decodeUserId(String token) =>
+      _decodeClaim<String>(token, 'sub');
+
+  static List<String> _decodeRoles(String token) {
+    final raw = _decodeClaim<List<dynamic>>(token, 'roles');
+    if (raw == null) return const [];
+    return raw.map((e) => e.toString()).toList(growable: false);
+  }
+
+  static T? _decodeClaim<T>(String token, String key) {
     try {
       final parts = token.split('.');
       if (parts.length != 3) return null;
-      final payload = parts[1];
-      final normalized = base64.normalize(payload);
+      final normalized = base64.normalize(parts[1]);
       final decoded = utf8.decode(base64.decode(normalized));
       final json = jsonDecode(decoded) as Map<String, dynamic>;
-      return json['sub'] as String?;
+      return json[key] as T?;
     } catch (_) {
       return null;
     }

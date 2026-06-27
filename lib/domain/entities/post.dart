@@ -4,10 +4,12 @@ class Post {
   final String authorId;
   final String content;
   final String scope; // 'local' | 'global'
+  final String? groupId;
   final List<String> mediaUrls;
   final int reactionCount;
   final int commentCount;
   final String? userReaction; // 'like' | 'insightful' | 'support' | null
+  final bool isBookmarked;
   final DateTime createdAt;
 
   // Dados do autor (enriquecidos pelo profile-service)
@@ -21,16 +23,43 @@ class Post {
     required this.authorId,
     required this.content,
     this.scope = 'global',
+    this.groupId,
     this.mediaUrls = const [],
     this.reactionCount = 0,
     this.commentCount = 0,
     this.userReaction,
+    this.isBookmarked = false,
     required this.createdAt,
     this.authorName,
     this.authorAvatarUrl,
     this.authorCourse,
     this.authorInstitutionName,
   });
+
+  Post copyWith({
+    String? userReaction,
+    int? reactionCount,
+    int? commentCount,
+    bool? isBookmarked,
+  }) {
+    return Post(
+      id: id,
+      authorId: authorId,
+      content: content,
+      scope: scope,
+      groupId: groupId,
+      mediaUrls: mediaUrls,
+      reactionCount: reactionCount ?? this.reactionCount,
+      commentCount: commentCount ?? this.commentCount,
+      userReaction: userReaction ?? this.userReaction,
+      isBookmarked: isBookmarked ?? this.isBookmarked,
+      createdAt: createdAt,
+      authorName: authorName,
+      authorAvatarUrl: authorAvatarUrl,
+      authorCourse: authorCourse,
+      authorInstitutionName: authorInstitutionName,
+    );
+  }
 }
 
 /// Representa um comentário em uma publicação.

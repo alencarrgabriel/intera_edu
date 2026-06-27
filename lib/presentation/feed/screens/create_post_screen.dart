@@ -3,10 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/design/app_tokens.dart';
 import '../../../core/di/service_locator.dart';
+import '../../../core/widgets/app_snackbar.dart';
 import '../../../domain/repositories/feed_repository.dart';
+import '../../shared/mention_autocomplete_field.dart';
 
 class CreatePostScreen extends StatefulWidget {
-  const CreatePostScreen({super.key});
+  final String? groupId;
+  const CreatePostScreen({super.key, this.groupId});
 
   @override
   State<CreatePostScreen> createState() => _CreatePostScreenState();
@@ -31,9 +34,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     final f = result.files.first;
     if (f.size > 10 * 1024 * 1024) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Arquivo maior que 10 MB.')),
-      );
+      AppSnackbar.warning(context, 'Arquivo maior que 10 MB.');
       return;
     }
     final ext = (f.extension ?? '').toLowerCase();
@@ -63,6 +64,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
       await _feedRepo.createPost(
         content: content,
         scope: _scope,
+        groupId: widget.groupId,
         fileBytes: _attachment?.bytes,
         filename: _attachment?.name,
         mimeType: _attachmentMime,
@@ -72,8 +74,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
       context.pop(true);
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(e.toString())));
+      AppSnackbar.error(context, e);
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -139,18 +140,19 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
 
             const SizedBox(height: 16),
 
-            // Campo de texto
+            // Campo de texto (com autocomplete de @menções)
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: TextField(
+                child: MentionAutocompleteField(
                   controller: _controller,
                   maxLength: _maxChars,
                   maxLines: null,
                   expands: true,
                   textAlignVertical: TextAlignVertical.top,
                   decoration: const InputDecoration(
-                    hintText: 'No que você está trabalhando?\nCompartilhe um projeto, dúvida ou conquista...',
+                    hintText:
+                        'No que você está trabalhando?\nUse @ pra mencionar, # pra tag.',
                     border: InputBorder.none,
                     counterText: '',
                   ),

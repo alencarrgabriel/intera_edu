@@ -7,6 +7,7 @@ import { SkillsModule } from './skills/skills.module';
 import { ConnectionsModule } from './connections/connections.module';
 import { EventsModule } from './events/events.module';
 import { BlocksModule } from './blocks/blocks.module';
+import { SuggestionsModule } from './suggestions/suggestions.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { BlocksModule } from './blocks/blocks.module';
     ConnectionsModule,
     EventsModule,
     BlocksModule,
+    SuggestionsModule,
     AuditModule,
   ],
   controllers: [],

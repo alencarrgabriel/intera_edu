@@ -11,6 +11,7 @@ import '../../messages/notifiers/messages_notifier.dart';
 import '../../shared/error_retry_widget.dart';
 import '../../shared/profile_info_card.dart';
 import '../../shared/user_avatar.dart';
+import '../../../core/widgets/app_snackbar.dart';
 
 class UserProfileScreen extends StatefulWidget {
   final String userId;
@@ -71,8 +72,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
       setState(() => _connectionStatus = 'pending');
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(e.toString())));
+      AppSnackbar.error(context, e);
     } finally {
       if (mounted) setState(() => _connecting = false);
     }
@@ -96,8 +96,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
       });
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(e.toString())));
+      AppSnackbar.error(context, e);
     } finally {
       if (mounted) setState(() => _startingChat = false);
     }
@@ -142,8 +141,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                   );
                 } catch (e) {
                   if (!mounted) return;
-                  ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(e.toString())));
+                  AppSnackbar.error(context, e);
                 }
               }
             },
