@@ -41,7 +41,7 @@ class ChatRoomNotifier extends ChangeNotifier {
       chatId: chatId,
       senderId: data['sender_id'] as String? ?? '',
       content: data['content'] as String? ?? '',
-      createdAt: DateTime.tryParse(data['created_at'] as String? ?? '') ?? DateTime.now(),
+      createdAt: (DateTime.tryParse(data['created_at'] as String? ?? '') ?? DateTime.now()).toLocal(),
     );
     messages = [...messages, msg];
     notifyListeners();

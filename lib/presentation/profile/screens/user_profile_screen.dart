@@ -48,10 +48,15 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
     setState(() { _loading = true; _error = null; });
     try {
       final p = await _profileRepo.getUserProfile(widget.userId);
+      String connStatus = 'none';
+      try {
+        final connections = await _connRepo.listConnections();
+        final match = connections.where((c) => c.otherUser?.id == widget.userId);
+        if (match.isNotEmpty) connStatus = match.first.status;
+      } catch (_) {}
       setState(() {
         _profile = p;
-        // connection_status may come from the API as an extra field
-        // For now we keep 'none' as default
+        _connectionStatus = connStatus;
       });
     } catch (e) {
       final msg = e.toString();

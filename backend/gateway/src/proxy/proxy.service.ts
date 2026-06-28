@@ -17,6 +17,12 @@ export class ProxyService {
     };
   }
 
+  getServiceBaseUrl(service: string): string {
+    const url = this.serviceUrls[service];
+    if (!url) throw new Error(`Unknown service: ${service}`);
+    return url;
+  }
+
   async forward(
     service: string,
     method: string,

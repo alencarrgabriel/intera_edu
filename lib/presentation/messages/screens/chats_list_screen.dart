@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import '../../../core/auth/auth_notifier.dart';
 import '../../../core/design/app_tokens.dart';
 import '../../../core/router/app_router.dart';
 import '../../../core/widgets/app_drawer.dart';
@@ -52,12 +53,17 @@ class _ChatsListScreenState extends State<ChatsListScreen> {
         label: const Text('Novo grupo',
             style: TextStyle(color: Colors.white)),
       ),
-      body: Consumer<MessagesNotifier>(
-        builder: (context, notifier, _) {
+      body: Consumer2<MessagesNotifier, AuthNotifier>(
+        builder: (context, notifier, auth, _) {
+          final currentUserId = auth.userId;
           final filtered = notifier.chats.where((c) {
-            final memberName = c.members.isNotEmpty
-                ? (c.members.first.fullName ?? '')
-                : '';
+            final other = c.members.isEmpty
+                ? null
+                : c.members.firstWhere(
+                    (m) => m.userId != currentUserId,
+                    orElse: () => c.members.first,
+                  );
+            final memberName = other?.fullName ?? '';
             final name = c.name ?? (memberName.isEmpty ? 'Conversa' : memberName);
             return _query.isEmpty ||
                 name.toLowerCase().contains(_query.toLowerCase());
@@ -106,7 +112,10 @@ class _ChatsListScreenState extends State<ChatsListScreen> {
                 else
                   ...filtered.map((chat) {
                     final other = chat.members.isNotEmpty
-                        ? chat.members.first
+                        ? chat.members.firstWhere(
+                            (m) => m.userId != currentUserId,
+                            orElse: () => chat.members.first,
+                          )
                         : null;
                     final memberName = other?.fullName ?? '';
                     final name = chat.name ??

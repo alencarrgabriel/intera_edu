@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 
-import '../../core/config/app_config.dart';
+import '../../core/config/server_config.dart';
 import '../../core/network/api_client.dart';
 import '../../core/network/api_endpoints.dart';
 import '../../core/storage/secure_storage.dart';
@@ -81,7 +81,7 @@ class MessagingRepositoryImpl implements MessagingRepository {
   }) async {
     // RF-27 — Upload multipart vai pelo gateway (multipart proxy stream-friendly).
     final uri = Uri.parse(
-        '${AppConfig.apiBaseUrl}${ApiEndpoints.chatMessages(chatId)}');
+        '${ServerConfig.instance.apiBaseUrl}${ApiEndpoints.chatMessages(chatId)}');
     final token = await _storage.getAccessToken();
     if (token == null) throw Exception('Sessão expirada — faça login.');
 

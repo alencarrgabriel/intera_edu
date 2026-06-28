@@ -1,3 +1,4 @@
+import * as http from 'http';
 import { Controller, All, Req, Res, Logger } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { ProxyService } from './proxy.service';
@@ -58,6 +59,25 @@ export class ProxyController {
     return null;
   }
 
+  private pipeMultipart(req: Request, res: Response, serviceUrl: string, servicePath: string): void {
+    const target = new URL(`${serviceUrl}${servicePath}`);
+    const options: http.RequestOptions = {
+      hostname: target.hostname,
+      port: Number(target.port) || 80,
+      path: target.pathname + (target.search ?? ''),
+      method: req.method,
+      headers: { ...req.headers, host: target.host },
+    };
+    const upstream = http.request(options, (upRes) => {
+      res.writeHead(upRes.statusCode ?? 502, upRes.headers);
+      upRes.pipe(res, { end: true });
+    });
+    upstream.on('error', () =>
+      res.status(502).json({ error: { code: 'BAD_GATEWAY', message: 'Upstream error on multipart forward' } }),
+    );
+    req.pipe(upstream, { end: true });
+  }
+
   @All('*')
   async proxy(@Req() req: Request, @Res() res: Response) {
     // Strip the /api/v1 prefix explicitly just in case Express preserves it
@@ -82,6 +102,13 @@ export class ProxyController {
           timestamp: new Date().toISOString(),
         },
       });
+    }
+
+    const contentType = (req.headers['content-type'] ?? '').toLowerCase();
+    if (contentType.includes('multipart/form-data')) {
+      const serviceUrl = this.proxyService.getServiceBaseUrl(resolved.service);
+      this.pipeMultipart(req, res, serviceUrl, resolved.servicePath);
+      return;
     }
 
     try {

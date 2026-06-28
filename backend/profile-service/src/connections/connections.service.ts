@@ -1,4 +1,4 @@
-import { Injectable, ConflictException, NotFoundException, ForbiddenException } from '@nestjs/common';
+import { Injectable, ConflictException, NotFoundException, ForbiddenException, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, IsNull, In, DataSource } from 'typeorm';
 import { Connection } from '../database/entities/connection.entity';
@@ -8,6 +8,9 @@ import { UpdateConnectionDto } from './dto/update-connection.dto';
 
 @Injectable()
 export class ConnectionsService {
+  private readonly logger = new Logger(ConnectionsService.name);
+  private readonly messagingUrl = process.env.MESSAGING_SERVICE_URL ?? 'http://messaging-service:3004';
+
   constructor(
     @InjectRepository(Connection)
     private readonly connectionRepo: Repository<Connection>,
@@ -15,6 +18,18 @@ export class ConnectionsService {
     private readonly userRepo: Repository<UserProfile>,
     private readonly dataSource: DataSource,
   ) {}
+
+  private async notify(userId: string, type: string, title: string, body: string): Promise<void> {
+    try {
+      await fetch(`${this.messagingUrl}/notifications/internal`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user_id: userId, type, title, body }),
+      });
+    } catch (e) {
+      this.logger.warn(`Failed to send notification: ${e}`);
+    }
+  }
 
   async list(userId: string, status?: string, direction?: string) {
     const where: any[] = [];
@@ -112,6 +127,15 @@ export class ConnectionsService {
       status: 'pending',
     });
 
+    const requester = await this.userRepo.findOne({ where: { id: requesterId, deletedAt: IsNull() } });
+    const requesterName = requester?.fullName ?? 'Alguém';
+    void this.notify(
+      dto.addressee_id,
+      'connection_request',
+      'Nova solicitação de conexão',
+      `${requesterName} quer se conectar com você`,
+    );
+
     return connection;
   }
 
@@ -128,7 +152,20 @@ export class ConnectionsService {
 
     connection.status = dto.action === 'accept' ? 'accepted' : 'rejected';
     connection.respondedAt = new Date();
-    return this.connectionRepo.save(connection);
+    const saved = await this.connectionRepo.save(connection);
+
+    if (dto.action === 'accept') {
+      const accepter = await this.userRepo.findOne({ where: { id: actorId, deletedAt: IsNull() } });
+      const accepterName = accepter?.fullName ?? 'Alguém';
+      void this.notify(
+        connection.requesterId,
+        'connection_accepted',
+        'Conexão aceita',
+        `${accepterName} aceitou sua solicitação de conexão`,
+      );
+    }
+
+    return saved;
   }
 
   async remove(actorId: string, connectionId: string) {

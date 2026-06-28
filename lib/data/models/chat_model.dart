@@ -35,7 +35,7 @@ class ChatModel extends Chat {
       members: members,
       lastMessage: lastMessage,
       updatedAt: DateTime.parse(
-          json['updated_at'] as String? ?? DateTime.now().toIso8601String()),
+          json['updated_at'] as String? ?? DateTime.now().toIso8601String()).toLocal(),
     );
   }
 }
@@ -60,7 +60,7 @@ class ChatMessageModel extends ChatMessage {
       content: json['content'] as String? ?? '',
       fileUrl: json['file_url'] as String?,
       createdAt: DateTime.parse(
-          json['created_at'] as String? ?? DateTime.now().toIso8601String()),
+          json['created_at'] as String? ?? DateTime.now().toIso8601String()).toLocal(),
     );
   }
 }
