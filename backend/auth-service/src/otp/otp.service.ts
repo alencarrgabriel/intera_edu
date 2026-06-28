@@ -36,9 +36,41 @@ export class OtpService {
     });
     await this.redis.set(otpKey, otpData, OTP_TTL_SECONDS);
 
-    // TODO: Send email via SMTP/SendGrid
-    // For development, log the code
-    this.logger.log(`[DEV] OTP for ${email}: ${code}`);
+    await this.sendEmail(email, code, purpose);
+    this.logger.log(`OTP sent to ${email} (purpose: ${purpose})`);
+  }
+
+  private async sendEmail(email: string, code: string, purpose: string): Promise<void> {
+    const apiKey = process.env.RESEND_API_KEY;
+    const from = process.env.RESEND_FROM ?? 'InteraEdu <onboarding@resend.dev>';
+
+    if (!apiKey) {
+      this.logger.warn(`[DEV] OTP for ${email}: ${code}`);
+      return;
+    }
+
+    const subject = purpose === 'registration'
+      ? 'Seu código de verificação — InteraEdu'
+      : 'Redefinição de senha — InteraEdu';
+
+    const res = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        from,
+        to: [email],
+        subject,
+        html: `<p>Seu código: <strong style="font-size:24px;letter-spacing:4px">${code}</strong></p><p>Válido por 10 minutos.</p>`,
+      }),
+    });
+
+    if (!res.ok) {
+      const body = await res.text();
+      this.logger.error(`Resend error ${res.status}: ${body}`);
+    }
   }
 
   async verify(email: string, code: string, purpose: string): Promise<boolean> {

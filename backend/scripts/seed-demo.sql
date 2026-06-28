@@ -16,6 +16,8 @@ BEGIN;
 -- ── Auth credentials (senha = Demo@1234) ──────────────────────────────
 INSERT INTO auth.user_credentials (id, email, password_hash, institution_id, status)
 VALUES
+  ('937f0f0d-0a85-440b-8892-931fdd87964a', 'joao@ufmg.br',       '$2b$12$W7CJJU4s7ZytwRapfRyff.ZblM3Gg8x0JloZrUMi4wIUjHQnPM7iS', 'f2f1bd56-0bdd-406f-acc3-d0d7c21a027a', 'active'),
+  ('f5056024-2bdb-4e00-8116-4c71d48c5a87', 'maria@usp.br',       '$2b$12$W7CJJU4s7ZytwRapfRyff.ZblM3Gg8x0JloZrUMi4wIUjHQnPM7iS', '79e44efb-e085-4967-b858-89154ce949aa', 'active'),
   ('aaaa0001-1111-4111-8111-111111111111', 'ana@aluno.ufmg.br',   '$2b$12$W7CJJU4s7ZytwRapfRyff.ZblM3Gg8x0JloZrUMi4wIUjHQnPM7iS', 'f2f1bd56-0bdd-406f-acc3-d0d7c21a027a', 'active'),
   ('aaaa0002-2222-4222-8222-222222222222', 'pedro@aluno.ufmg.br', '$2b$12$W7CJJU4s7ZytwRapfRyff.ZblM3Gg8x0JloZrUMi4wIUjHQnPM7iS', 'f2f1bd56-0bdd-406f-acc3-d0d7c21a027a', 'active'),
   ('aaaa0003-3333-4333-8333-333333333333', 'julia@ufmg.br',       '$2b$12$W7CJJU4s7ZytwRapfRyff.ZblM3Gg8x0JloZrUMi4wIUjHQnPM7iS', 'f2f1bd56-0bdd-406f-acc3-d0d7c21a027a', 'active'),
@@ -27,6 +29,16 @@ ON CONFLICT (email) DO NOTHING;
 -- Preenche perfis dos usuários demo + atualiza os existentes (joao/maria)
 INSERT INTO profile.users (id, institution_id, email, full_name, bio, course, period, privacy_level, avatar_url, created_at, updated_at)
 VALUES
+  ('937f0f0d-0a85-440b-8892-931fdd87964a', 'f2f1bd56-0bdd-406f-acc3-d0d7c21a027a', 'joao@ufmg.br',
+   'João Oliveira', 'Aluno de CC · UFMG. Backend (Go, NestJS) e curioso por sistemas distribuídos.',
+   'Ciência da Computação', 3, 'public', 'https://i.pravatar.cc/300?img=33',
+   NOW() - INTERVAL '10 days', NOW() - INTERVAL '10 days'),
+
+  ('f5056024-2bdb-4e00-8116-4c71d48c5a87', '79e44efb-e085-4967-b858-89154ce949aa', 'maria@usp.br',
+   'Maria Silva', 'Biotecnologia · USP. Bioinformática e visualização de dados genômicos.',
+   'Biotecnologia', 5, 'public', 'https://i.pravatar.cc/300?img=44',
+   NOW() - INTERVAL '10 days', NOW() - INTERVAL '10 days'),
+
   ('aaaa0001-1111-4111-8111-111111111111', 'f2f1bd56-0bdd-406f-acc3-d0d7c21a027a', 'ana@aluno.ufmg.br',
    'Ana Carolina Silva',
    'Estudante de Ciência da Computação, interessada em ML aplicado à saúde. Procurando grupos de estudo entre instituições.',
@@ -69,24 +81,14 @@ ON CONFLICT (id) DO UPDATE SET
   privacy_level = EXCLUDED.privacy_level,
   avatar_url = EXCLUDED.avatar_url;
 
--- Garante que joao + maria também tenham avatar e dados completos
-UPDATE profile.users SET
-  full_name = 'João Oliveira',
-  bio = 'Aluno de CC · UFMG. Backend (Go, NestJS) e curioso por sistemas distribuídos.',
-  course = 'Ciência da Computação',
-  period = 3,
-  privacy_level = 'public',
-  avatar_url = 'https://i.pravatar.cc/300?img=33'
-WHERE id = '937f0f0d-0a85-440b-8892-931fdd87964a';
-
-UPDATE profile.users SET
-  full_name = 'Maria Silva',
-  bio = 'Biotecnologia · USP. Bioinformática e visualização de dados genômicos.',
-  course = 'Biotecnologia',
-  period = 5,
-  privacy_level = 'public',
-  avatar_url = 'https://i.pravatar.cc/300?img=44'
-WHERE id = 'f5056024-2bdb-4e00-8116-4c71d48c5a87';
+-- ── Skills (catálogo base) ────────────────────────────────────────────
+INSERT INTO profile.skills (id, name, slug, category) VALUES
+  ('1a02556a-cb5f-4d5d-9c8b-dafd1c6bb0b4', 'Python',          'python',          'programming'),
+  ('9926f0f4-2723-46ff-b4a6-82b5f3fc40c1', 'Machine Learning', 'machine-learning', 'data-science'),
+  ('cd65c6c3-0c5a-49e1-8d35-d1e1b85012af', 'Data Analysis',   'data-analysis',   'data-science'),
+  ('cb17375a-8814-4942-8de2-7adcf0f73e63', 'UI/UX',           'ui-ux',           'design'),
+  ('02a16a75-17f9-40f8-af67-e2d916d5f4ec', 'React',           'react',           'programming')
+ON CONFLICT DO NOTHING;
 
 -- ── Skills vinculadas a alguns usuários ───────────────────────────────
 -- Ana → Python, ML, Data Analysis

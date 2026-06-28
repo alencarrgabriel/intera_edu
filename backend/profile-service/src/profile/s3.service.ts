@@ -4,6 +4,7 @@ import {
   PutObjectCommand,
   HeadBucketCommand,
   CreateBucketCommand,
+  PutBucketPolicyCommand,
 } from '@aws-sdk/client-s3';
 
 /**
@@ -48,6 +49,24 @@ export class S3Service implements OnModuleInit {
       } catch (err) {
         this.logger.warn(`Não foi possível garantir o bucket: ${String(err)}`);
       }
+    }
+    await this.applyPublicReadPolicy();
+  }
+
+  private async applyPublicReadPolicy(): Promise<void> {
+    const policy = JSON.stringify({
+      Version: '2012-10-17',
+      Statement: [{
+        Effect: 'Allow',
+        Principal: { AWS: ['*'] },
+        Action: ['s3:GetObject'],
+        Resource: [`arn:aws:s3:::${this.bucket}/*`],
+      }],
+    });
+    try {
+      await this.client.send(new PutBucketPolicyCommand({ Bucket: this.bucket, Policy: policy }));
+    } catch (err) {
+      this.logger.warn(`Não foi possível definir política pública do bucket: ${String(err)}`);
     }
   }
 

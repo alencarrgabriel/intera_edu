@@ -4,6 +4,7 @@ import {
   PutObjectCommand,
   HeadBucketCommand,
   CreateBucketCommand,
+  PutBucketPolicyCommand,
 } from '@aws-sdk/client-s3';
 
 /// RF-27 — Wrapper S3/MinIO usado pelo messaging-service para anexar
@@ -36,12 +37,28 @@ export class S3Service implements OnModuleInit {
       await this.client.send(new HeadBucketCommand({ Bucket: this.bucket }));
     } catch {
       try {
-        await this.client.send(
-          new CreateBucketCommand({ Bucket: this.bucket }),
-        );
+        await this.client.send(new CreateBucketCommand({ Bucket: this.bucket }));
       } catch {
         // ignore — bucket criação concorrente OK
       }
+    }
+    await this.applyPublicReadPolicy();
+  }
+
+  private async applyPublicReadPolicy(): Promise<void> {
+    const policy = JSON.stringify({
+      Version: '2012-10-17',
+      Statement: [{
+        Effect: 'Allow',
+        Principal: { AWS: ['*'] },
+        Action: ['s3:GetObject'],
+        Resource: [`arn:aws:s3:::${this.bucket}/*`],
+      }],
+    });
+    try {
+      await this.client.send(new PutBucketPolicyCommand({ Bucket: this.bucket, Policy: policy }));
+    } catch (err) {
+      this.logger.warn(`Could not set bucket policy: ${String(err)}`);
     }
   }
 
