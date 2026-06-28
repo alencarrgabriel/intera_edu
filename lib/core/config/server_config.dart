@@ -26,9 +26,12 @@ class ServerConfig extends ChangeNotifier {
 
   bool get isInitialized => _initialized;
 
-  /// `true` quando o usuário ainda não definiu nenhum host.
+  /// `true` quando o usuário ainda não definiu nenhum host E nenhuma URL
+  /// foi embutida via --dart-define (build com URL fixa não precisa de setup).
   bool get needsSetup =>
-      _initialized && (_customHost == null || _customHost!.isEmpty);
+      _initialized &&
+      (_customHost == null || _customHost!.isEmpty) &&
+      AppConfig.apiBaseUrl == 'http://localhost:3000/api/v1';
 
   String get customHost => _customHost ?? '';
 

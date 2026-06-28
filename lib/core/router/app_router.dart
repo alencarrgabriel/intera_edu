@@ -108,6 +108,7 @@ GoRouter createRouter(BuildContext context) {
           loc != AppRoutes.initialServerSetup) {
         return AppRoutes.initialServerSetup;
       }
+      if (loc == AppRoutes.initialServerSetup) return null;
 
       final authPaths = {
         AppRoutes.welcome,
