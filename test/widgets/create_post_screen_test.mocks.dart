@@ -68,10 +68,18 @@ class MockFeedRepository extends _i1.Mock implements _i2.FeedRepository {
   _i3.Future<String> createPost({
     required String? content,
     String? scope = 'global',
+    String? groupId,
+    List<int>? fileBytes,
+    String? filename,
+    String? mimeType,
   }) =>
       (super.noSuchMethod(
             Invocation.method(#createPost, [], {
               #content: content,
+              #groupId: groupId,
+              #fileBytes: fileBytes,
+              #filename: filename,
+              #mimeType: mimeType,
               #scope: scope,
             }),
             returnValue: _i3.Future<String>.value(
@@ -79,6 +87,10 @@ class MockFeedRepository extends _i1.Mock implements _i2.FeedRepository {
                 this,
                 Invocation.method(#createPost, [], {
                   #content: content,
+              #groupId: groupId,
+              #fileBytes: fileBytes,
+              #filename: filename,
+              #mimeType: mimeType,
                   #scope: scope,
                 }),
               ),

@@ -47,3 +47,8 @@ Leitura obrigatória antes de abrir o IDE.
 - [README Raiz](../README.md) — Setup local do projeto (Docker + Flutter)
 - [Walkthrough da Refatoração](./walkthrough.md) — Histórico das alterações realizadas na documentação
 - [Walkthrough da Sessão de Implementação](./walkthrough-sessao.md) — Mudanças de código por feature (skin, M-07, B-02, B-05)
+
+## Entrega final
+
+- [Relatório técnico final](./entrega/relatorio-final.md): ADRs, re-especificação, evidências, avaliação crítica de IA e pendências.
+- [Matriz de entrega no README](../README.md#entrega-final--matriz-dos-itens-obrigatórios).

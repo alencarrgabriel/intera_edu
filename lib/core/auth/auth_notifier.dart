@@ -24,11 +24,9 @@ class AuthNotifier extends ChangeNotifier {
   bool get isAuthenticated => _status == AuthStatus.authenticated;
   bool get isAdmin => _roles.contains('admin');
 
-  AuthNotifier({
-    AuthRepository? authRepo,
-    SecureStorageService? storage,
-  })  : _authRepo = authRepo ?? AuthRepositoryImpl(),
-        _storage = storage ?? SecureStorageService();
+  AuthNotifier({AuthRepository? authRepo, SecureStorageService? storage})
+    : _authRepo = authRepo ?? AuthRepositoryImpl(),
+      _storage = storage ?? SecureStorageService();
 
   /// Verifica se há sessão válida ao iniciar o app.
   /// - Se tem access token → autenticado
@@ -39,7 +37,13 @@ class AuthNotifier extends ChangeNotifier {
 
     try {
       final accessToken = await _storage.getAccessToken();
-      if (accessToken != null) {
+      final expiresAt = accessToken == null
+          ? null
+          : _decodeClaim<num>(accessToken, 'exp');
+      if (accessToken != null &&
+          _decodeUserId(accessToken) != null &&
+          expiresAt != null &&
+          expiresAt > DateTime.now().millisecondsSinceEpoch / 1000) {
         _userId = _decodeUserId(accessToken);
         _roles = _decodeRoles(accessToken);
         _setStatus(AuthStatus.authenticated);
@@ -49,6 +53,12 @@ class AuthNotifier extends ChangeNotifier {
       final refreshToken = await _storage.getRefreshToken();
       if (refreshToken != null) {
         await _authRepo.refreshToken();
+        final token = await _storage.getAccessToken();
+        if (token == null || _decodeUserId(token) == null) {
+          throw StateError('Token de sessão inválido');
+        }
+        _userId = _decodeUserId(token);
+        _roles = _decodeRoles(token);
         _setStatus(AuthStatus.authenticated);
         return;
       }
@@ -57,6 +67,7 @@ class AuthNotifier extends ChangeNotifier {
       await _storage.clearTokens();
     }
 
+    await _storage.clearTokens();
     _setStatus(AuthStatus.unauthenticated);
   }
 
@@ -91,6 +102,10 @@ class AuthNotifier extends ChangeNotifier {
   }
 
   void _setStatus(AuthStatus status) {
+    if (status == AuthStatus.unauthenticated) {
+      _userId = null;
+      _roles = const [];
+    }
     _status = status;
     notifyListeners();
   }

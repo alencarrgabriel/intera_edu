@@ -1,0 +1,29 @@
+name: Validar testes Flutter
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  flutter-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.44.4'
+          channel: stable
+      - name: Resolver dependências no runner
+        run: flutter pub get
+      - name: Executar suíte e registrar resultado
+        run: flutter test --no-pub --machine > flutter-tests.jsonl
+      - name: Preservar evidência
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: flutter-tests-${{ github.sha }}
+          path: flutter-tests.jsonl
+          if-no-files-found: warn
