@@ -1,0 +1,88 @@
+
+> interaedu-backend@1.0.0 test:all
+> npm run test --workspaces --runInBand
+
+npm warn Unknown cli config "--runInBand". This will stop working in the next major version of npm.
+
+> @interaedu/shared@1.0.0 test
+> jest
+
+'jest' is not recognized as an internal or external command,
+operable program or batch file.
+npm error Lifecycle script `test` failed with error:
+npm error code 1
+npm error path C:\Users\USER\Downloads\Intera-oEdu\backend\shared
+npm error workspace @interaedu/shared@1.0.0
+npm error location C:\Users\USER\Downloads\Intera-oEdu\backend\shared
+npm error command failed
+npm error command C:\Windows\system32\cmd.exe /d /s /c jest
+
+
+> @interaedu/gateway@1.0.0 test
+> jest
+
+'jest' is not recognized as an internal or external command,
+operable program or batch file.
+npm error Lifecycle script `test` failed with error:
+npm error code 1
+npm error path C:\Users\USER\Downloads\Intera-oEdu\backend\gateway
+npm error workspace @interaedu/gateway@1.0.0
+npm error location C:\Users\USER\Downloads\Intera-oEdu\backend\gateway
+npm error command failed
+npm error command C:\Windows\system32\cmd.exe /d /s /c jest
+
+
+> @interaedu/auth-service@1.0.0 test
+> jest
+
+'jest' is not recognized as an internal or external command,
+operable program or batch file.
+npm error Lifecycle script `test` failed with error:
+npm error code 1
+npm error path C:\Users\USER\Downloads\Intera-oEdu\backend\auth-service
+npm error workspace @interaedu/auth-service@1.0.0
+npm error location C:\Users\USER\Downloads\Intera-oEdu\backend\auth-service
+npm error command failed
+npm error command C:\Windows\system32\cmd.exe /d /s /c jest
+
+
+> @interaedu/profile-service@1.0.0 test
+> jest
+
+'jest' is not recognized as an internal or external command,
+operable program or batch file.
+npm error Lifecycle script `test` failed with error:
+npm error code 1
+npm error path C:\Users\USER\Downloads\Intera-oEdu\backend\profile-service
+npm error workspace @interaedu/profile-service@1.0.0
+npm error location C:\Users\USER\Downloads\Intera-oEdu\backend\profile-service
+npm error command failed
+npm error command C:\Windows\system32\cmd.exe /d /s /c jest
+
+
+> @interaedu/feed-service@1.0.0 test
+> jest
+
+'jest' is not recognized as an internal or external command,
+operable program or batch file.
+npm error Lifecycle script `test` failed with error:
+npm error code 1
+npm error path C:\Users\USER\Downloads\Intera-oEdu\backend\feed-service
+npm error workspace @interaedu/feed-service@1.0.0
+npm error location C:\Users\USER\Downloads\Intera-oEdu\backend\feed-service
+npm error command failed
+npm error command C:\Windows\system32\cmd.exe /d /s /c jest
+
+
+> @interaedu/messaging-service@1.0.0 test
+> jest
+
+'jest' is not recognized as an internal or external command,
+operable program or batch file.
+npm error Lifecycle script `test` failed with error:
+npm error code 1
+npm error path C:\Users\USER\Downloads\Intera-oEdu\backend\messaging-service
+npm error workspace @interaedu/messaging-service@1.0.0
+npm error location C:\Users\USER\Downloads\Intera-oEdu\backend\messaging-service
+npm error command failed
+npm error command C:\Windows\system32\cmd.exe /d /s /c jest

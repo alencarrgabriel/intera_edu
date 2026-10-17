@@ -1,0 +1,11 @@
+{
+  "total": 36,
+  "aprovados": 36,
+  "falhas": 0,
+  "ignorados": 0,
+  "pendentes": 0,
+  "execucao_concluida": true,
+  "sucesso": true,
+  "linhas_cobertas": 1285,
+  "linhas_instrumentadas": 5841
+}

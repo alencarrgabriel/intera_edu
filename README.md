@@ -200,7 +200,37 @@ mas não impõe proteção por si só. Vincular issues aos PRs e usar milestone 
 sprint com objetivo, responsáveis, itens entregues e retrospectiva. Registrar apenas
 atividades reais; não criar evidências retroativas fictícias.
 
-### Evidência de testes sem usar este dispositivo
+### Testes automatizados realizados — 17/10/2026
+
+A suíte existente do aplicativo Flutter foi executada neste dispositivo com
+`flutter test --no-pub --coverage --machine`, usando diretamente o SDK local
+com acesso autorizado ao cache. A execução terminou com sucesso.
+
+| Verificação | Resultado |
+|---|---|
+| Testes Flutter de modelos (posts, comentários e conexões), autenticação, cliente HTTP, feed e widgets (aplicativo, login e criação de post) | **36 aprovados, 0 falhas, 0 ignorados e 0 incompletos** |
+| Cobertura de linhas instrumentadas do Flutter | **22,00% — 1.285 de 5.841 linhas** |
+| Tentativa de executar testes dos seis workspaces do backend | **Bloqueada:** Jest não instalado; nenhum arquivo de teste ou configuração Jest encontrado no backend |
+
+Evidências e resultados detalhados:
+
+- [Relatório completo, com cada caso executado](./reports/testes/relatorio.md).
+- [Resumo dos resultados em JSON](./reports/testes/resumo.json).
+- [Relatório JUnit XML](./reports/testes/junit.xml).
+- [Eventos da execução Flutter em JSONL](./reports/testes/flutter-final.jsonl).
+- [Cobertura em formato LCOV](./reports/testes/lcov.info).
+- [Saída da tentativa de testes do backend](./reports/testes/backend-output.txt).
+
+Para repetir a avaliação e gerar os relatórios, consulte as instruções no
+[relatório completo](./reports/testes/relatorio.md) e o
+[gerador de relatórios](./.scripts/gerar-relatorio-testes.py).
+A cobertura informada não representa cobertura de requisitos ou do backend.
+Não foram executados testes ponta a ponta com PostgreSQL, Redis, SMTP, MinIO
+ou dispositivos reais; a integração de cadastro/OTP, permissões, uploads e
+WebSocket ainda precisa de homologação. Esta rodada não reavaliou a análise
+estática global nem o build do backend.
+
+### Workflow remoto de testes Flutter
 
 Foi adicionado o workflow manual [Validar testes Flutter](./.github/workflows/validate-flutter.yml).
 Após publicar a alteração, um integrante pode executá-lo em GitHub Actions e
@@ -208,8 +238,8 @@ baixar o artefato `flutter-tests-<commit>` com o resultado em JSONL. As dependê
 serão resolvidas no runner remoto. O workflow foi escrito, mas **não foi disparado
 nem validado nesta etapa**, e não testa backend ou integração.
 
-O grupo deve entregar URL da execução, commit, resultado e log. A suíte anterior
-aprovou 36 testes, mas isso não substitui um test harness completo. Ainda faltam
+O grupo deve entregar URL da execução remota, commit, resultado e log. A execução
+local de 17/10/2026 aprovou 36 testes, conforme os relatórios acima. Ainda faltam
 evidências de integração de cadastro/OTP, permissões, uploads e WebSocket, além
 de testes e build do backend. A análise estática global continua com pendências.
 
