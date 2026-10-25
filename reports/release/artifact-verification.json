@@ -1,0 +1,20 @@
+{
+  "verified_at": "2026-10-25T15:34:22.560153+00:00",
+  "tested_sources_match_current_tree": true,
+  "web_build_exit_code": 0,
+  "compose_validation": "passed_config_only",
+  "container_runtime_validation": "pending",
+  "packaging_sha256": {
+    "compose.yaml": "fc71a43b4808d5886ee8aeac89c7d221865f57d40ad9632f2ec5b97589cb1785",
+    "compose.test.yaml": "dfae28b0e1b7e68d3701e38875357390070eb112cf5e493d690ecf464f1ae75b",
+    "Dockerfile.test": "babd62e4151eaa4336314e76f54f56fc2daba7f981ed0137676cbb4b35cdc067",
+    "Dockerfile.web": "036141862b458f23b0fa2b897476236c5562e2ad09efca6ceefa4feca48dcd68",
+    "backend/docker-compose.yml": "d9ffb7db636dee830f7c6822dd6d9abe35fe3852035891a77ed7d7c1082a069a",
+    "backend/auth-service/Dockerfile": "9df4f5a7eecb0c7a65ac68263ffdbc5c1f1ebe6edad120d1f7ffc361483fdbac",
+    "backend/feed-service/Dockerfile": "c885726eb6181a5d8933fc63991ac2f02dab1be136275e2d5f61b424faee542d",
+    "backend/gateway/Dockerfile": "265635ad23bf6690ec96b4b43487c384b53a7d4f672726928c6fb6f2d0fa108b",
+    "backend/messaging-service/Dockerfile": "648f72044d08be97376c40b9aa0329c48135b85435f17ac63a1577b703923d3d",
+    "backend/profile-service/Dockerfile": "038a8af806ba1f400a82ee193dab18fc95f64fab92050f42042ca5e94956b8b4",
+    "backend/storage/Dockerfile": "32d70e452a467f1165d48979962a34d8e46bbaa1aca29c2a057f6e3bb2c58a92"
+  }
+}

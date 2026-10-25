@@ -1,0 +1,932 @@
+[
+  {
+    "service": "profile-service",
+    "verb": "GET",
+    "route": "/health",
+    "public": true,
+    "parameters": "—",
+    "status": "200 (padrão Nest)",
+    "handler": "HealthController.health",
+    "source": "backend/shared/src/health.controller.ts"
+  },
+  {
+    "service": "feed-service",
+    "verb": "GET",
+    "route": "/health",
+    "public": true,
+    "parameters": "—",
+    "status": "200 (padrão Nest)",
+    "handler": "HealthController.health",
+    "source": "backend/shared/src/health.controller.ts"
+  },
+  {
+    "service": "messaging-service",
+    "verb": "GET",
+    "route": "/health",
+    "public": true,
+    "parameters": "—",
+    "status": "200 (padrão Nest)",
+    "handler": "HealthController.health",
+    "source": "backend/shared/src/health.controller.ts"
+  },
+  {
+    "service": "gateway",
+    "verb": "GET",
+    "route": "/health",
+    "public": false,
+    "parameters": "—",
+    "status": "200 (padrão Nest)",
+    "handler": "HealthController.health",
+    "source": "backend/gateway/src/health.controller.ts"
+  },
+  {
+    "service": "gateway",
+    "verb": "GET",
+    "route": "/health/ready",
+    "public": false,
+    "parameters": "—",
+    "status": "200 (padrão Nest)",
+    "handler": "HealthController.readiness",
+    "source": "backend/gateway/src/health.controller.ts"
+  },
+  {
+    "service": "gateway",
+    "verb": "ALL",
+    "route": "/*",
+    "public": false,
+    "parameters": "@Req() req: Request; @Res() res: Response",
+    "status": "200 (padrão Nest)",
+    "handler": "ProxyController.proxy",
+    "source": "backend/gateway/src/proxy/proxy.controller.ts"
+  },
+  {
+    "service": "auth-service",
+    "verb": "POST",
+    "route": "/auth/register",
+    "public": true,
+    "parameters": "@Body() dto: RegisterDto",
+    "status": "HttpStatus.ACCEPTED",
+    "handler": "AuthController.register",
+    "source": "backend/auth-service/src/auth/auth.controller.ts"
+  },
+  {
+    "service": "auth-service",
+    "verb": "POST",
+    "route": "/auth/verify-otp",
+    "public": true,
+    "parameters": "@Body() dto: VerifyOtpDto",
+    "status": "HttpStatus.OK",
+    "handler": "AuthController.verifyOtp",
+    "source": "backend/auth-service/src/auth/auth.controller.ts"
+  },
+  {
+    "service": "auth-service",
+    "verb": "POST",
+    "route": "/auth/complete-registration",
+    "public": true,
+    "parameters": "@Body() dto: CompleteRegistrationDto",
+    "status": "HttpStatus.CREATED",
+    "handler": "AuthController.completeRegistration",
+    "source": "backend/auth-service/src/auth/auth.controller.ts"
+  },
+  {
+    "service": "auth-service",
+    "verb": "POST",
+    "route": "/auth/login",
+    "public": true,
+    "parameters": "@Body() dto: LoginDto",
+    "status": "HttpStatus.OK",
+    "handler": "AuthController.login",
+    "source": "backend/auth-service/src/auth/auth.controller.ts"
+  },
+  {
+    "service": "auth-service",
+    "verb": "POST",
+    "route": "/auth/google",
+    "public": true,
+    "parameters": "@Body() dto: GoogleLoginDto",
+    "status": "HttpStatus.OK",
+    "handler": "AuthController.loginWithGoogle",
+    "source": "backend/auth-service/src/auth/auth.controller.ts"
+  },
+  {
+    "service": "auth-service",
+    "verb": "POST",
+    "route": "/auth/forgot-password",
+    "public": true,
+    "parameters": "@Body() dto: ForgotPasswordDto",
+    "status": "HttpStatus.ACCEPTED",
+    "handler": "AuthController.forgotPassword",
+    "source": "backend/auth-service/src/auth/auth.controller.ts"
+  },
+  {
+    "service": "auth-service",
+    "verb": "POST",
+    "route": "/auth/reset-password",
+    "public": true,
+    "parameters": "@Body() dto: ResetPasswordDto",
+    "status": "HttpStatus.OK",
+    "handler": "AuthController.resetPassword",
+    "source": "backend/auth-service/src/auth/auth.controller.ts"
+  },
+  {
+    "service": "auth-service",
+    "verb": "POST",
+    "route": "/auth/refresh",
+    "public": true,
+    "parameters": "@Body() dto: RefreshTokenDto",
+    "status": "HttpStatus.OK",
+    "handler": "AuthController.refresh",
+    "source": "backend/auth-service/src/auth/auth.controller.ts"
+  },
+  {
+    "service": "auth-service",
+    "verb": "POST",
+    "route": "/auth/logout",
+    "public": false,
+    "parameters": "@Body() dto: RefreshTokenDto",
+    "status": "HttpStatus.NO_CONTENT",
+    "handler": "AuthController.logout",
+    "source": "backend/auth-service/src/auth/auth.controller.ts"
+  },
+  {
+    "service": "auth-service",
+    "verb": "POST",
+    "route": "/auth/accept-terms",
+    "public": false,
+    "parameters": "@CurrentUser() user: JwtPayload",
+    "status": "HttpStatus.OK",
+    "handler": "AuthController.acceptTerms",
+    "source": "backend/auth-service/src/auth/auth.controller.ts"
+  },
+  {
+    "service": "auth-service",
+    "verb": "POST",
+    "route": "/auth/revoke-consent",
+    "public": false,
+    "parameters": "@CurrentUser() user: JwtPayload",
+    "status": "HttpStatus.OK",
+    "handler": "AuthController.revokeConsent",
+    "source": "backend/auth-service/src/auth/auth.controller.ts"
+  },
+  {
+    "service": "auth-service",
+    "verb": "GET",
+    "route": "/health",
+    "public": true,
+    "parameters": "—",
+    "status": "200 (padrão Nest)",
+    "handler": "HealthController.health",
+    "source": "backend/auth-service/src/health.controller.ts"
+  },
+  {
+    "service": "auth-service",
+    "verb": "GET",
+    "route": "/institutions",
+    "public": true,
+    "parameters": "—",
+    "status": "200 (padrão Nest)",
+    "handler": "InstitutionController.list",
+    "source": "backend/auth-service/src/institution/institution.controller.ts"
+  },
+  {
+    "service": "auth-service",
+    "verb": "POST",
+    "route": "/institutions",
+    "public": false,
+    "parameters": "@CurrentUser() user: JwtPayload; @Body() dto: { name: string; slug: string; domains: string[] }",
+    "status": "HttpStatus.CREATED",
+    "handler": "InstitutionController.create",
+    "source": "backend/auth-service/src/institution/institution.controller.ts"
+  },
+  {
+    "service": "auth-service",
+    "verb": "PATCH",
+    "route": "/institutions/:id/domains",
+    "public": false,
+    "parameters": "@CurrentUser() user: JwtPayload; @Param('id') id: string; @Body() body: { add?: string[]; remove?: string[] }",
+    "status": "200 (padrão Nest)",
+    "handler": "InstitutionController.patchDomains",
+    "source": "backend/auth-service/src/institution/institution.controller.ts"
+  },
+  {
+    "service": "profile-service",
+    "verb": "GET",
+    "route": "/users/me/blocks",
+    "public": false,
+    "parameters": "@CurrentUser() user: JwtPayload",
+    "status": "200 (padrão Nest)",
+    "handler": "BlocksController.list",
+    "source": "backend/profile-service/src/blocks/blocks.controller.ts"
+  },
+  {
+    "service": "profile-service",
+    "verb": "POST",
+    "route": "/users/me/blocks/:userId",
+    "public": false,
+    "parameters": "@Param('userId') blockedId: string; @CurrentUser() user: JwtPayload",
+    "status": "HttpStatus.CREATED",
+    "handler": "BlocksController.block",
+    "source": "backend/profile-service/src/blocks/blocks.controller.ts"
+  },
+  {
+    "service": "profile-service",
+    "verb": "DELETE",
+    "route": "/users/me/blocks/:userId",
+    "public": false,
+    "parameters": "@Param('userId') blockedId: string; @CurrentUser() user: JwtPayload",
+    "status": "HttpStatus.OK",
+    "handler": "BlocksController.unblock",
+    "source": "backend/profile-service/src/blocks/blocks.controller.ts"
+  },
+  {
+    "service": "profile-service",
+    "verb": "GET",
+    "route": "/connections",
+    "public": false,
+    "parameters": "@CurrentUser() user: JwtPayload; @Query('status') status?: string; @Query('direction') direction?: string",
+    "status": "200 (padrão Nest)",
+    "handler": "ConnectionsController.list",
+    "source": "backend/profile-service/src/connections/connections.controller.ts"
+  },
+  {
+    "service": "profile-service",
+    "verb": "POST",
+    "route": "/connections",
+    "public": false,
+    "parameters": "@CurrentUser() user: JwtPayload; @Body() dto: CreateConnectionDto",
+    "status": "201 (padrão Nest)",
+    "handler": "ConnectionsController.create",
+    "source": "backend/profile-service/src/connections/connections.controller.ts"
+  },
+  {
+    "service": "profile-service",
+    "verb": "PATCH",
+    "route": "/connections/:id",
+    "public": false,
+    "parameters": "@CurrentUser() user: JwtPayload; @Param('id') id: string; @Body() dto: UpdateConnectionDto",
+    "status": "200 (padrão Nest)",
+    "handler": "ConnectionsController.update",
+    "source": "backend/profile-service/src/connections/connections.controller.ts"
+  },
+  {
+    "service": "profile-service",
+    "verb": "DELETE",
+    "route": "/connections/:id",
+    "public": false,
+    "parameters": "@CurrentUser() user: JwtPayload; @Param('id') id: string",
+    "status": "200 (padrão Nest)",
+    "handler": "ConnectionsController.remove",
+    "source": "backend/profile-service/src/connections/connections.controller.ts"
+  },
+  {
+    "service": "profile-service",
+    "verb": "GET",
+    "route": "/users/me",
+    "public": false,
+    "parameters": "@CurrentUser() user: JwtPayload",
+    "status": "200 (padrão Nest)",
+    "handler": "ProfileController.getMyProfile",
+    "source": "backend/profile-service/src/profile/profile.controller.ts"
+  },
+  {
+    "service": "profile-service",
+    "verb": "PATCH",
+    "route": "/users/me",
+    "public": false,
+    "parameters": "@CurrentUser() user: JwtPayload; @Body() dto: UpdateProfileDto",
+    "status": "200 (padrão Nest)",
+    "handler": "ProfileController.updateMyProfile",
+    "source": "backend/profile-service/src/profile/profile.controller.ts"
+  },
+  {
+    "service": "profile-service",
+    "verb": "POST",
+    "route": "/users/me/avatar",
+    "public": false,
+    "parameters": "@CurrentUser() user: JwtPayload; @UploadedFile() file: Express.Multer.File",
+    "status": "201 (padrão Nest)",
+    "handler": "ProfileController.uploadAvatar",
+    "source": "backend/profile-service/src/profile/profile.controller.ts"
+  },
+  {
+    "service": "profile-service",
+    "verb": "DELETE",
+    "route": "/users/me",
+    "public": false,
+    "parameters": "@CurrentUser() user: JwtPayload",
+    "status": "200 (padrão Nest)",
+    "handler": "ProfileController.deleteMyAccount",
+    "source": "backend/profile-service/src/profile/profile.controller.ts"
+  },
+  {
+    "service": "profile-service",
+    "verb": "GET",
+    "route": "/users/me/data-export",
+    "public": false,
+    "parameters": "@CurrentUser() user: JwtPayload",
+    "status": "200 (padrão Nest)",
+    "handler": "ProfileController.requestDataExport",
+    "source": "backend/profile-service/src/profile/profile.controller.ts"
+  },
+  {
+    "service": "profile-service",
+    "verb": "GET",
+    "route": "/users/search",
+    "public": false,
+    "parameters": "@Query() query: any; @CurrentUser() user: JwtPayload",
+    "status": "200 (padrão Nest)",
+    "handler": "ProfileController.searchUsers",
+    "source": "backend/profile-service/src/profile/profile.controller.ts"
+  },
+  {
+    "service": "profile-service",
+    "verb": "GET",
+    "route": "/users/batch",
+    "public": false,
+    "parameters": "@Query('ids') ids: string",
+    "status": "200 (padrão Nest)",
+    "handler": "ProfileController.batchGet",
+    "source": "backend/profile-service/src/profile/profile.controller.ts"
+  },
+  {
+    "service": "profile-service",
+    "verb": "GET",
+    "route": "/users/by-handles",
+    "public": false,
+    "parameters": "@Query('handles') handles: string",
+    "status": "200 (padrão Nest)",
+    "handler": "ProfileController.byHandles",
+    "source": "backend/profile-service/src/profile/profile.controller.ts"
+  },
+  {
+    "service": "profile-service",
+    "verb": "GET",
+    "route": "/users/handle/:handle",
+    "public": false,
+    "parameters": "@Param('handle') handle: string; @CurrentUser() user: JwtPayload",
+    "status": "200 (padrão Nest)",
+    "handler": "ProfileController.getByHandle",
+    "source": "backend/profile-service/src/profile/profile.controller.ts"
+  },
+  {
+    "service": "profile-service",
+    "verb": "GET",
+    "route": "/users/:id",
+    "public": false,
+    "parameters": "@Param('id') id: string; @CurrentUser() user: JwtPayload",
+    "status": "200 (padrão Nest)",
+    "handler": "ProfileController.getProfile",
+    "source": "backend/profile-service/src/profile/profile.controller.ts"
+  },
+  {
+    "service": "profile-service",
+    "verb": "GET",
+    "route": "/skills",
+    "public": false,
+    "parameters": "@Query('category') category?: string",
+    "status": "200 (padrão Nest)",
+    "handler": "SkillsController.list",
+    "source": "backend/profile-service/src/skills/skills.controller.ts"
+  },
+  {
+    "service": "profile-service",
+    "verb": "GET",
+    "route": "/skills/search",
+    "public": false,
+    "parameters": "@Query('q') q: string",
+    "status": "200 (padrão Nest)",
+    "handler": "SkillsController.search",
+    "source": "backend/profile-service/src/skills/skills.controller.ts"
+  },
+  {
+    "service": "profile-service",
+    "verb": "GET",
+    "route": "/users/me/suggestions",
+    "public": false,
+    "parameters": "@CurrentUser() user: JwtPayload",
+    "status": "200 (padrão Nest)",
+    "handler": "SuggestionsController.list",
+    "source": "backend/profile-service/src/suggestions/suggestions.controller.ts"
+  },
+  {
+    "service": "feed-service",
+    "verb": "GET",
+    "route": "/bookmarks",
+    "public": false,
+    "parameters": "@CurrentUser() user: JwtPayload; @Headers('authorization') auth: string",
+    "status": "200 (padrão Nest)",
+    "handler": "BookmarksController.list",
+    "source": "backend/feed-service/src/bookmarks/bookmarks.controller.ts"
+  },
+  {
+    "service": "feed-service",
+    "verb": "POST",
+    "route": "/posts/:id/bookmark",
+    "public": false,
+    "parameters": "@Param('id') id: string; @CurrentUser() user: JwtPayload",
+    "status": "201 (padrão Nest)",
+    "handler": "BookmarksController.add",
+    "source": "backend/feed-service/src/bookmarks/bookmarks.controller.ts"
+  },
+  {
+    "service": "feed-service",
+    "verb": "DELETE",
+    "route": "/posts/:id/bookmark",
+    "public": false,
+    "parameters": "@Param('id') id: string; @CurrentUser() user: JwtPayload",
+    "status": "200 (padrão Nest)",
+    "handler": "BookmarksController.remove",
+    "source": "backend/feed-service/src/bookmarks/bookmarks.controller.ts"
+  },
+  {
+    "service": "feed-service",
+    "verb": "GET",
+    "route": "/disciplines",
+    "public": false,
+    "parameters": "@CurrentUser() user: JwtPayload; @Query('q') q?: string",
+    "status": "200 (padrão Nest)",
+    "handler": "GroupsController.listDisciplines",
+    "source": "backend/feed-service/src/groups/groups.controller.ts"
+  },
+  {
+    "service": "feed-service",
+    "verb": "POST",
+    "route": "/disciplines",
+    "public": false,
+    "parameters": "@Body() dto: any; @CurrentUser() user: JwtPayload",
+    "status": "201 (padrão Nest)",
+    "handler": "GroupsController.createDiscipline",
+    "source": "backend/feed-service/src/groups/groups.controller.ts"
+  },
+  {
+    "service": "feed-service",
+    "verb": "GET",
+    "route": "/groups",
+    "public": false,
+    "parameters": "@CurrentUser() user: JwtPayload; @Query('mine') mine?: string; @Query('q') q?: string",
+    "status": "200 (padrão Nest)",
+    "handler": "GroupsController.listGroups",
+    "source": "backend/feed-service/src/groups/groups.controller.ts"
+  },
+  {
+    "service": "feed-service",
+    "verb": "POST",
+    "route": "/groups",
+    "public": false,
+    "parameters": "@Body() dto: any; @CurrentUser() user: JwtPayload",
+    "status": "201 (padrão Nest)",
+    "handler": "GroupsController.createGroup",
+    "source": "backend/feed-service/src/groups/groups.controller.ts"
+  },
+  {
+    "service": "feed-service",
+    "verb": "GET",
+    "route": "/groups/:id",
+    "public": false,
+    "parameters": "@Param('id') id: string; @CurrentUser() user: JwtPayload",
+    "status": "200 (padrão Nest)",
+    "handler": "GroupsController.getGroup",
+    "source": "backend/feed-service/src/groups/groups.controller.ts"
+  },
+  {
+    "service": "feed-service",
+    "verb": "POST",
+    "route": "/groups/:id/join",
+    "public": false,
+    "parameters": "@Param('id') id: string; @CurrentUser() user: JwtPayload",
+    "status": "201 (padrão Nest)",
+    "handler": "GroupsController.joinGroup",
+    "source": "backend/feed-service/src/groups/groups.controller.ts"
+  },
+  {
+    "service": "feed-service",
+    "verb": "DELETE",
+    "route": "/groups/:id/join",
+    "public": false,
+    "parameters": "@Param('id') id: string; @CurrentUser() user: JwtPayload",
+    "status": "200 (padrão Nest)",
+    "handler": "GroupsController.leaveGroup",
+    "source": "backend/feed-service/src/groups/groups.controller.ts"
+  },
+  {
+    "service": "feed-service",
+    "verb": "GET",
+    "route": "/groups/:id/members",
+    "public": false,
+    "parameters": "@Param('id') id: string",
+    "status": "200 (padrão Nest)",
+    "handler": "GroupsController.listMembers",
+    "source": "backend/feed-service/src/groups/groups.controller.ts"
+  },
+  {
+    "service": "feed-service",
+    "verb": "GET",
+    "route": "/groups/:id/materials",
+    "public": false,
+    "parameters": "@Param('id') id: string; @CurrentUser() user: JwtPayload",
+    "status": "200 (padrão Nest)",
+    "handler": "MaterialsController.list",
+    "source": "backend/feed-service/src/materials/materials.controller.ts"
+  },
+  {
+    "service": "feed-service",
+    "verb": "POST",
+    "route": "/groups/:id/materials",
+    "public": false,
+    "parameters": "@Param('id') id: string; @UploadedFile() file: Express.Multer.File | undefined; @Body() body: any; @CurrentUser() user: JwtPayload",
+    "status": "201 (padrão Nest)",
+    "handler": "MaterialsController.upload",
+    "source": "backend/feed-service/src/materials/materials.controller.ts"
+  },
+  {
+    "service": "feed-service",
+    "verb": "GET",
+    "route": "/materials/:id/download",
+    "public": false,
+    "parameters": "@Param('id') id: string; @CurrentUser() user: JwtPayload",
+    "status": "200 (padrão Nest)",
+    "handler": "MaterialsController.download",
+    "source": "backend/feed-service/src/materials/materials.controller.ts"
+  },
+  {
+    "service": "feed-service",
+    "verb": "POST",
+    "route": "/materials/:id/rate",
+    "public": false,
+    "parameters": "@Param('id') id: string; @Body() body: any; @CurrentUser() user: JwtPayload",
+    "status": "201 (padrão Nest)",
+    "handler": "MaterialsController.rate",
+    "source": "backend/feed-service/src/materials/materials.controller.ts"
+  },
+  {
+    "service": "feed-service",
+    "verb": "DELETE",
+    "route": "/materials/:id",
+    "public": false,
+    "parameters": "@Param('id') id: string; @CurrentUser() user: JwtPayload",
+    "status": "200 (padrão Nest)",
+    "handler": "MaterialsController.remove",
+    "source": "backend/feed-service/src/materials/materials.controller.ts"
+  },
+  {
+    "service": "feed-service",
+    "verb": "GET",
+    "route": "/groups/:id/feed",
+    "public": false,
+    "parameters": "@Param('id') id: string; @Query('cursor') cursor: string; @Query('limit') limit: number; @CurrentUser() user: JwtPayload; @Headers('authorization') authToken: string",
+    "status": "200 (padrão Nest)",
+    "handler": "GroupFeedController.groupFeed",
+    "source": "backend/feed-service/src/posts/group-feed.controller.ts"
+  },
+  {
+    "service": "feed-service",
+    "verb": "GET",
+    "route": "/posts",
+    "public": false,
+    "parameters": "@Query('scope') scope: string; @Query('cursor') cursor: string; @Query('limit') limit: number; @CurrentUser() user: JwtPayload; @Headers('authorization') authToken: string",
+    "status": "200 (padrão Nest)",
+    "handler": "PostsController.getFeed",
+    "source": "backend/feed-service/src/posts/posts.controller.ts"
+  },
+  {
+    "service": "feed-service",
+    "verb": "POST",
+    "route": "/posts",
+    "public": false,
+    "parameters": "@Body() dto: CreatePostDto; @UploadedFile() file: Express.Multer.File | undefined; @CurrentUser() user: JwtPayload; @Headers('authorization') authToken: string",
+    "status": "201 (padrão Nest)",
+    "handler": "PostsController.createPost",
+    "source": "backend/feed-service/src/posts/posts.controller.ts"
+  },
+  {
+    "service": "feed-service",
+    "verb": "GET",
+    "route": "/posts/:id",
+    "public": false,
+    "parameters": "@Param('id') id: string",
+    "status": "200 (padrão Nest)",
+    "handler": "PostsController.getPost",
+    "source": "backend/feed-service/src/posts/posts.controller.ts"
+  },
+  {
+    "service": "feed-service",
+    "verb": "DELETE",
+    "route": "/posts/:id",
+    "public": false,
+    "parameters": "@Param('id') id: string; @CurrentUser() user: JwtPayload",
+    "status": "200 (padrão Nest)",
+    "handler": "PostsController.deletePost",
+    "source": "backend/feed-service/src/posts/posts.controller.ts"
+  },
+  {
+    "service": "feed-service",
+    "verb": "POST",
+    "route": "/posts/:id/reactions",
+    "public": false,
+    "parameters": "@Param('id') id: string; @Body() dto: any; @CurrentUser() user: JwtPayload",
+    "status": "201 (padrão Nest)",
+    "handler": "PostsController.addReaction",
+    "source": "backend/feed-service/src/posts/posts.controller.ts"
+  },
+  {
+    "service": "feed-service",
+    "verb": "DELETE",
+    "route": "/posts/:id/reactions",
+    "public": false,
+    "parameters": "@Param('id') id: string; @CurrentUser() user: JwtPayload",
+    "status": "200 (padrão Nest)",
+    "handler": "PostsController.removeReaction",
+    "source": "backend/feed-service/src/posts/posts.controller.ts"
+  },
+  {
+    "service": "feed-service",
+    "verb": "GET",
+    "route": "/posts/:id/comments",
+    "public": false,
+    "parameters": "@Param('id') id: string; @Query('cursor') cursor: string; @Headers('authorization') authToken: string",
+    "status": "200 (padrão Nest)",
+    "handler": "PostsController.getComments",
+    "source": "backend/feed-service/src/posts/posts.controller.ts"
+  },
+  {
+    "service": "feed-service",
+    "verb": "POST",
+    "route": "/posts/:id/comments",
+    "public": false,
+    "parameters": "@Param('id') id: string; @Body() dto: any; @CurrentUser() user: JwtPayload; @Headers('authorization') authToken: string",
+    "status": "201 (padrão Nest)",
+    "handler": "PostsController.addComment",
+    "source": "backend/feed-service/src/posts/posts.controller.ts"
+  },
+  {
+    "service": "feed-service",
+    "verb": "POST",
+    "route": "/reports",
+    "public": false,
+    "parameters": "@CurrentUser() user: JwtPayload; @Body()\r\n    dto: {\r\n      target_type: string;\r\n      target_id: string;\r\n      reason?: string;\r\n      description?: string;\r\n    }",
+    "status": "HttpStatus.CREATED",
+    "handler": "ReportsController.create",
+    "source": "backend/feed-service/src/reports/reports.controller.ts"
+  },
+  {
+    "service": "feed-service",
+    "verb": "GET",
+    "route": "/reports",
+    "public": false,
+    "parameters": "—",
+    "status": "200 (padrão Nest)",
+    "handler": "ReportsController.listOpen",
+    "source": "backend/feed-service/src/reports/reports.controller.ts"
+  },
+  {
+    "service": "feed-service",
+    "verb": "PATCH",
+    "route": "/reports/:id",
+    "public": false,
+    "parameters": "@CurrentUser() user: JwtPayload; @Param('id') id: string; @Body() body: { action: 'resolve' | 'dismiss' }",
+    "status": "200 (padrão Nest)",
+    "handler": "ReportsController.resolve",
+    "source": "backend/feed-service/src/reports/reports.controller.ts"
+  },
+  {
+    "service": "feed-service",
+    "verb": "GET",
+    "route": "/stories",
+    "public": false,
+    "parameters": "@CurrentUser() user: JwtPayload; @Headers('authorization') auth: string",
+    "status": "200 (padrão Nest)",
+    "handler": "StoriesController.list",
+    "source": "backend/feed-service/src/stories/stories.controller.ts"
+  },
+  {
+    "service": "feed-service",
+    "verb": "GET",
+    "route": "/stories/mine",
+    "public": false,
+    "parameters": "@CurrentUser() user: JwtPayload",
+    "status": "200 (padrão Nest)",
+    "handler": "StoriesController.mine",
+    "source": "backend/feed-service/src/stories/stories.controller.ts"
+  },
+  {
+    "service": "feed-service",
+    "verb": "POST",
+    "route": "/stories",
+    "public": false,
+    "parameters": "@UploadedFile() file: Express.Multer.File | undefined; @Body() body: any; @CurrentUser() user: JwtPayload",
+    "status": "201 (padrão Nest)",
+    "handler": "StoriesController.create",
+    "source": "backend/feed-service/src/stories/stories.controller.ts"
+  },
+  {
+    "service": "feed-service",
+    "verb": "POST",
+    "route": "/stories/:id/view",
+    "public": false,
+    "parameters": "@Param('id') id: string; @CurrentUser() user: JwtPayload",
+    "status": "201 (padrão Nest)",
+    "handler": "StoriesController.view",
+    "source": "backend/feed-service/src/stories/stories.controller.ts"
+  },
+  {
+    "service": "feed-service",
+    "verb": "DELETE",
+    "route": "/stories/:id",
+    "public": false,
+    "parameters": "@Param('id') id: string; @CurrentUser() user: JwtPayload",
+    "status": "200 (padrão Nest)",
+    "handler": "StoriesController.remove",
+    "source": "backend/feed-service/src/stories/stories.controller.ts"
+  },
+  {
+    "service": "feed-service",
+    "verb": "GET",
+    "route": "/tags",
+    "public": false,
+    "parameters": "@Query('q') q?: string",
+    "status": "200 (padrão Nest)",
+    "handler": "TagsController.search",
+    "source": "backend/feed-service/src/tags/tags.controller.ts"
+  },
+  {
+    "service": "feed-service",
+    "verb": "GET",
+    "route": "/tags/trending",
+    "public": false,
+    "parameters": "@CurrentUser() user: JwtPayload",
+    "status": "200 (padrão Nest)",
+    "handler": "TagsController.trending",
+    "source": "backend/feed-service/src/tags/tags.controller.ts"
+  },
+  {
+    "service": "feed-service",
+    "verb": "GET",
+    "route": "/tags/mine",
+    "public": false,
+    "parameters": "@CurrentUser() user: JwtPayload",
+    "status": "200 (padrão Nest)",
+    "handler": "TagsController.mine",
+    "source": "backend/feed-service/src/tags/tags.controller.ts"
+  },
+  {
+    "service": "feed-service",
+    "verb": "GET",
+    "route": "/tags/:slug",
+    "public": false,
+    "parameters": "@Param('slug') slug: string; @CurrentUser() user: JwtPayload",
+    "status": "200 (padrão Nest)",
+    "handler": "TagsController.get",
+    "source": "backend/feed-service/src/tags/tags.controller.ts"
+  },
+  {
+    "service": "feed-service",
+    "verb": "GET",
+    "route": "/tags/:slug/posts",
+    "public": false,
+    "parameters": "@Param('slug') slug: string; @Query('cursor') cursor: string; @CurrentUser() user: JwtPayload; @Headers('authorization') auth: string",
+    "status": "200 (padrão Nest)",
+    "handler": "TagsController.posts",
+    "source": "backend/feed-service/src/tags/tags.controller.ts"
+  },
+  {
+    "service": "feed-service",
+    "verb": "POST",
+    "route": "/tags/:slug/follow",
+    "public": false,
+    "parameters": "@Param('slug') slug: string; @CurrentUser() user: JwtPayload",
+    "status": "201 (padrão Nest)",
+    "handler": "TagsController.follow",
+    "source": "backend/feed-service/src/tags/tags.controller.ts"
+  },
+  {
+    "service": "feed-service",
+    "verb": "DELETE",
+    "route": "/tags/:slug/follow",
+    "public": false,
+    "parameters": "@Param('slug') slug: string; @CurrentUser() user: JwtPayload",
+    "status": "200 (padrão Nest)",
+    "handler": "TagsController.unfollow",
+    "source": "backend/feed-service/src/tags/tags.controller.ts"
+  },
+  {
+    "service": "messaging-service",
+    "verb": "GET",
+    "route": "/chats",
+    "public": false,
+    "parameters": "@Query('type') type: string; @Query('cursor') cursor: string; @CurrentUser() user: JwtPayload",
+    "status": "200 (padrão Nest)",
+    "handler": "ChatsController.listChats",
+    "source": "backend/messaging-service/src/chats/chats.controller.ts"
+  },
+  {
+    "service": "messaging-service",
+    "verb": "POST",
+    "route": "/chats",
+    "public": false,
+    "parameters": "@Body() dto: any; @CurrentUser() user: JwtPayload",
+    "status": "201 (padrão Nest)",
+    "handler": "ChatsController.createChat",
+    "source": "backend/messaging-service/src/chats/chats.controller.ts"
+  },
+  {
+    "service": "messaging-service",
+    "verb": "GET",
+    "route": "/chats/:id",
+    "public": false,
+    "parameters": "@Param('id') id: string; @CurrentUser() user: JwtPayload",
+    "status": "200 (padrão Nest)",
+    "handler": "ChatsController.getChat",
+    "source": "backend/messaging-service/src/chats/chats.controller.ts"
+  },
+  {
+    "service": "messaging-service",
+    "verb": "PATCH",
+    "route": "/chats/:id",
+    "public": false,
+    "parameters": "@Param('id') id: string; @Body() dto: any; @CurrentUser() user: JwtPayload",
+    "status": "200 (padrão Nest)",
+    "handler": "ChatsController.updateChat",
+    "source": "backend/messaging-service/src/chats/chats.controller.ts"
+  },
+  {
+    "service": "messaging-service",
+    "verb": "GET",
+    "route": "/chats/:id/messages",
+    "public": false,
+    "parameters": "@Param('id') id: string; @Query('cursor') cursor: string; @Query('limit') limit: number; @CurrentUser() user: JwtPayload",
+    "status": "200 (padrão Nest)",
+    "handler": "ChatsController.getMessages",
+    "source": "backend/messaging-service/src/chats/chats.controller.ts"
+  },
+  {
+    "service": "messaging-service",
+    "verb": "POST",
+    "route": "/chats/:id/messages",
+    "public": false,
+    "parameters": "@Param('id') id: string; @Body() dto: any; @UploadedFile() file: Express.Multer.File | undefined; @CurrentUser() user: JwtPayload",
+    "status": "201 (padrão Nest)",
+    "handler": "ChatsController.sendMessage",
+    "source": "backend/messaging-service/src/chats/chats.controller.ts"
+  },
+  {
+    "service": "messaging-service",
+    "verb": "POST",
+    "route": "/chats/:id/members",
+    "public": false,
+    "parameters": "@Param('id') id: string; @Body() dto: any; @CurrentUser() user: JwtPayload",
+    "status": "201 (padrão Nest)",
+    "handler": "ChatsController.addMember",
+    "source": "backend/messaging-service/src/chats/chats.controller.ts"
+  },
+  {
+    "service": "messaging-service",
+    "verb": "DELETE",
+    "route": "/chats/:id/members/:userId",
+    "public": false,
+    "parameters": "@Param('id') id: string; @Param('userId') userId: string; @CurrentUser() user: JwtPayload",
+    "status": "200 (padrão Nest)",
+    "handler": "ChatsController.removeMember",
+    "source": "backend/messaging-service/src/chats/chats.controller.ts"
+  },
+  {
+    "service": "messaging-service",
+    "verb": "GET",
+    "route": "/notifications",
+    "public": false,
+    "parameters": "@CurrentUser() user: JwtPayload; @Query('unread') unread?: string",
+    "status": "200 (padrão Nest)",
+    "handler": "NotificationsController.list",
+    "source": "backend/messaging-service/src/notifications/notifications.controller.ts"
+  },
+  {
+    "service": "messaging-service",
+    "verb": "PATCH",
+    "route": "/notifications/:id/read",
+    "public": false,
+    "parameters": "@CurrentUser() user: JwtPayload; @Param('id') id: string",
+    "status": "HttpStatus.OK",
+    "handler": "NotificationsController.markRead",
+    "source": "backend/messaging-service/src/notifications/notifications.controller.ts"
+  },
+  {
+    "service": "messaging-service",
+    "verb": "PATCH",
+    "route": "/notifications/read-all",
+    "public": false,
+    "parameters": "@CurrentUser() user: JwtPayload",
+    "status": "HttpStatus.OK",
+    "handler": "NotificationsController.markAllRead",
+    "source": "backend/messaging-service/src/notifications/notifications.controller.ts"
+  },
+  {
+    "service": "messaging-service",
+    "verb": "POST",
+    "route": "/notifications/internal",
+    "public": true,
+    "parameters": "@Body() body: any; @Headers('x-internal-token') token?: string",
+    "status": "201 (padrão Nest)",
+    "handler": "NotificationsController.createInternal",
+    "source": "backend/messaging-service/src/notifications/notifications.controller.ts"
+  }
+]

@@ -1,0 +1,23 @@
+
+> interaedu-backend@1.0.0 test:coverage
+> npm test -- --coverage --json --outputFile=../reports/release/backend-tests.json
+
+
+> interaedu-backend@1.0.0 test
+> jest --config jest.config.cjs --runInBand --coverage --json --outputFile=../reports/release/backend-tests.json
+
+PASS test/notifications.test.js (5.265 s)
+PASS test/http-integration.test.js
+PASS test/domain.test.js
+[Nest] 15336  - 10/25/2026, 12:27:28 PM     LOG [ChatsService] Message sent to chat: c by: u
+PASS test/auth.test.js
+PASS test/gateway-integration.test.js
+[Nest] 15336  - 10/25/2026, 12:27:31 PM   ERROR [OtpService] Email delivery failed with status 503
+PASS test/otp.test.js
+
+Test Suites: 6 passed, 6 total
+Tests:       61 passed, 61 total
+Snapshots:   0 total
+Time:        15.821 s, estimated 38 s
+Ran all test suites.
+Test results written to: ..\reports\release\backend-tests.json

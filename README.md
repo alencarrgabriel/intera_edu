@@ -2,7 +2,23 @@
 
 > **Rede social acadêmica** exclusiva para universitários, com identidade verificada por e-mail institucional.
 
-**Cobertura declarada na documentação anterior:** 45 de 50 requisitos funcionais (90%). Esse número não foi revalidado nesta revisão e não comprova integração completa. Veja o [Resumo de Implementação](./IMPLEMENTACAO.md) e a matriz de entrega abaixo.
+## Entrega final — candidata de 25/10/2026
+
+**Responsável:** Davi Vieira. **IA utilizada:** Claude e ChatGPT.
+
+O pacote local inclui testes, relatórios, SDD As-Built e configuração de execução. A release oficial ainda depende da validação Docker/funcional, revisão do commit e publicação no GitHub. Na consulta de 25/10, o repositório tinha zero PRs abertos, `master` sem proteção e nenhuma release.
+
+| Entregável | Evidência |
+|---|---|
+| PDF da Entrega 2 | [Relatório consolidado: dez passos, checklist e apêndices](./output/pdf/InteraEdu_Entrega_2_Relatorio_Final.pdf) |
+| Especificação técnica atual | [SDD As-Built](./docs/entrega/sdd-as-built.md), [contratos HTTP/DTOs](./docs/entrega/contratos-as-built.md) e [modelos](./docs/entrega/modelos-as-built.md) |
+| Testes e cobertura | [Relatório da candidata](./reports/release/relatorio.md), [JSON](./reports/release/summary.json), [JUnit](./reports/release/junit.xml) e [identificação da execução](./reports/release/run.json) |
+| Reprodutibilidade | [Compose da aplicação](./compose.yaml), [Compose do harness](./compose.test.yaml) e instruções abaixo |
+| Higienização | [Resultado do scan](./reports/release/hygiene.json); caches e cópias compiladas removidos, segredos gerados localmente |
+| Release e governança | [Checklist de aceite](./docs/entrega/checklist-release.md), [workflow de validação](./.github/workflows/validate-release.yml) e [publicação após aprovação](./.github/workflows/publish-release.yml) |
+| Demonstração e aprendizado | [Roteiro de vídeo de 4min30s](./docs/entrega/roteiro-video.md) e [retrospectiva](./docs/entrega/retrospectiva.md) |
+
+A aprovação dos casos executados não representa cobertura total nem homologação de todos os fluxos. O relatório diferencia as integrações HTTP isoladas da validação com banco, storage e dispositivos reais. Davi confirmou que o vídeo já está gravado; falta anexar o link ao pacote.
 
 ---
 
@@ -23,49 +39,90 @@ Atalhos rápidos:
 
 ---
 
-## ⚡ Como Rodar o Projeto Localmente
+## Instalação e execução
 
-> Instruções para o ambiente de avaliação do grupo. Nesta etapa documental não
-> foram executados Flutter, aplicação ou downloads de dependências neste dispositivo.
-> A execução de testes citada mais abaixo pertence à etapa anterior.
+Execute os comandos na raiz do repositório. Preserve `pubspec.lock` e `backend/package-lock.json`. Para execução em containers: Docker com Compose v2.20+ e Python 3.10+ para gerar a configuração. Para desenvolvimento/testes locais: Flutter **3.38.10** (SDK usado na validação local), Dart compatível com `^3.10.0`, Node.js **20** (referência dos containers/CI) e Python 3.10+. Android exige também JDK 17, Android SDK e emulador ou aparelho.
 
-Pré-requisitos do ambiente de avaliação: Git, Docker com Compose v2 e Flutter
-3.44.4 (mesma referência do workflow existente), com Dart compatível com
-`^3.10.0`. Para Android, JDK 17 e Android SDK/emulador; para web, Chrome.
-Node 20 é usado pelos Dockerfiles; instalação local só é necessária ao desenvolver
-backend fora dos containers. Manter `pubspec.lock` e `backend/package-lock.json`.
-
-Clone o [repositório configurado](https://github.com/alencarrgabriel/intera_edu)
-e entre em `intera_edu`. Registre o commit usado para avaliação. Configure
-`backend/.env` a partir do exemplo, com segredos próprios, SMTP e armazenamento.
-Em PowerShell, use `Copy-Item .env.example .env` dentro de `backend`.
-O Compose contém valores e portas de desenvolvimento: não constitui configuração
-de produção. Banco vazio usa `backend/scripts/init-db.sql` na primeira inicialização;
-não apague volumes para repetir uma demonstração com dados importantes.
-
-
-### 1. Backend (Microsserviços em Docker)
+### 1. Configurar o ambiente
 
 ```bash
-cd backend
-cp .env.example .env  # preencha as variáveis de ambiente
-docker compose up --build
+python .scripts/init-env.py
 ```
 
-> O API Gateway ficará disponível em: `http://localhost:3000/api/v1`
+O comando cria `backend/.env` com segredos aleatórios e preserva um arquivo já existente. Como alternativa, copie `backend/.env.example` para `backend/.env` e preencha as variáveis obrigatórias. Nunca versione esse arquivo.
 
-### 2. App Mobile (Flutter)
+- `DATABASE_PASSWORD`, `JWT_ACCESS_SECRET`, `JWT_REFRESH_SECRET`, `INTERNAL_SERVICE_TOKEN`, `S3_SECRET_KEY` e `GRAFANA_ADMIN_PASSWORD`: preenchidos pelo gerador.
+- `RESEND_API_KEY` e `RESEND_FROM`: envio real de OTP por Resend. A implementação atual não usa SMTP. Sem provedor configurado, o envio retorna 503.
+- `ALLOW_DEV_OTP_LOG=true`: opção explícita para demonstração local com contas fictícias; o código aparece somente nos logs do auth-service em desenvolvimento. Não usar com dados reais nem em produção.
+- `S3_PUBLIC_ENDPOINT`: `http://localhost:9000` para navegador no computador; para celular, usar o IP acessível do computador.
+- `GOOGLE_CLIENT_ID`: opcional; sem configuração, o login Google fica indisponível.
+
+### 2. Subir a aplicação com um comando
 
 ```bash
-# Na raiz do projeto:
-flutter pub get
+docker compose --env-file backend/.env up --build -d --wait
+```
 
+Frontend: [localhost:8080](http://localhost:8080). API: [localhost:3000/api/v1](http://localhost:3000/api/v1). Readiness: [health/ready](http://localhost:3000/api/v1/health/ready). Socket.IO: `http://localhost:3004/ws`.
+
+O comando constrói o frontend web e os serviços. A execução Docker ainda deve ser validada em host com Docker; este computador não dispõe do runtime. O workflow de validação executa a stack e o smoke test quando publicado.
+
+```bash
+node .scripts/smoke-test.mjs
+docker compose --env-file backend/.env logs --tail=100 gateway
+docker compose --env-file backend/.env down
+```
+
+O smoke test verifica serviços reais, respostas de autenticação/validação e entrega do frontend. Ele não substitui cadastro, upload e conversa entre duas contas. O banco vazio recebe os schemas na primeira inicialização e usa sincronização TypeORM em desenvolvimento. `down` preserva os volumes; não usar `down -v` com dados que devam ser mantidos.
+
+Observabilidade opcional: acrescentar `--profile observability` ao comando Compose. Grafana fica na porta 3030 e usa a senha gerada em `.env`.
+
+### 3. Executar o cliente mobile ou web localmente
+
+```bash
+flutter pub get --enforce-lockfile
 # Emulador Android:
 flutter run --dart-define=API_BASE_URL=http://10.0.2.2:3000/api/v1 --dart-define=WS_BASE_URL=http://10.0.2.2:3004
-
-# Web em ambiente de desenvolvimento:
+# Navegador no computador:
 flutter run -d chrome --dart-define=API_BASE_URL=http://localhost:3000/api/v1 --dart-define=WS_BASE_URL=http://localhost:3004
 ```
+
+Para aparelho físico, usar o IP do computador nas URLs e em `S3_PUBLIC_ENDPOINT`, com os dispositivos na mesma rede. O aplicativo também possui configuração de servidor. O build web em container usa URLs de localhost por padrão; para acesso de outra máquina, definir `API_BASE_URL` e `WS_BASE_URL` no ambiente usado pelo Compose antes do build.
+
+## Testes e relatórios da entrega
+
+Instalação local das dependências, uma vez:
+
+```bash
+npm --prefix backend ci --no-audit --no-fund
+flutter pub get --enforce-lockfile
+```
+
+Harness completo, com um comando:
+
+```bash
+python .scripts/run-tests.py
+```
+
+Alternativa em container, sem exigir Flutter/Node instalados no host:
+
+```bash
+docker compose -f compose.test.yaml run --build --rm harness
+```
+
+O harness compila os seis workspaces do backend, executa Jest e Flutter, retorna código diferente de zero se uma etapa falhar e grava resultados em `reports/release/`. Os testes HTTP usam servidores locais reais com dependências isoladas; não dependem de PostgreSQL/Redis/MinIO.
+
+- [Relatório de testes e cobertura por unidade crítica](./reports/release/relatorio.md).
+- [LCOV Flutter](./reports/release/flutter-lcov.info) e [LCOV backend](./reports/release/backend-coverage/lcov.info).
+- [Resumo de cobertura backend](./reports/release/backend-coverage/coverage-summary.json), [JUnit](./reports/release/junit.xml) e [fontes testados](./reports/release/source-sha256.json).
+- Verificação de higiene: `python .scripts/check-hygiene.py`.
+- Atualização dos contratos/modelos: `node .scripts/generate-as-built.cjs`.
+
+Resultado local de 25/10/2026: **97 testes aprovados — 36 Flutter e 61 backend**, sem falhas ou ignorados. Cobertura de linhas: **22,00% Flutter** e **23,94% backend**. Os seis pacotes backend e o build web também compilaram. Os dois arquivos Compose passaram na validação de configuração; execução dos containers e smoke test permanecem pendentes.
+
+As imagens-base estão [fixadas por digest](./deploy/images.lock.json). O MinIO é construído de fonte oficial com revisão e checksum fixos, conforme o SDD. O primeiro build pode demorar devido à compilação do storage e do Flutter.
+
+O detalhamento e os limites de aceite estão no [checklist de release](./docs/entrega/checklist-release.md). As evidências de 17/10 abaixo são históricas; a candidata atual usa os relatórios em `reports/release`.
 
 ---
 
@@ -74,13 +131,17 @@ flutter run -d chrome --dart-define=API_BASE_URL=http://localhost:3000/api/v1 --
 | Camada | Stack |
 |---|---|
 | **Backend** | Node.js 20 + NestJS 10 + TypeScript, TypeORM, PostgreSQL 16, Redis 7, MinIO |
-| **Mobile** | Flutter 3.44.4 (referência do workflow), Dart ^3.10.0, Clean Architecture |
+| **Mobile** | Flutter 3.38.10 (referência validada localmente), Dart ^3.10.0, Clean Architecture |
 | **Infraestrutura** | Docker + Docker Compose |
 
 ---
 
 *Para diagramas, decisões arquiteturais e guias de desenvolvimento, consulte [`/docs/README.md`](./docs/README.md).*
 
+
+## Histórico de documentação e verificações anteriores
+
+Os registros seguintes descrevem etapas anteriores. Para o estado atual, consulte a seção de entrega final no início deste README.
 
 ## Análise e correções de bugs — 12/10/2026
 

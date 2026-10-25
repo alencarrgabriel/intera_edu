@@ -1,0 +1,11 @@
+name: interaedu-harness
+services:
+  harness:
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+    volumes:
+      - ./reports:/app/reports
+    environment:
+      NODE_ENV: test
+      CI: 'true'

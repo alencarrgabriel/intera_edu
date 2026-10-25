@@ -1,4 +1,5 @@
 // Shared library barrel exports
+export * from './health.controller';
 export * from './database/database.module';
 export * from './redis/redis.module';
 export * from './redis/redis.service';

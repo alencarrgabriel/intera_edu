@@ -43,3 +43,25 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Local configuration, dependencies and generated caches
+.env
+.env.*
+!.env.example
+**/node_modules/
+**/.npm-cache/
+**/*.tsbuildinfo
+backend/**/src/**/*.js
+backend/**/src/**/*.js.map
+backend/**/src/**/*.d.ts
+/android/build/
+**/__pycache__/
+reports/release/backend-coverage/lcov-report/
+reports/release/backend-coverage/*.html
+reports/release/backend-coverage/*.css
+reports/release/backend-coverage/*.js
+reports/release/backend-coverage/*.png
+reports/release/backend-coverage/*/src/
+
+# Intermediários da revisão visual de documentos
+/tmp/pdfs/

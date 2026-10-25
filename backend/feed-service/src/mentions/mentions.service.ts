@@ -74,6 +74,7 @@ export class MentionsService {
       headers: {
         'Content-Type': 'application/json',
         Authorization: authToken,
+        'X-Internal-Token': process.env.INTERNAL_SERVICE_TOKEN ?? '',
       },
       body: JSON.stringify({
         user_id: userId,

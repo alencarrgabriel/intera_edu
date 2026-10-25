@@ -8,7 +8,7 @@ import { LoginDto } from './dto/login.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { GoogleLoginDto } from './dto/google-login.dto';
 import { ForgotPasswordDto, ResetPasswordDto } from './dto/forgot-password.dto';
-import { Public } from '@interaedu/shared';
+import { CurrentUser, JwtPayload, Public } from '@interaedu/shared';
 
 @Controller('auth')
 export class AuthController {
@@ -82,19 +82,14 @@ export class AuthController {
   /// RN-09 — Re-aceitar termos quando a versão muda.
   @Post('accept-terms')
   @HttpCode(HttpStatus.OK)
-  async acceptTerms(@Body() body: { user_id?: string }) {
-    // user_id vem do JWT em produção; no MVP aceitamos body por simplicidade
-    // e o front sempre envia. Em produção, ler de CurrentUser.
-    if (!body?.user_id) {
-      return { ok: false, error: 'user_id obrigatório' };
-    }
-    return this.authService.acceptTerms(body.user_id);
+  async acceptTerms(@CurrentUser() user: JwtPayload) {
+    return this.authService.acceptTerms(user.sub);
   }
 
   /// RF-32 — Revoga consentimento. Dispara exclusão de conta em cascata.
   @Post('revoke-consent')
   @HttpCode(HttpStatus.OK)
-  async revokeConsent(@Body() body: { user_id: string }) {
-    return this.authService.revokeConsent(body.user_id);
+  async revokeConsent(@CurrentUser() user: JwtPayload) {
+    return this.authService.revokeConsent(user.sub);
   }
 }

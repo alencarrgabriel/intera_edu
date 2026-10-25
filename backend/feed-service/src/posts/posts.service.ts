@@ -66,7 +66,7 @@ export class PostsService {
     const take = Math.min(Math.max(limit || 20, 1), 50);
     const cursorDate = this.decodeCursor(cursor);
 
-    const cacheKey = `feed:${normalizedScope}:${user.institution_id}:${cursorDate?.toISOString() ?? 'first'}:${take}`;
+    const cacheKey = `feed:${normalizedScope}:${user.institution_id}:${user.sub}:${cursorDate?.toISOString() ?? 'first'}:${take}`;
     const cached = await this.redis.get(cacheKey);
     if (cached) return JSON.parse(cached);
 

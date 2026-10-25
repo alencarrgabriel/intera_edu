@@ -1,0 +1,70 @@
+name: Publicar release aprovada
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Versão estável aprovada (ex. v1.0.0)
+        required: true
+        default: v1.0.0
+      approved_commit:
+        description: SHA completo do commit da main aprovado pelo responsável
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    if: github.ref == 'refs/heads/main'
+    uses: ./.github/workflows/validate-release.yml
+  publish:
+    needs: validate
+    runs-on: ubuntu-latest
+    environment: release
+    permissions:
+      contents: write
+      pull-requests: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          path: release-assets
+      - name: Verificar aprovação, main protegida e PRs abertos
+        uses: actions/github-script@v7
+        env:
+          RELEASE_TAG: ${{ inputs.tag }}
+          APPROVED_COMMIT: ${{ inputs.approved_commit }}
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const tag = process.env.RELEASE_TAG;
+            if (!/^v\d+\.\d+\.\d+(?:-final)?$/.test(tag)) throw new Error('Tag estável inválida');
+            if (process.env.APPROVED_COMMIT !== context.sha) throw new Error('SHA aprovado difere do SHA executado');
+            const { data: branch } = await github.rest.repos.getBranch({ owner, repo, branch: 'main' });
+            if (!branch.protected || branch.commit.sha !== context.sha) throw new Error('main deve estar protegida e permanecer no commit aprovado');
+            const { data: pulls } = await github.rest.pulls.list({ owner, repo, state: 'open', per_page: 1 });
+            if (pulls.length) throw new Error('Há Pull Requests abertos; consolidar antes da release');
+            try {
+              await github.rest.git.getRef({ owner, repo, ref: `tags/${tag}` });
+              throw new Error('A tag já existe; não será sobrescrita');
+            } catch (error) { if (error.status !== 404) throw error; }
+      - name: Empacotar evidências
+        run: zip -r release-assets.zip release-assets docs/entrega
+      - name: Publicar tag e release no commit validado
+        uses: actions/github-script@v7
+        env:
+          RELEASE_TAG: ${{ inputs.tag }}
+        with:
+          script: |
+            const fs = require('fs');
+            const { owner, repo } = context.repo;
+            const tag = process.env.RELEASE_TAG;
+            const runUrl = `https://github.com/${owner}/${repo}/actions/runs/${context.runId}`;
+            const { data: release } = await github.rest.repos.createRelease({
+              owner, repo, tag_name: tag, target_commitish: context.sha,
+              name: `InteraEdu ${tag}`, draft: true, prerelease: false,
+              body: `Commit aprovado: ${context.sha}\n\nValidação: ${runUrl}\n\n` + fs.readFileSync('docs/entrega/notas-release.md', 'utf8'),
+            });
+            const data = fs.readFileSync('release-assets.zip');
+            await github.rest.repos.uploadReleaseAsset({ owner, repo, release_id: release.id, name: 'release-assets.zip', data });
+            await github.rest.repos.updateRelease({ owner, repo, release_id: release.id, draft: false });

@@ -1,0 +1,7 @@
+{
+  "version": "v5.6.1",
+  "checksum": "91b1492f0a923427651e2b955739d732ac36b8191193bf4799e62f3e3525c4cd",
+  "app_config": "valid",
+  "harness_config": "valid",
+  "runtime_execution": "not_run_no_docker_engine"
+}

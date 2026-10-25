@@ -50,5 +50,10 @@ Leitura obrigatória antes de abrir o IDE.
 
 ## Entrega final
 
+- [SDD As-Built da candidata](./entrega/sdd-as-built.md): arquitetura efetiva, contratos, persistência e limites.
+- [Contratos HTTP e DTOs](./entrega/contratos-as-built.md) e [modelos TypeORM](./entrega/modelos-as-built.md): extraídos dos fontes.
+- [Relatório de validação atual](../reports/release/relatorio.md): testes, cobertura e evidências.
+- [Checklist de release](./entrega/checklist-release.md): aprovação, main protegida e publicação.
+- [Roteiro do vídeo](./entrega/roteiro-video.md) e [retrospectiva de Davi Vieira](./entrega/retrospectiva.md).
 - [Relatório técnico final](./entrega/relatorio-final.md): ADRs, re-especificação, evidências, avaliação crítica de IA e pendências.
 - [Matriz de entrega no README](../README.md#entrega-final--matriz-dos-itens-obrigatórios).

@@ -2,7 +2,7 @@
 # Build stage
 # Context: backend/ (workspace root)
 # ─────────────────────────────────────────
-FROM node:20-alpine AS builder
+FROM node:20-alpine@sha256:fb4cd12c85ee03686f6af5362a0b0d56d50c58a04632e6c0fb8363f609372293 AS builder
 WORKDIR /app
 
 # 1. Copy workspace manifests first (for layer caching of npm ci)
@@ -28,7 +28,7 @@ RUN cd profile-service && npx nest build
 # ─────────────────────────────────────────
 # Runtime stage
 # ─────────────────────────────────────────
-FROM node:20-alpine AS runtime
+FROM node:20-alpine@sha256:fb4cd12c85ee03686f6af5362a0b0d56d50c58a04632e6c0fb8363f609372293 AS runtime
 WORKDIR /app
 
 RUN addgroup -g 1001 -S appgroup && adduser -S appuser -u 1001 -G appgroup
