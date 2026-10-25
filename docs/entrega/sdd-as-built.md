@@ -105,7 +105,7 @@ Socket.IO usa a porta 3004 e namespace `/ws`, com JWT em `handshake.auth.token`.
 - [compose.test.yaml](../../compose.test.yaml) e [Dockerfile.test](../../Dockerfile.test): harness isolado, sem necessidade de banco para unitários/integrações HTTP locais.
 - `GET /api/v1/health`: liveness do gateway. `GET /api/v1/health/ready`: consulta `/health` dos quatro serviços, retorna 503 se algum estiver indisponível. Não comprova integridade funcional do banco ou entrega de eventos.
 
-O ambiente usa `NODE_ENV=development` e sincronização automática de entidades TypeORM. É um ambiente de demonstração, não um procedimento de migração/implantação de produção. As versões de pacotes são travadas nos lockfiles e as imagens-base foram fixadas por digest em [images.lock.json](../../deploy/images.lock.json). O MinIO é compilado de uma revisão oficial fixa com checksum do arquivo-fonte, pois a imagem anterior deixou de ser acessível. Isso fixa as entradas principais do build; não é uma comprovação de builds bit a bit idênticos. O Compose ainda precisa ser executado e validado em host com Docker.
+O ambiente usa `NODE_ENV=development` e sincronização automática de entidades TypeORM. É um ambiente de demonstração, não um procedimento de migração/implantação de produção. As versões de pacotes são travadas nos lockfiles e as imagens-base foram fixadas por digest em [images.lock.json](../../deploy/images.lock.json). O MinIO é compilado de uma revisão oficial fixa com checksum do arquivo-fonte, pois a imagem anterior deixou de ser acessível. Isso fixa as entradas principais do build; não é uma comprovação de builds bit a bit idênticos. O Compose foi executado no GitHub Actions: todos os serviços saudáveis, 9 smoke checks e 97 testes no harness em container aprovados. Evidências em reports/release/ci/docker.
 
 ## 8. Verificação e aceite
 
@@ -115,4 +115,4 @@ O [checklist de liberação](./checklist-release.md) distingue preparação loca
 
 ## 9. Proveniência do storage
 
-O [Dockerfile do MinIO](../../backend/storage/Dockerfile) usa o commit `9e49d5e7a648f00e26f2246f4dc28e6b07f8c84a` da [release oficial RELEASE.2025-10-15T17-29-55Z](https://github.com/minio/minio/releases/tag/RELEASE.2025-10-15T17-29-55Z), com Go 1.24.8 conforme o go.mod dessa revisão. A licença AGPL-3.0 acompanha a imagem. A construção desse container ainda depende da execução Docker; a disponibilidade do código-fonte e das imagens-base foi verificada separadamente.
+O [Dockerfile do MinIO](../../backend/storage/Dockerfile) usa o commit `9e49d5e7a648f00e26f2246f4dc28e6b07f8c84a` da [release oficial RELEASE.2025-10-15T17-29-55Z](https://github.com/minio/minio/releases/tag/RELEASE.2025-10-15T17-29-55Z), com Go 1.24.8 conforme o go.mod dessa revisão. A licença AGPL-3.0 acompanha a imagem. A construção desse container e sua inicialização saudável foram confirmadas na execução Docker do GitHub Actions 40236431191.

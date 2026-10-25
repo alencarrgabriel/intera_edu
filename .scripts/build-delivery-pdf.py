@@ -140,7 +140,7 @@ space(23); p('ENTREGA 2 / RELATÓRIO CONSOLIDADO','eyebrow'); space(9);story.app
 p('<b>Davi Vieira</b><br/>25 de outubro de 2026')
 p('Rede social acadêmica com aplicação Flutter e serviços NestJS. Documento organizado pelos dez passos da entrega, com checklist e apêndice de evidências.')
 table(['TESTES LOCAIS','RESULTADO','COBERTURA DE LINHAS'],[['97 casos executados','97 aprovados<br/>0 falhas / 0 ignorados','Flutter: 22,00%<br/>Backend: 23,94%']],[150,150,W-300])
-note('Situação do pacote','Candidata à entrega. Os testes e builds locais foram validados. A execução da stack em Docker, a homologação funcional, a proteção da main, a publicação da release ainda exigem conclusão ou aprovação. Davi confirmou o vídeo gravado; falta anexar seu link.')
+note('Situação do pacote','Candidata à entrega. Testes locais e no CI aprovados; Docker validado com 9 smoke checks e 97 testes em container. A configuração da main caberá ao proprietário. A release oficial e o aceite funcional ainda dependem de conclusão. Davi confirmou o vídeo gravado e seu envio separado.')
 p('Ferramentas de IA informadas: <b>Claude e ChatGPT</b>. O documento distingue relato do responsável, evidência técnica observada e atividades propostas.','small')
 
 # 2
@@ -160,14 +160,14 @@ table(['ÁREA','BASE ENCONTRADA','AVANÇO DESTA ETAPA'],[
     ['Contratos','Documentação misturava decisões planejadas e comportamento real.','Inventário com 93 entradas de rota, 13 arquivos de DTO e 31 entidades.'],
     ['Segurança/configuração','Defaults de credenciais, consentimento por body e cache compartilhado.','Segredos via ambiente; identidade por JWT; isolamento de cache e token interno.'],
     ['Repositório','master sem proteção; artefatos compilados e caches versionados.','Limpeza local e workflows preparados; main/release ainda pendentes.'],
-    ['Execução','Compose antigo, frontend separado e imagem de storage indisponível.','Compose integrado, harness em container e storage com fonte fixa; runtime Docker pendente.'],
+    ['Execução','Compose antigo, frontend separado e imagem de storage indisponível.','Compose integrado, harness em container e storage com fonte fixa; stack e testes Docker aprovados no CI.'],
 ],[70,200,W-270])
-h2('Backlog restante, ordenado por risco')
+h2('Backlog de fechamento e situação')
 table(['NÍVEL','ITEM / CRITÉRIO DE CONCLUSÃO'],[
-    ['P0','Executar Docker e smoke test; exigir todos os serviços saudáveis e relatório sem falhas.'],
+    ['P0','Concluído no CI: stack saudável, 9/9 smoke checks e 97/97 testes em container.'],
     ['P0','Homologar cadastro/OTP, perfil, publicação, privacidade, arquivo e conversa entre duas contas.'],
     ['P0','Revisar o commit final, consolidar main protegida e publicar tag apontando para o SHA aprovado.'],
-    ['P1','Anexar o vídeo já gravado e os links de execução e revisão.'],
+    ['P1','Enviar o vídeo separadamente e registrar links de execução e revisão.'],
     ['P1','Completar comparação empírica das IAs se exigida; revisar relato pessoal e limitações.'],
 ],[70,W-70])
 
@@ -207,8 +207,8 @@ section('Passo 4','Governança: comprovado e pendente','step4')
 p('A governança precisa ser demonstrada por registros, não apenas descrita como intenção. A consulta pública ao GitHub em 25/10/2026 e o histórico local permitem as conclusões abaixo.')
 table(['VERIFICAÇÃO','EVIDÊNCIA / CONCLUSÃO'],[
     ['Branches e PRs históricos','O histórico inclui merges, como o PR #11 no commit 5f1b26f. Isso comprova uso de PR, mas não comprova revisão independente ou aprovação qualificada.'],
-    ['PRs abertos','Consulta pública: zero PRs abertos naquele momento. Deve ser revalidado antes da publicação.'],
-    ['Branch principal','master é a padrão e está sem proteção. Não há main na consulta registrada.'],
+    ['PRs abertos','Consulta inicial: zero PRs. A entrega foi enviada pelo PR #12; sua integração deve ser conferida antes da tag.'],
+    ['Branch principal','Na consulta inicial, master era a padrão, sem proteção. O proprietário configurará a main, conforme orientação de Davi.'],
     ['Release oficial','Nenhuma release existente na consulta. A tag estável ainda não foi publicada.'],
     ['Sprint/board/revisores','Não há evidência suficiente para atribuir datas de sprint, reuniões, issues ou revisão por outro integrante.'],
 ],[112,W-112])
@@ -232,7 +232,7 @@ h2('Harness e diagnóstico')
 code('npm --prefix backend ci --no-audit --no-fund\nflutter pub get --enforce-lockfile\npython .scripts/run-tests.py')
 code('docker compose -f compose.test.yaml run --build --rm harness\nnode .scripts/smoke-test.mjs')
 p('A primeira linha do segundo bloco é a alternativa de testes em container. O smoke test exige a aplicação já iniciada. Logs e resultados são gravados em reports/release. O harness retorna código diferente de zero quando uma etapa falha.')
-note('Resultado observado','Os arquivos Compose passaram na validação oficial de configuração; não foram executados em engine Docker neste computador. O build web e os seis builds backend foram executados localmente com sucesso.')
+note('Resultado observado','A stack Docker foi executada no GitHub Actions: todos os serviços saudáveis, 9/9 smoke checks, 97/97 testes no container e pacote web exportado. Os builds locais também passaram.')
 
 # 8
 section('Passo 5 / arquitetura','Arquitetura e fluxo da aplicação','architecture')
@@ -260,7 +260,7 @@ for title,context,decision,alternative,tradeoff,proof in [
 section('Passo 6 / decisões 4-6','Defesa das decisões de entrega','adr-more')
 for title,content,proof in [
     ('ADR-004 | JWT e renovação limitada','<b>Contexto:</b> tokens expiram e requisições podem receber 401.<br/><b>Decisão:</b> backend verifica o token; cliente restaura estado a partir de claims e faz no máximo uma repetição após refresh.<br/><b>Alternativa:</b> renovar indefinidamente ou pedir login em toda expiração.<br/><b>Defesa:</b> evita ciclos e preserva erros de credenciais. A inspeção local de claims não substitui autorização criptográfica no servidor.','ApiClient, AuthNotifier, estratégia JWT e testes de sessão.'),
-    ('ADR-005 | Compose e storage compatível com S3','<b>Contexto:</b> reproduzir aplicação, banco, cache e arquivos.<br/><b>Decisão:</b> Compose com imagens-base por digest; MinIO construído de commit oficial e checksum fixos.<br/><b>Alternativa:</b> instalação manual ou serviços gerenciados.<br/><b>Defesa:</b> descreve entradas do build e reduz variação. O primeiro build é pesado e a execução Docker ainda precisa de evidência. Objetos públicos e synchronize limitam uso com dados reais.','compose.yaml; Dockerfiles; deploy/images.lock.json; storage/Dockerfile.'),
+    ('ADR-005 | Compose e storage compatível com S3','<b>Contexto:</b> reproduzir aplicação, banco, cache e arquivos.<br/><b>Decisão:</b> Compose com imagens-base por digest; MinIO construído de commit oficial e checksum fixos.<br/><b>Alternativa:</b> instalação manual ou serviços gerenciados.<br/><b>Defesa:</b> descreve entradas do build e reduz variação. O primeiro build é pesado; execução aprovada no CI 40236431191. Objetos públicos e synchronize limitam uso com dados reais.','compose.yaml; Dockerfiles; deploy/images.lock.json; storage/Dockerfile.'),
     ('ADR-006 | Harness único e evidência por execução','<b>Contexto:</b> testes isolados e resultados históricos dificultam defender a versão entregue.<br/><b>Decisão:</b> um comando compila backend, roda Jest/Flutter e gera JSON, JUnit, LCOV e hashes dos fontes.<br/><b>Alternativa:</b> comandos manuais sem consolidação.<br/><b>Defesa:</b> torna o procedimento repetível e auditável. A aprovação mede os casos executados; cobertura e e2e continuam critérios separados.','run-tests.py; release-report.py; reports/release/run.json.'),
 ]: h2(title);p(content);evidence(proof)
 note('Síntese para a defesa oral','Justifique cada escolha pelo problema resolvido, explicite o custo e a alternativa descartada, e mostre a evidência correspondente. Evite apresentar uma tecnologia como superior em qualquer contexto.')
@@ -312,11 +312,13 @@ table(['ETAPA','RESULTADO E ESCOPO'],[
     ['Testes backend','6 suítes Jest; unidade e integração HTTP com servidores locais e dependências isoladas.'],
     ['Testes Flutter','Modelos, rede, sessão, notifiers e widgets; sem execução em aparelho real.'],
     ['Build web adicional','Compilação release concluída; cache local de dependências foi isolado após arquivos ausentes no cache global.'],
-    ['Compose','Configuração válida no validador oficial; nenhum container foi iniciado nesta máquina.'],
+    ['Compose e CI','Stack saudável, 9/9 smoke checks e 97/97 testes no container. CI: 40236431191.'],
 ],[115,W-115])
 h2('Cobertura não é taxa de aprovação')
 story.append(CoverageBars())
 p('A taxa de aprovação é <b>100% dos 97 casos executados</b>. A cobertura de linhas é <b>22,00% no Flutter</b> (1.285/5.841) e <b>23,94% no backend</b> (480/2.005). Esses percentuais medem dimensões diferentes e devem ser apresentados juntos.','small')
+
+p('Repetição em Linux: 97/97 aprovados, cobertura Flutter 21,98%. Em Docker: 97/97 aprovados, cobertura Flutter 21,97%. Backend 23,94% em todas. Evidências: reports/release/ci/initial e ci/docker.','small')
 
 # 15
 section('Passo 10 / cobertura','Unidades críticas e limites da evidência','coverage')
@@ -330,7 +332,7 @@ p('No Flutter, o relatório detalha também ApiClient (52,21%), AuthNotifier (66
 h2('O que foi realmente integrado')
 p('Os testes HTTP iniciam aplicações Nest reais, exercitam validação de DTO, autenticação JWT e o proxy para um servidor HTTP local. Repositórios e Redis são isolados por mocks em testes de domínio. Isso permite verificar contratos sem depender da infraestrutura externa.')
 h2('O que ainda não foi homologado')
-p('PostgreSQL, Redis, MinIO, Resend, criação de perfil por evento, uploads e conversas entre dispositivos não foram exercitados como uma stack completa nesta rodada. A medição backend exclui bootstrap, módulos de DI, entidades, DTOs e interfaces; inclui serviços/controllers sem testes, reduzindo a chance de ocultar lacunas.')
+p('A stack com PostgreSQL, Redis e MinIO iniciou e passou no smoke test. Ainda falta homologar envio real via Resend, criação de perfil por evento, uploads e conversas entre dispositivos em um fluxo completo. A medição backend exclui bootstrap, módulos de DI, entidades, DTOs e interfaces; inclui serviços/controllers sem testes, reduzindo a chance de ocultar lacunas.')
 evidence('reports/release/relatorio.md; summary.json; junit.xml; backend-tests.json; flutter-events.jsonl; backend-coverage/coverage-summary.json; arquivos LCOV.')
 
 # 16
@@ -347,10 +349,10 @@ table(['ITEM','SITUAÇÃO','EVIDÊNCIA / PRÓXIMO PASSO'],[
     ['Ética: quatro pilares','Preparado','Riscos, controles e lacunas identificados.'],
     ['Relatório/PDF e cobertura','Verificado localmente','Resultados reais, LCOV/JUnit/JSON e este relatório.'],
     ['main protegida e release','Pendente','Migrar/consolidar master, proteger main, aprovar SHA e publicar tag.'],
-    ['Docker reproduzível','Parcial','Configuração e referências verificadas; executar containers e smoke test.'],
-    ['Vídeo de 3-5 minutos','Gravado','Confirmado por Davi; link e duração real a informar.'],
+    ['Docker reproduzível','Verificado no CI','Stack, smoke test, harness e exportação web aprovados.'],
+    ['Vídeo de 3-5 minutos','Gravado','Confirmado por Davi; envio separado pelo responsável.'],
 ],[133,105,W-238])
-note('Condição para declarar a entrega concluída','Os itens preparados e os testes locais estão disponíveis. A conclusão integral exige fechar as pendências de execução, aprovação e evidência, especialmente release, governança e vídeo. Este PDF não converte pendências em resultados obtidos.')
+note('Condição para declarar a entrega concluída','Os itens preparados e os testes locais estão disponíveis. A conclusão integral exige fechar as pendências de execução, aprovação e evidência, especialmente release, proteção da main pelo proprietário e aceite funcional. O vídeo será enviado separadamente. Este PDF não converte pendências em resultados obtidos.')
 
 # 17
 section('Apêndice A','Cronograma da sprint e critérios de saída','sprint')
@@ -360,10 +362,10 @@ table(['DIA','ATIVIDADE','CRITÉRIO DE SAÍDA'],[
     ['D2','Executar smoke e fluxos de cadastro, perfil, post, conexão, upload e conversa.','Esperado/obtido registrado; erros reproduzíveis viram issues e testes.'],
     ['D3','Corrigir falhas e reexecutar harness; revisar ADRs, IA e ética.','Checks aprovados na versão candidata e documentação alinhada.'],
     ['D4','Revisar PR/commit, consolidar main, configurar proteção e publicar release.','SHA aprovado, regras ativas, zero PRs pendentes e URL da release.'],
-    ['D5','Anexar vídeo já gravado e conferir pacote final.','Vídeo de 3-5 min, PDF revisado, links acessíveis e evidências do mesmo commit.'],
+    ['D5','Enviar vídeo separadamente e conferir pacote final.','Vídeo de 3-5 min, PDF revisado, links acessíveis e evidências do mesmo commit.'],
 ],[45,230,W-275])
 h2('Registros históricos efetivamente disponíveis')
-p('<b>17/10/2026:</b> relatório de 36 testes Flutter aprovados; backend então bloqueado pela ausência de Jest/testes.<br/><b>25/10/2026:</b> novo harness, 61 testes backend, 97 casos aprovados no total, build web/backend e validação de configuração Compose.<br/><b>GitHub na consulta de 25/10:</b> master sem proteção, zero PRs abertos e nenhuma release.')
+p('<b>17/10/2026:</b> relatório de 36 testes Flutter aprovados; backend então bloqueado pela ausência de Jest/testes.<br/><b>25/10/2026:</b> novo harness, 61 testes backend, 97 casos aprovados no total, build web/backend, stack Docker, 9 smoke checks e harness em container aprovados.<br/><b>GitHub na consulta de 25/10:</b> consulta inicial sem proteção/release; PR #12 criado nesta etapa e CI aprovado.')
 h2('Como comprovar a sprint')
 p('Para cada item, registrar responsável, critério de aceite, issue, branch/PR, decisão de revisão e evidência. O cronograma proposto passa a ser histórico apenas quando essas ações ocorrerem e forem registradas. Não criar atas, issues concluídas ou aprovações retroativas fictícias.')
 
@@ -383,7 +385,7 @@ table(['ID','ARTEFATO','FINALIDADE'],[
 ],[35,258,W-293])
 p('Os nomes abreviados de E03/E10 ficam em docs/entrega; E05-E08 ficam em reports/release. Anexar os arquivos digitais ao repositório/release mantém os detalhes auditáveis sem inserir milhares de linhas de log no PDF.','small')
 h2('Itens ainda a anexar')
-p('URL da release e SHA final; evidência de proteção da main; checks de CI do mesmo commit; revisão humana identificada; relatório Docker/smoke e fluxos homologados; link do vídeo. Na apresentação, mostrar resultados ao vivo ou identificar claramente um corte/registro anterior.')
+p('URL da release e SHA final; evidência de proteção da main; checks de CI do mesmo commit; revisão humana identificada; aceite dos fluxos homologados. Docker/smoke já registrado; vídeo será enviado separadamente. Na apresentação, mostrar resultados ao vivo ou identificar claramente um corte/registro anterior.')
 h2('Referências verificáveis')
 p('<link href="https://github.com/alencarrgabriel/intera_edu" color="#176449">Repositório InteraEdu: github.com/alencarrgabriel/intera_edu</link><br/><link href="https://github.com/minio/minio/releases/tag/RELEASE.2025-10-15T17-29-55Z" color="#176449">MinIO: revisão oficial usada pelo Dockerfile de storage</link>','small')
 p('As referências de código e resultados correspondem à candidata local identificada nos manifests. Novos commits, testes ou homologações exigem atualizar as evidências e, quando necessário, regenerar o PDF.','small')

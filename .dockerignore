@@ -16,3 +16,8 @@ reports
 coverage
 prototipo
 *.log
+
+# Relatórios finais e revisão visual não pertencem às imagens
+tmp
+output
+*.pdf

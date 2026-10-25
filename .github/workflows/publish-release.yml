@@ -49,7 +49,7 @@ jobs:
               throw new Error('A tag já existe; não será sobrescrita');
             } catch (error) { if (error.status !== 404) throw error; }
       - name: Empacotar evidências
-        run: zip -r release-assets.zip release-assets docs/entrega
+        run: zip -r release-assets.zip release-assets docs/entrega output/pdf README.md deploy/images.lock.json
       - name: Publicar tag e release no commit validado
         uses: actions/github-script@v7
         env:

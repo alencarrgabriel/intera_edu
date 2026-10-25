@@ -8,12 +8,12 @@ Revisão: 25/10/2026. Responsável: Davi Vieira. A candidata local ainda não é
 | Suíte 100% pass | [Relatório local](../../reports/release/relatorio.md). A aprovação se refere aos casos executados, não a todos os requisitos funcionais. |
 | Cobertura de módulos críticos | Relatório por unidade e arquivos LCOV/Jest/JSON em `reports/release`. |
 | Código higienizado | Scan de padrões na árvore atual, remoção de caches/cópias compiladas e segredos obrigatórios via ambiente. Revisão humana e histórico Git não certificados pelo scan. |
-| Aplicação/harness com comando único | Compose validado pelo validador oficial; imagens-base fixadas por digest e MinIO compilável de fonte oficial. **Execução em Docker pendente** neste dispositivo, que não possui engine Docker. |
+| Aplicação/harness com comando único | Stack executada no GitHub Actions: todos os serviços saudáveis, 9/9 smoke checks e 97/97 testes em container. [Evidências](../../reports/release/ci/docker/provenance.json). |
 | README final | Guia de ambiente, execução, testes, evidências e limites atualizado. |
-| PRs abertos | Consulta pública ao GitHub em 25/10/2026: **zero**. Revalidar no momento da publicação. |
-| main consolidada/protegida | GitHub ainda usa **master sem proteção**; não há main. Migração e regras pendentes. |
+| PRs abertos | Entrega acompanhada no [PR #12](https://github.com/alencarrgabriel/intera_edu/pull/12); conferir integração e zero PRs antes da tag. |
+| main consolidada/protegida | GitHub ainda usa **master sem proteção**; não há main. O proprietário configurará a main e suas regras, conforme orientação de Davi. |
 | Tag/release oficial | Nenhuma release na consulta. Workflow de publicação preparado; ainda não executado. |
-| Vídeo de 3–5 minutos | Gravação concluída, conforme confirmação de Davi. Link e duração ainda não informados. |
+| Vídeo de 3–5 minutos | Gravação concluída, conforme confirmação de Davi. Envio separado pelo responsável, conforme sua orientação. |
 | Retrospectiva | [Texto](./retrospectiva.md) preparado com o relato fornecido; revisão pessoal pendente. |
 
 ## Fechar o pacote local
@@ -22,7 +22,7 @@ Revisão: 25/10/2026. Responsável: Davi Vieira. A candidata local ainda não é
 2. Instalar dependências com lockfile; executar `python .scripts/run-tests.py`.
 3. Em host com Docker, executar `docker compose --env-file backend/.env up --build -d --wait`, depois `node .scripts/smoke-test.mjs` e `docker compose -f compose.test.yaml run --build --rm harness`.
 4. Homologar cadastro/OTP com provedor configurado, criação de perfil, login/logout, privacidade entre contas, publicação/anexo, conexão e mensagem entre dois clientes. Registrar esperado, obtido e evidência. O smoke test não substitui esses fluxos.
-5. Anexar o vídeo já gravado; preencher o registro do roteiro e revisar a retrospectiva.
+5. Enviar o vídeo separadamente, conforme orientação de Davi; revisar a retrospectiva.
 
 ## Consolidar no GitHub
 
@@ -44,5 +44,5 @@ O workflow não cria proteção nem fornece uma aprovação humana por conta pr�
 | URL dos checks do commit final | Pendente |
 | Evidência de proteção da main | Pendente |
 | URL da release/tag | Pendente |
-| URL do vídeo | Pendente |
+| Vídeo | Gravado; envio separado por Davi |
 | Evidências dos fluxos homologados | Pendente |

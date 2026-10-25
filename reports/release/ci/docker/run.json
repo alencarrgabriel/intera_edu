@@ -1,0 +1,57 @@
+{
+  "started_at": "2026-10-25T21:44:26.982613+00:00",
+  "head": null,
+  "branch": null,
+  "working_tree_status": null,
+  "scope": "Flutter unit/widgets; backend unit/HTTP integration with isolated repositories; backend builds",
+  "steps": [
+    {
+      "name": "backend-build",
+      "command": [
+        "/usr/local/bin/npm",
+        "run",
+        "build:all"
+      ],
+      "started_at": "2026-10-25T21:44:26.987469+00:00",
+      "exit_code": 0,
+      "finished_at": "2026-10-25T21:44:53.951169+00:00"
+    },
+    {
+      "name": "backend-tests",
+      "command": [
+        "/usr/local/bin/npm",
+        "run",
+        "test:coverage"
+      ],
+      "started_at": "2026-10-25T21:44:53.951232+00:00",
+      "exit_code": 0,
+      "finished_at": "2026-10-25T21:45:01.252504+00:00"
+    },
+    {
+      "name": "flutter-version",
+      "command": [
+        "/sdks/flutter/bin/flutter",
+        "--version",
+        "--machine"
+      ],
+      "started_at": "2026-10-25T21:45:01.253055+00:00",
+      "exit_code": 0,
+      "finished_at": "2026-10-25T21:45:01.417494+00:00"
+    },
+    {
+      "name": "flutter-tests",
+      "command": [
+        "/sdks/flutter/bin/flutter",
+        "test",
+        "--no-pub",
+        "--coverage",
+        "--machine"
+      ],
+      "started_at": "2026-10-25T21:45:01.417540+00:00",
+      "exit_code": 0,
+      "finished_at": "2026-10-25T21:45:21.755837+00:00"
+    }
+  ],
+  "finished_at": "2026-10-25T21:45:21.756333+00:00",
+  "success": true
+}

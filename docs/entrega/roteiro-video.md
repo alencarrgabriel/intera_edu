@@ -1,6 +1,6 @@
 # Roteiro de demonstração — 3 a 5 minutos
 
-**Apresentador:** Davi Vieira. **Duração sugerida:** 4min30s. Davi confirmou em 25/10/2026 que o vídeo já está gravado. O roteiro abaixo permanece como referência; link e duração real aguardam registro.
+**Apresentador:** Davi Vieira. **Duração sugerida:** 4min30s. Davi confirmou em 25/10/2026 que o vídeo já está gravado. O roteiro abaixo permanece como referência; o vídeo será enviado separadamente pelo responsável.
 
 ## Preparação
 
@@ -26,7 +26,7 @@ Se os testes demorarem mais que a janela do vídeo, iniciar aos 0:30 e continuar
 
 ## Registro da entrega
 
-- Link do vídeo: **gravação concluída; link a informar**.
+- Link do vídeo: **envio separado pelo responsável**.
 - Data e duração: **preencher após gravação**.
 - Commit/tag demonstrado: **preencher com o valor real**.
 - Fluxos demonstrados: **registrar as ações efetivamente mostradas**.

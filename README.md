@@ -6,7 +6,7 @@
 
 **Responsável:** Davi Vieira. **IA utilizada:** Claude e ChatGPT.
 
-O pacote local inclui testes, relatórios, SDD As-Built e configuração de execução. A release oficial ainda depende da validação Docker/funcional, revisão do commit e publicação no GitHub. Na consulta de 25/10, o repositório tinha zero PRs abertos, `master` sem proteção e nenhuma release.
+O pacote local inclui testes, relatórios, SDD As-Built e configuração de execução. A stack Docker, o smoke test e o harness em container passaram no GitHub Actions. A entrega está no [PR #12](https://github.com/alencarrgabriel/intera_edu/pull/12). O proprietário configurará a `main`; a publicação oficial depende dessa configuração e do aceite do commit final.
 
 | Entregável | Evidência |
 |---|---|
@@ -20,7 +20,7 @@ O pacote local inclui testes, relatórios, SDD As-Built e configuração de exec
 
 Validação adicional no [GitHub Actions](https://github.com/alencarrgabriel/intera_edu/actions/runs/40235881663): **97/97 testes aprovados em Linux**, com conferência dos contratos gerados. [Evidências da execução](./reports/release/ci/initial/provenance.json). Nessa execução, a cobertura Flutter foi **21,98%** (1.284/5.841 linhas); o resultado local abaixo foi 22,00%. Backend: 23,94% em ambos.
 
-A aprovação dos casos executados não representa cobertura total nem homologação de todos os fluxos. O relatório diferencia as integrações HTTP isoladas da validação com banco, storage e dispositivos reais. Davi confirmou que o vídeo já está gravado; falta anexar o link ao pacote.
+A aprovação dos casos executados não representa cobertura total nem homologação de todos os fluxos. O relatório diferencia as integrações HTTP isoladas da validação com banco, storage e dispositivos reais. Davi confirmou que o vídeo já está gravado e será enviado separadamente.
 
 ---
 
@@ -67,7 +67,7 @@ docker compose --env-file backend/.env up --build -d --wait
 
 Frontend: [localhost:8080](http://localhost:8080). API: [localhost:3000/api/v1](http://localhost:3000/api/v1). Readiness: [health/ready](http://localhost:3000/api/v1/health/ready). Socket.IO: `http://localhost:3004/ws`.
 
-O comando constrói o frontend web e os serviços. A execução Docker ainda deve ser validada em host com Docker; este computador não dispõe do runtime. O workflow de validação executa a stack e o smoke test quando publicado.
+O comando constrói o frontend web e os serviços. A stack foi executada com sucesso no [GitHub Actions](https://github.com/alencarrgabriel/intera_edu/actions/runs/40236431191): todos os serviços saudáveis, **9/9 smoke checks** e **97/97 testes no container**. [Evidências Docker](./reports/release/ci/docker/provenance.json).
 
 ```bash
 node .scripts/smoke-test.mjs
@@ -120,7 +120,7 @@ O harness compila os seis workspaces do backend, executa Jest e Flutter, retorna
 - Verificação de higiene: `python .scripts/check-hygiene.py`.
 - Atualização dos contratos/modelos: `node .scripts/generate-as-built.cjs`.
 
-Resultado local de 25/10/2026: **97 testes aprovados — 36 Flutter e 61 backend**, sem falhas ou ignorados. Cobertura de linhas: **22,00% Flutter** e **23,94% backend**. Os seis pacotes backend e o build web também compilaram. Os dois arquivos Compose passaram na validação de configuração; execução dos containers e smoke test permanecem pendentes.
+Resultado local de 25/10/2026: **97 testes aprovados — 36 Flutter e 61 backend**, sem falhas ou ignorados. Cobertura de linhas: **22,00% Flutter** e **23,94% backend**. Os seis pacotes backend e o build web também compilaram. Os dois arquivos Compose passaram na validação de configuração; a execução dos containers, os 9 smoke checks e os 97 testes no harness em container também passaram no CI. A cobertura Flutter no container foi 21,97% (1.283/5.841); backend 23,94%. Os registros preservam cada execução separadamente.
 
 As imagens-base estão [fixadas por digest](./deploy/images.lock.json). O MinIO é construído de fonte oficial com revisão e checksum fixos, conforme o SDD. O primeiro build pode demorar devido à compilação do storage e do Flutter.
 
