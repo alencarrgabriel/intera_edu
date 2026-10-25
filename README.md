@@ -18,6 +18,8 @@ O pacote local inclui testes, relatórios, SDD As-Built e configuração de exec
 | Release e governança | [Checklist de aceite](./docs/entrega/checklist-release.md), [workflow de validação](./.github/workflows/validate-release.yml) e [publicação após aprovação](./.github/workflows/publish-release.yml) |
 | Demonstração e aprendizado | [Roteiro de vídeo de 4min30s](./docs/entrega/roteiro-video.md) e [retrospectiva](./docs/entrega/retrospectiva.md) |
 
+Validação adicional no [GitHub Actions](https://github.com/alencarrgabriel/intera_edu/actions/runs/40235881663): **97/97 testes aprovados em Linux**, com conferência dos contratos gerados. [Evidências da execução](./reports/release/ci/initial/provenance.json). Nessa execução, a cobertura Flutter foi **21,98%** (1.284/5.841 linhas); o resultado local abaixo foi 22,00%. Backend: 23,94% em ambos.
+
 A aprovação dos casos executados não representa cobertura total nem homologação de todos os fluxos. O relatório diferencia as integrações HTTP isoladas da validação com banco, storage e dispositivos reais. Davi confirmou que o vídeo já está gravado; falta anexar o link ao pacote.
 
 ---

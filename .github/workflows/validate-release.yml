@@ -59,6 +59,14 @@ jobs:
         run: |
           docker compose --env-file backend/.env config --quiet
           docker compose --env-file backend/.env up --build -d --wait --wait-timeout 240
+      - name: Registrar estado dos containers
+        if: always()
+        run: |
+          mkdir -p reports/release
+          docker compose --env-file backend/.env ps --all --format json > reports/release/docker-services.json
+          for id in $(docker compose --env-file backend/.env ps --all --quiet); do
+            docker inspect --format '{{.Name}} {{json .State.Health}}' "$id"
+          done > reports/release/docker-health.txt
       - run: node .scripts/smoke-test.mjs
       - name: Verificar harness em container
         run: docker compose -f compose.test.yaml run --build --rm harness

@@ -1,0 +1,57 @@
+{
+  "started_at": "2026-10-25T21:32:34.082261+00:00",
+  "head": "2c45e4592a8585acf03c75973592740d8b7bc090",
+  "branch": "",
+  "working_tree_status": "D reports/release/backend-coverage/coverage-summary.json\n D reports/release/backend-coverage/lcov.info\n D reports/release/backend-tests.json\n D reports/release/flutter-lcov.info\n M reports/release/source-sha256.json",
+  "scope": "Flutter unit/widgets; backend unit/HTTP integration with isolated repositories; backend builds",
+  "steps": [
+    {
+      "name": "backend-build",
+      "command": [
+        "/opt/hostedtoolcache/node/20.20.2/x64/bin/npm",
+        "run",
+        "build:all"
+      ],
+      "started_at": "2026-10-25T21:32:34.108620+00:00",
+      "exit_code": 0,
+      "finished_at": "2026-10-25T21:32:55.203189+00:00"
+    },
+    {
+      "name": "backend-tests",
+      "command": [
+        "/opt/hostedtoolcache/node/20.20.2/x64/bin/npm",
+        "run",
+        "test:coverage"
+      ],
+      "started_at": "2026-10-25T21:32:55.203264+00:00",
+      "exit_code": 0,
+      "finished_at": "2026-10-25T21:33:00.703786+00:00"
+    },
+    {
+      "name": "flutter-version",
+      "command": [
+        "/opt/hostedtoolcache/flutter/stable-3.38.10-x64/flutter/bin/flutter",
+        "--version",
+        "--machine"
+      ],
+      "started_at": "2026-10-25T21:33:00.704080+00:00",
+      "exit_code": 0,
+      "finished_at": "2026-10-25T21:33:00.818444+00:00"
+    },
+    {
+      "name": "flutter-tests",
+      "command": [
+        "/opt/hostedtoolcache/flutter/stable-3.38.10-x64/flutter/bin/flutter",
+        "test",
+        "--no-pub",
+        "--coverage",
+        "--machine"
+      ],
+      "started_at": "2026-10-25T21:33:00.818502+00:00",
+      "exit_code": 0,
+      "finished_at": "2026-10-25T21:33:17.548812+00:00"
+    }
+  ],
+  "finished_at": "2026-10-25T21:33:17.549175+00:00",
+  "success": true
+}
