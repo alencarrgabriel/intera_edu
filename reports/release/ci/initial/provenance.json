@@ -1,0 +1,10 @@
+{
+  "run_url": "https://github.com/alencarrgabriel/intera_edu/actions/runs/40235881663",
+  "pull_request": "https://github.com/alencarrgabriel/intera_edu/pull/12",
+  "head_commit": "5fa1f2b",
+  "tested_merge_commit": "2c45e4592a8585acf03c75973592740d8b7bc090",
+  "job": "Harness Flutter e backend",
+  "conclusion": "success",
+  "artifact_id": 12615310364,
+  "scope": "Execução Linux no GitHub Actions; não substitui resultado Docker."
+}

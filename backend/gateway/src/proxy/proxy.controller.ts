@@ -52,7 +52,7 @@ export class ProxyController {
     ];
 
     for (const route of routes) {
-      if (path.startsWith(route.prefix)) {
+      if (path === route.prefix || path.startsWith(`${route.prefix}/`)) {
         return { service: route.service, servicePath: path };
       }
     }

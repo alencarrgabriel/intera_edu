@@ -14,7 +14,9 @@
   "scripts": {
     "build:all": "npm run build --workspaces",
     "lint:all": "npm run lint --workspaces",
-    "test:all": "npm run test --workspaces",
+    "test": "jest --config jest.config.cjs --runInBand",
+    "test:all": "npm test",
+    "test:coverage": "npm test -- --coverage --json --outputFile=../reports/release/backend-tests.json",
     "docker:up": "docker compose up -d",
     "docker:down": "docker compose down",
     "docker:logs": "docker compose logs -f",

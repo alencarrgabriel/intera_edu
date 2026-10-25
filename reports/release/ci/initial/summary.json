@@ -1,0 +1,55 @@
+{
+  "flutter": {
+    "total": 36,
+    "passed": 36,
+    "failed": 0,
+    "skipped": 0,
+    "success": true,
+    "coverage": {
+      "covered": 1284,
+      "total": 5841,
+      "pct": 21.98
+    }
+  },
+  "backend": {
+    "total": 61,
+    "passed": 61,
+    "failed": 0,
+    "skipped": 0,
+    "success": true,
+    "coverage": {
+      "lines": {
+        "total": 2005,
+        "covered": 480,
+        "skipped": 0,
+        "pct": 23.94
+      },
+      "statements": {
+        "total": 2329,
+        "covered": 548,
+        "skipped": 0,
+        "pct": 23.52
+      },
+      "functions": {
+        "total": 443,
+        "covered": 58,
+        "skipped": 0,
+        "pct": 13.09
+      },
+      "branches": {
+        "total": 1527,
+        "covered": 310,
+        "skipped": 0,
+        "pct": 20.3
+      },
+      "branchesTrue": {
+        "total": 0,
+        "covered": 0,
+        "skipped": 0,
+        "pct": 100
+      }
+    }
+  },
+  "harness_success": true,
+  "release_approved": false
+}

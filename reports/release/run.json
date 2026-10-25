@@ -1,0 +1,59 @@
+{
+  "started_at": "2026-10-25T15:25:46.030880+00:00",
+  "head": "d04d9496578b01aa9332fcb21cd07fb297854310",
+  "branch": "master",
+  "working_tree_status": "M .github/workflows/build-apk.yml\n M .github/workflows/validate-flutter.yml\n M .gitignore\n M README.md\n D android/build/reports/problems/problems-report.html\n M backend/.dockerignore\n M backend/.env.example\n M backend/auth-service/src/auth/auth.controller.ts\n M backend/auth-service/src/health.controller.ts\n M backend/auth-service/src/otp/otp.service.ts\n D backend/auth-service/tsconfig.tsbuildinfo\n M backend/docker-compose.yml\n M backend/feed-service/src/app.module.ts\n D backend/feed-service/src/feed/feed.module.ts\n M backend/feed-service/src/mentions/mentions.service.ts\n M backend/feed-service/src/posts/posts.service.ts\n M backend/feed-service/src/posts/s3.service.ts\n D backend/feed-service/tsconfig.tsbuildinfo\n M backend/gateway/src/health.controller.ts\n M backend/gateway/src/proxy/multipart-proxy.middleware.ts\n M backend/gateway/src/proxy/proxy.controller.ts\n M backend/gateway/src/proxy/proxy.module.ts\n M backend/gateway/src/proxy/proxy.service.ts\n D backend/gateway/tsconfig.tsbuildinfo\n M backend/messaging-service/src/app.module.ts\n M backend/messaging-service/src/chats/s3.service.ts\n M backend/messaging-service/src/notifications/notifications.controller.ts\n M backend/package.json\n M backend/profile-service/src/app.module.ts\n M backend/profile-service/src/connections/connections.service.ts\n M backend/profile-service/src/profile/s3.service.ts\n D backend/profile-service/tsconfig.tsbuildinfo\n D backend/shared/src/auth/current-user.decorator.d.ts\n D backend/shared/src/auth/current-user.decorator.js\n D backend/shared/src/auth/current-user.decorator.js.map\n D backend/shared/src/auth/jwt-auth.guard.d.ts\n D backend/shared/src/auth/jwt-auth.guard.js\n D backend/shared/src/auth/jwt-auth.guard.js.map\n D backend/shared/src/auth/jwt.strategy.d.ts\n D backend/shared/src/auth/jwt.strategy.js\n D backend/shared/src/auth/jwt.strategy.js.map\n D backend/shared/src/database/database.module.d.ts\n D backend/shared/src/database/database.module.js\n D backend/shared/src/database/database.module.js.map\n D backend/shared/src/dto/error-response.dto.d.ts\n D backend/shared/src/dto/error-response.dto.js\n D backend/shared/src/dto/error-response.dto.js.map\n D backend/shared/src/dto/pagination.dto.d.ts\n D backend/shared/src/dto/pagination.dto.js\n D backend/shared/src/dto/pagination.dto.js.map\n D backend/shared/src/index.d.ts\n D backend/shared/src/index.js\n D backend/shared/src/index.js.map\n M backend/shared/src/index.ts\n D backend/shared/src/interfaces/jwt-payload.interface.d.ts\n D backend/shared/src/interfaces/jwt-payload.interface.js\n D backend/shared/src/interfaces/jwt-payload.interface.js.map\n D backend/shared/src/interfaces/paginated-response.interface.d.ts\n D backend/shared/src/interfaces/paginated-response.interface.js\n D backend/shared/src/interfaces/paginated-response.interface.js.map\n D backend/shared/src/redis/redis.module.d.ts\n D backend/shared/src/redis/redis.module.js\n D backend/shared/src/redis/redis.module.js.map\n D backend/shared/src/redis/redis.service.d.ts\n D backend/shared/src/redis/redis.service.js\n D backend/shared/src/redis/redis.service.js.map\n D backend/shared/tsconfig.tsbuildinfo\n M docs/README.md\n D reports/testes/flutter-direct-exit-code.txt\n D reports/testes/flutter-direct-stderr.txt\n D reports/testes/flutter-direct.jsonl\n D reports/testes/flutter-errors.txt\n D reports/testes/flutter-events.jsonl\n D reports/testes/flutter-exit-code.txt\n D reports/testes/flutter-results.jsonl\n?? .dockerignore\n?? .github/workflows/publish-release.yml\n?? .github/workflows/validate-release.yml\n?? .scripts/check-hygiene.py\n?? .scripts/generate-as-built.cjs\n?? .scripts/init-env.py\n?? .scripts/release-report.py\n?? .scripts/run-tests.py\n?? .scripts/smoke-test.mjs\n?? Dockerfile.test\n?? Dockerfile.web\n?? backend/jest.config.cjs\n?? backend/shared/src/health.controller.ts\n?? backend/test/\n?? backend/tsconfig.test.json\n?? compose.test.yaml\n?? compose.yaml\n?? deploy/\n?? docs/entrega/checklist-release.md\n?? docs/entrega/contratos-as-built.md\n?? docs/entrega/modelos-as-built.md\n?? docs/entrega/notas-release.md\n?? docs/entrega/retrospectiva.md\n?? docs/entrega/roteiro-video.md\n?? docs/entrega/sdd-as-built.md\n?? reports/release/",
+  "scope": "Flutter unit/widgets; backend unit/HTTP integration with isolated repositories; backend builds",
+  "steps": [
+    {
+      "name": "backend-build",
+      "command": [
+        "C:\\Program Files\\nodejs\\npm.cmd",
+        "run",
+        "build:all"
+      ],
+      "started_at": "2026-10-25T15:25:46.593764+00:00",
+      "exit_code": 0,
+      "finished_at": "2026-10-25T15:27:15.371824+00:00"
+    },
+    {
+      "name": "backend-tests",
+      "command": [
+        "C:\\Program Files\\nodejs\\npm.cmd",
+        "run",
+        "test:coverage"
+      ],
+      "started_at": "2026-10-25T15:27:15.372065+00:00",
+      "exit_code": 0,
+      "finished_at": "2026-10-25T15:27:34.774584+00:00"
+    },
+    {
+      "name": "flutter-version",
+      "command": [
+        "C:\\src\\flutter\\bin\\cache\\dart-sdk\\bin\\dart.exe",
+        "C:\\src\\flutter\\bin\\cache\\flutter_tools.snapshot",
+        "--version",
+        "--machine"
+      ],
+      "started_at": "2026-10-25T15:27:34.792661+00:00",
+      "exit_code": 0,
+      "finished_at": "2026-10-25T15:27:35.125818+00:00"
+    },
+    {
+      "name": "flutter-tests",
+      "command": [
+        "C:\\src\\flutter\\bin\\cache\\dart-sdk\\bin\\dart.exe",
+        "C:\\src\\flutter\\bin\\cache\\flutter_tools.snapshot",
+        "test",
+        "--no-pub",
+        "--coverage",
+        "--machine"
+      ],
+      "started_at": "2026-10-25T15:27:35.125886+00:00",
+      "exit_code": 0,
+      "finished_at": "2026-10-25T15:28:30.869361+00:00"
+    }
+  ],
+  "finished_at": "2026-10-25T15:28:30.871166+00:00",
+  "success": true
+}

@@ -1,0 +1,6 @@
+{
+  "scope": "Arquivos versionados e novos não ignorados da árvore atual; relatórios e histórico Git não inspecionados.",
+  "files_checked": 510,
+  "findings": [],
+  "limitation": "Busca por padrões conhecidos; não certifica ausência universal de segredos nem substitui revisão humana."
+}

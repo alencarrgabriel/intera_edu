@@ -1,0 +1,40 @@
+
+> interaedu-backend@1.0.0 build:all
+> npm run build --workspaces
+
+
+> @interaedu/shared@1.0.0 build
+> tsc
+
+
+> @interaedu/gateway@1.0.0 build
+> nest build
+
+
+> @interaedu/auth-service@1.0.0 build
+> npm -w @interaedu/shared run build && nest build
+
+
+> @interaedu/shared@1.0.0 build
+> tsc
+
+
+> @interaedu/profile-service@1.0.0 build
+> npm -w @interaedu/shared run build && nest build
+
+
+> @interaedu/shared@1.0.0 build
+> tsc
+
+
+> @interaedu/feed-service@1.0.0 build
+> npm -w @interaedu/shared run build && nest build
+
+
+> @interaedu/shared@1.0.0 build
+> tsc
+
+
+> @interaedu/messaging-service@1.0.0 build
+> nest build
+

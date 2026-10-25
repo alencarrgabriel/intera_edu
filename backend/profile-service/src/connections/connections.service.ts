@@ -23,7 +23,7 @@ export class ConnectionsService {
     try {
       await fetch(`${this.messagingUrl}/notifications/internal`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'X-Internal-Token': process.env.INTERNAL_SERVICE_TOKEN ?? '' },
         body: JSON.stringify({ user_id: userId, type, title, body }),
       });
     } catch (e) {

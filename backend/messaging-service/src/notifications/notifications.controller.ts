@@ -8,6 +8,8 @@ import {
   Body,
   HttpCode,
   HttpStatus,
+  Headers,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { NotificationsService } from './notifications.service';
 import { CurrentUser, JwtPayload, Public } from '@interaedu/shared';
@@ -39,12 +41,12 @@ export class NotificationsController {
     return this.notifications.markAllRead(user.sub);
   }
 
-  /// Internal-service-only endpoint. Trusted callers (feed-service, profile-service)
-  /// post mentions/event notifications here. Production deploys should fence this
-  /// behind an internal network or a service token; in dev it's open.
+  /// Service-to-service endpoint: a user JWT is not sufficient authorization.
   @Public()
   @Post('internal')
-  async createInternal(@Body() body: any) {
+  async createInternal(@Body() body: any, @Headers('x-internal-token') token?: string) {
+    const expected = process.env.INTERNAL_SERVICE_TOKEN;
+    if (!expected || token !== expected) throw new UnauthorizedException('Invalid service token');
     if (!body?.user_id || !body?.type || !body?.title) return { ok: false };
     return this.notifications.create(
       body.user_id,

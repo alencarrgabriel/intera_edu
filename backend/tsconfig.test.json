@@ -1,0 +1,4 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": { "isolatedModules": true, "declaration": false, "incremental": false }
+}

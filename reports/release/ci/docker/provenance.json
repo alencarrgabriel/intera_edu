@@ -1,0 +1,11 @@
+{
+  "run_url": "https://github.com/alencarrgabriel/intera_edu/actions/runs/40236431191",
+  "pull_request": "https://github.com/alencarrgabriel/intera_edu/pull/12",
+  "head_commit": "2f47243",
+  "tested_merge_commit": "3cb837464bf0fbfa346ce0827c900177714939b6",
+  "job": "Stack Docker e smoke test",
+  "conclusion": "success",
+  "artifact_id": 12615656316,
+  "web_artifact_id": 12615406902,
+  "scope": "Stack completa em Docker, 9 smoke checks e 97 testes no harness em container."
+}

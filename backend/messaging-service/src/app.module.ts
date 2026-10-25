@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { HealthController } from '@interaedu/shared';
 import { ConfigModule } from '@nestjs/config';
 import { DatabaseModule, RedisModule, JwtAuthGuard, JwtStrategy } from '@interaedu/shared';
 import { APP_GUARD } from '@nestjs/core';
@@ -15,6 +16,7 @@ import { NotificationsModule } from './notifications/notifications.module';
     WebsocketModule,
     NotificationsModule,
   ],
+  controllers: [HealthController],
   providers: [
     {
       provide: APP_GUARD,

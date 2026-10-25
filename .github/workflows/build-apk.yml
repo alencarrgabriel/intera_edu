@@ -6,11 +6,11 @@ on:
       api_base_url:
         description: 'API Base URL'
         required: true
-        default: 'http://187.127.16.75:3000/api/v1'
+        default: 'http://10.0.2.2:3000/api/v1'
       ws_base_url:
         description: 'WebSocket Base URL'
         required: true
-        default: 'http://187.127.16.75:3004'
+        default: 'http://10.0.2.2:3004'
 
 jobs:
   build:
@@ -26,14 +26,16 @@ jobs:
 
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.44.4'
+          flutter-version: '3.38.10'
           channel: stable
 
       - run: flutter pub get
 
-      - run: flutter build apk --release
-          --dart-define=API_BASE_URL=${{ github.event.inputs.api_base_url }}
-          --dart-define=WS_BASE_URL=${{ github.event.inputs.ws_base_url }}
+      - name: Compilar APK
+        env:
+          API_BASE_URL: ${{ inputs.api_base_url }}
+          WS_BASE_URL: ${{ inputs.ws_base_url }}
+        run: flutter build apk --release --dart-define="API_BASE_URL=$API_BASE_URL" --dart-define="WS_BASE_URL=$WS_BASE_URL"
 
       - uses: actions/upload-artifact@v4
         with:

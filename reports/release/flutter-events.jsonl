@@ -1,0 +1,145 @@
+{"protocolVersion":"0.1.1","runnerVersion":null,"pid":8792,"type":"start","time":0}
+{"suite":{"id":0,"platform":"vm","path":"C:/Users/USER/Downloads/Intera-oEdu/test/models/comment_model_test.dart"},"type":"suite","time":1}
+{"test":{"id":1,"name":"loading C:/Users/USER/Downloads/Intera-oEdu/test/models/comment_model_test.dart","suiteID":0,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":4}
+{"suite":{"id":2,"platform":"vm","path":"C:/Users/USER/Downloads/Intera-oEdu/test/models/connection_model_test.dart"},"type":"suite","time":17}
+{"test":{"id":3,"name":"loading C:/Users/USER/Downloads/Intera-oEdu/test/models/connection_model_test.dart","suiteID":2,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":17}
+{"suite":{"id":4,"platform":"vm","path":"C:/Users/USER/Downloads/Intera-oEdu/test/models/post_model_test.dart"},"type":"suite","time":18}
+{"test":{"id":5,"name":"loading C:/Users/USER/Downloads/Intera-oEdu/test/models/post_model_test.dart","suiteID":4,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":18}
+{"suite":{"id":6,"platform":"vm","path":"C:/Users/USER/Downloads/Intera-oEdu/test/network/api_client_test.dart"},"type":"suite","time":20}
+{"test":{"id":7,"name":"loading C:/Users/USER/Downloads/Intera-oEdu/test/network/api_client_test.dart","suiteID":6,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":21}
+{"count":9,"time":24,"type":"allSuites"}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":"http://127.0.0.1:56558/yoIdimii-w0=/"}}]
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":"http://127.0.0.1:56559/m2-qgDdI0qA=/"}}]
+{"testID":3,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":26123}
+{"group":{"id":8,"suiteID":2,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":2,"line":null,"column":null,"url":null},"type":"group","time":26149}
+{"group":{"id":9,"suiteID":2,"parentID":8,"name":"Connection.fromJson","metadata":{"skip":false,"skipReason":null},"testCount":2,"line":5,"column":3,"url":"file:///C:/Users/USER/Downloads/Intera-oEdu/test/models/connection_model_test.dart"},"type":"group","time":26159}
+{"test":{"id":10,"name":"Connection.fromJson parseia conexão com other_user completo","suiteID":2,"groupIDs":[8,9],"metadata":{"skip":false,"skipReason":null},"line":6,"column":5,"url":"file:///C:/Users/USER/Downloads/Intera-oEdu/test/models/connection_model_test.dart"},"type":"testStart","time":26159}
+{"testID":1,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":26172}
+{"group":{"id":11,"suiteID":0,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":3,"line":null,"column":null,"url":null},"type":"group","time":26172}
+{"group":{"id":12,"suiteID":0,"parentID":11,"name":"CommentModel.fromJson","metadata":{"skip":false,"skipReason":null},"testCount":3,"line":5,"column":3,"url":"file:///C:/Users/USER/Downloads/Intera-oEdu/test/models/comment_model_test.dart"},"type":"group","time":26173}
+{"test":{"id":13,"name":"CommentModel.fromJson parseia campos diretos","suiteID":0,"groupIDs":[11,12],"metadata":{"skip":false,"skipReason":null},"line":6,"column":5,"url":"file:///C:/Users/USER/Downloads/Intera-oEdu/test/models/comment_model_test.dart"},"type":"testStart","time":26173}
+{"testID":10,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":26255}
+{"test":{"id":14,"name":"Connection.fromJson otherUser é null quando ausente no JSON","suiteID":2,"groupIDs":[8,9],"metadata":{"skip":false,"skipReason":null},"line":30,"column":5,"url":"file:///C:/Users/USER/Downloads/Intera-oEdu/test/models/connection_model_test.dart"},"type":"testStart","time":26256}
+{"testID":13,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":26263}
+{"testID":14,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":26263}
+{"test":{"id":15,"name":"CommentModel.fromJson parseia author aninhado","suiteID":0,"groupIDs":[11,12],"metadata":{"skip":false,"skipReason":null},"line":27,"column":5,"url":"file:///C:/Users/USER/Downloads/Intera-oEdu/test/models/comment_model_test.dart"},"type":"testStart","time":26264}
+{"testID":15,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":26319}
+{"test":{"id":16,"name":"CommentModel.fromJson parentCommentId é preservado","suiteID":0,"groupIDs":[11,12],"metadata":{"skip":false,"skipReason":null},"line":47,"column":5,"url":"file:///C:/Users/USER/Downloads/Intera-oEdu/test/models/comment_model_test.dart"},"type":"testStart","time":26329}
+{"testID":16,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":26361}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":"http://127.0.0.1:56574/8GVNPRTkTA4=/"}}]
+{"testID":5,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":26823}
+{"group":{"id":17,"suiteID":4,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":3,"line":null,"column":null,"url":null},"type":"group","time":26823}
+{"group":{"id":18,"suiteID":4,"parentID":17,"name":"PostModel.fromJson","metadata":{"skip":false,"skipReason":null},"testCount":3,"line":5,"column":3,"url":"file:///C:/Users/USER/Downloads/Intera-oEdu/test/models/post_model_test.dart"},"type":"group","time":26824}
+{"test":{"id":19,"name":"PostModel.fromJson parseia campos diretos (sem nested author)","suiteID":4,"groupIDs":[17,18],"metadata":{"skip":false,"skipReason":null},"line":6,"column":5,"url":"file:///C:/Users/USER/Downloads/Intera-oEdu/test/models/post_model_test.dart"},"type":"testStart","time":26824}
+{"testID":19,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":27019}
+{"test":{"id":20,"name":"PostModel.fromJson parseia objeto author aninhado","suiteID":4,"groupIDs":[17,18],"metadata":{"skip":false,"skipReason":null},"line":32,"column":5,"url":"file:///C:/Users/USER/Downloads/Intera-oEdu/test/models/post_model_test.dart"},"type":"testStart","time":27019}
+{"testID":20,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":27053}
+{"test":{"id":21,"name":"PostModel.fromJson usa defaults quando campos opcionais ausentes","suiteID":4,"groupIDs":[17,18],"metadata":{"skip":false,"skipReason":null},"line":56,"column":5,"url":"file:///C:/Users/USER/Downloads/Intera-oEdu/test/models/post_model_test.dart"},"type":"testStart","time":27054}
+{"testID":21,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":27128}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":"http://127.0.0.1:56585/VSKpEWkMzzw=/"}}]
+{"suite":{"id":22,"platform":"vm","path":"C:/Users/USER/Downloads/Intera-oEdu/test/notifiers/auth_notifier_test.dart"},"type":"suite","time":28644}
+{"test":{"id":23,"name":"loading C:/Users/USER/Downloads/Intera-oEdu/test/notifiers/auth_notifier_test.dart","suiteID":22,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":28644}
+{"suite":{"id":24,"platform":"vm","path":"C:/Users/USER/Downloads/Intera-oEdu/test/notifiers/feed_notifier_test.dart"},"type":"suite","time":28742}
+{"test":{"id":25,"name":"loading C:/Users/USER/Downloads/Intera-oEdu/test/notifiers/feed_notifier_test.dart","suiteID":24,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":28742}
+{"testID":7,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":29065}
+{"group":{"id":26,"suiteID":6,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":7,"line":null,"column":null,"url":null},"type":"group","time":29066}
+{"test":{"id":27,"name":"login rejeitado preserva erro e não renova sessão","suiteID":6,"groupIDs":[26],"metadata":{"skip":false,"skipReason":null},"line":17,"column":3,"url":"file:///C:/Users/USER/Downloads/Intera-oEdu/test/network/api_client_test.dart"},"type":"testStart","time":29066}
+{"suite":{"id":28,"platform":"vm","path":"C:/Users/USER/Downloads/Intera-oEdu/test/widgets/create_post_screen_test.dart"},"type":"suite","time":29121}
+{"test":{"id":29,"name":"loading C:/Users/USER/Downloads/Intera-oEdu/test/widgets/create_post_screen_test.dart","suiteID":28,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":29124}
+{"testID":27,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":29234}
+{"test":{"id":30,"name":"401 persistente repete requisição apenas uma vez","suiteID":6,"groupIDs":[26],"metadata":{"skip":false,"skipReason":null},"line":39,"column":3,"url":"file:///C:/Users/USER/Downloads/Intera-oEdu/test/network/api_client_test.dart"},"type":"testStart","time":29234}
+{"testID":30,"messageType":"print","message":"[SecureStorage] Tokens salvos","type":"print","time":29295}
+{"testID":30,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":29297}
+{"test":{"id":31,"name":"erro com corpo inesperado é ApiException: []","suiteID":6,"groupIDs":[26],"metadata":{"skip":false,"skipReason":null},"line":64,"column":5,"url":"file:///C:/Users/USER/Downloads/Intera-oEdu/test/network/api_client_test.dart"},"type":"testStart","time":29297}
+{"testID":31,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":29307}
+{"test":{"id":32,"name":"erro com corpo inesperado é ApiException: null","suiteID":6,"groupIDs":[26],"metadata":{"skip":false,"skipReason":null},"line":64,"column":5,"url":"file:///C:/Users/USER/Downloads/Intera-oEdu/test/network/api_client_test.dart"},"type":"testStart","time":29308}
+{"testID":32,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":29316}
+{"test":{"id":33,"name":"erro com corpo inesperado é ApiException: 42","suiteID":6,"groupIDs":[26],"metadata":{"skip":false,"skipReason":null},"line":64,"column":5,"url":"file:///C:/Users/USER/Downloads/Intera-oEdu/test/network/api_client_test.dart"},"type":"testStart","time":29317}
+{"testID":33,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":29330}
+{"test":{"id":34,"name":"erro com corpo inesperado é ApiException: not json","suiteID":6,"groupIDs":[26],"metadata":{"skip":false,"skipReason":null},"line":64,"column":5,"url":"file:///C:/Users/USER/Downloads/Intera-oEdu/test/network/api_client_test.dart"},"type":"testStart","time":29330}
+{"testID":34,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":29342}
+{"test":{"id":35,"name":"erro com corpo inesperado é ApiException: {\"message\":42}","suiteID":6,"groupIDs":[26],"metadata":{"skip":false,"skipReason":null},"line":64,"column":5,"url":"file:///C:/Users/USER/Downloads/Intera-oEdu/test/network/api_client_test.dart"},"type":"testStart","time":29342}
+{"testID":35,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":29352}
+{"suite":{"id":36,"platform":"vm","path":"C:/Users/USER/Downloads/Intera-oEdu/test/widgets/login_screen_test.dart"},"type":"suite","time":31521}
+{"test":{"id":37,"name":"loading C:/Users/USER/Downloads/Intera-oEdu/test/widgets/login_screen_test.dart","suiteID":36,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":31521}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":"http://127.0.0.1:56606/8cipxkmwfEA=/"}}]
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":"http://127.0.0.1:56613/XRVYxm6kyRg=/"}}]
+{"testID":23,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":33091}
+{"group":{"id":38,"suiteID":22,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":4,"line":null,"column":null,"url":null},"type":"group","time":33092}
+{"test":{"id":39,"name":"restaura identidade após renovar token: null","suiteID":22,"groupIDs":[38],"metadata":{"skip":false,"skipReason":null},"line":35,"column":5,"url":"file:///C:/Users/USER/Downloads/Intera-oEdu/test/notifiers/auth_notifier_test.dart"},"type":"testStart","time":33093}
+{"testID":39,"messageType":"print","message":"[SecureStorage] Tokens salvos","type":"print","time":33240}
+{"testID":39,"messageType":"print","message":"[SecureStorage] Tokens removidos","type":"print","time":33243}
+{"testID":39,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":33246}
+{"test":{"id":40,"name":"restaura identidade após renovar token: header.eyJzdWIiOiJleHBpcmVkIiwiZXhwIjoxLCJyb2xlcyI6WyJhZG1pbiJdfQ==.signature","suiteID":22,"groupIDs":[38],"metadata":{"skip":false,"skipReason":null},"line":35,"column":5,"url":"file:///C:/Users/USER/Downloads/Intera-oEdu/test/notifiers/auth_notifier_test.dart"},"type":"testStart","time":33248}
+{"testID":40,"messageType":"print","message":"[SecureStorage] Tokens salvos","type":"print","time":33259}
+{"testID":40,"messageType":"print","message":"[SecureStorage] Tokens removidos","type":"print","time":33260}
+{"testID":40,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":33261}
+{"test":{"id":41,"name":"restaura identidade após renovar token: invalid","suiteID":22,"groupIDs":[38],"metadata":{"skip":false,"skipReason":null},"line":35,"column":5,"url":"file:///C:/Users/USER/Downloads/Intera-oEdu/test/notifiers/auth_notifier_test.dart"},"type":"testStart","time":33262}
+{"testID":41,"messageType":"print","message":"[SecureStorage] Tokens salvos","type":"print","time":33280}
+{"testID":41,"messageType":"print","message":"[SecureStorage] Tokens removidos","type":"print","time":33280}
+{"testID":41,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":33281}
+{"test":{"id":42,"name":"token inválido sem refresh não autentica","suiteID":22,"groupIDs":[38],"metadata":{"skip":false,"skipReason":null},"line":53,"column":3,"url":"file:///C:/Users/USER/Downloads/Intera-oEdu/test/notifiers/auth_notifier_test.dart"},"type":"testStart","time":33281}
+{"testID":42,"messageType":"print","message":"[SecureStorage] Tokens removidos","type":"print","time":33294}
+{"testID":42,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":33295}
+{"testID":25,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":33501}
+{"group":{"id":43,"suiteID":24,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":8,"line":null,"column":null,"url":null},"type":"group","time":33501}
+{"group":{"id":44,"suiteID":24,"parentID":43,"name":"load()","metadata":{"skip":false,"skipReason":null},"testCount":3,"line":29,"column":3,"url":"file:///C:/Users/USER/Downloads/Intera-oEdu/test/notifiers/feed_notifier_test.dart"},"type":"group","time":33502}
+{"test":{"id":45,"name":"load() popula posts e limpa erro em sucesso","suiteID":24,"groupIDs":[43,44],"metadata":{"skip":false,"skipReason":null},"line":30,"column":5,"url":"file:///C:/Users/USER/Downloads/Intera-oEdu/test/notifiers/feed_notifier_test.dart"},"type":"testStart","time":33502}
+{"testID":45,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":33625}
+{"test":{"id":46,"name":"load() registra erro quando getFeed lança exceção","suiteID":24,"groupIDs":[43,44],"metadata":{"skip":false,"skipReason":null},"line":42,"column":5,"url":"file:///C:/Users/USER/Downloads/Intera-oEdu/test/notifiers/feed_notifier_test.dart"},"type":"testStart","time":33626}
+{"testID":46,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":33637}
+{"test":{"id":47,"name":"load() hasMore é true quando há next_cursor","suiteID":24,"groupIDs":[43,44],"metadata":{"skip":false,"skipReason":null},"line":53,"column":5,"url":"file:///C:/Users/USER/Downloads/Intera-oEdu/test/notifiers/feed_notifier_test.dart"},"type":"testStart","time":33639}
+{"testID":47,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":33652}
+{"group":{"id":48,"suiteID":24,"parentID":43,"name":"toggleReaction()","metadata":{"skip":false,"skipReason":null},"testCount":3,"line":66,"column":3,"url":"file:///C:/Users/USER/Downloads/Intera-oEdu/test/notifiers/feed_notifier_test.dart"},"type":"group","time":33652}
+{"test":{"id":49,"name":"toggleReaction() reação otimista: sem reação → com reação, contador +1","suiteID":24,"groupIDs":[43,48],"metadata":{"skip":false,"skipReason":null},"line":67,"column":5,"url":"file:///C:/Users/USER/Downloads/Intera-oEdu/test/notifiers/feed_notifier_test.dart"},"type":"testStart","time":33653}
+{"testID":49,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":33697}
+{"test":{"id":50,"name":"toggleReaction() reação otimista: com reação → sem reação, contador -1","suiteID":24,"groupIDs":[43,48],"metadata":{"skip":false,"skipReason":null},"line":81,"column":5,"url":"file:///C:/Users/USER/Downloads/Intera-oEdu/test/notifiers/feed_notifier_test.dart"},"type":"testStart","time":33698}
+{"testID":50,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":33710}
+{"test":{"id":51,"name":"toggleReaction() rollback quando addReaction falha","suiteID":24,"groupIDs":[43,48],"metadata":{"skip":false,"skipReason":null},"line":95,"column":5,"url":"file:///C:/Users/USER/Downloads/Intera-oEdu/test/notifiers/feed_notifier_test.dart"},"type":"testStart","time":33711}
+{"testID":51,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":33728}
+{"group":{"id":52,"suiteID":24,"parentID":43,"name":"changeScope()","metadata":{"skip":false,"skipReason":null},"testCount":2,"line":110,"column":3,"url":"file:///C:/Users/USER/Downloads/Intera-oEdu/test/notifiers/feed_notifier_test.dart"},"type":"group","time":33728}
+{"test":{"id":53,"name":"changeScope() recarrega quando scope muda","suiteID":24,"groupIDs":[43,52],"metadata":{"skip":false,"skipReason":null},"line":111,"column":5,"url":"file:///C:/Users/USER/Downloads/Intera-oEdu/test/notifiers/feed_notifier_test.dart"},"type":"testStart","time":33729}
+{"testID":53,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":33752}
+{"test":{"id":54,"name":"changeScope() não recarrega quando scope não muda","suiteID":24,"groupIDs":[43,52],"metadata":{"skip":false,"skipReason":null},"line":123,"column":5,"url":"file:///C:/Users/USER/Downloads/Intera-oEdu/test/notifiers/feed_notifier_test.dart"},"type":"testStart","time":33753}
+{"testID":54,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":33766}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":"http://127.0.0.1:56625/6LQHQNdwwRs=/"}}]
+{"suite":{"id":55,"platform":"vm","path":"C:/Users/USER/Downloads/Intera-oEdu/test/widget_test.dart"},"type":"suite","time":35227}
+{"test":{"id":56,"name":"loading C:/Users/USER/Downloads/Intera-oEdu/test/widget_test.dart","suiteID":55,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":35227}
+{"testID":29,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":35249}
+{"group":{"id":57,"suiteID":28,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":4,"line":null,"column":null,"url":null},"type":"group","time":35250}
+{"group":{"id":58,"suiteID":28,"parentID":57,"name":"CreatePostScreen","metadata":{"skip":false,"skipReason":null},"testCount":4,"line":36,"column":3,"url":"file:///C:/Users/USER/Downloads/Intera-oEdu/test/widgets/create_post_screen_test.dart"},"type":"group","time":35250}
+{"test":{"id":59,"name":"CreatePostScreen botão Publicar desabilitado quando campo vazio","suiteID":28,"groupIDs":[57,58],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":37,"root_column":5,"root_url":"file:///C:/Users/USER/Downloads/Intera-oEdu/test/widgets/create_post_screen_test.dart"},"type":"testStart","time":35251}
+{"testID":59,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":37166}
+{"test":{"id":60,"name":"CreatePostScreen botão Publicar habilitado com texto preenchido","suiteID":28,"groupIDs":[57,58],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":45,"root_column":5,"root_url":"file:///C:/Users/USER/Downloads/Intera-oEdu/test/widgets/create_post_screen_test.dart"},"type":"testStart","time":37167}
+{"testID":60,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":37646}
+{"test":{"id":61,"name":"CreatePostScreen chama feedRepo.createPost ao publicar","suiteID":28,"groupIDs":[57,58],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":56,"root_column":5,"root_url":"file:///C:/Users/USER/Downloads/Intera-oEdu/test/widgets/create_post_screen_test.dart"},"type":"testStart","time":37646}
+{"testID":61,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":38385}
+{"test":{"id":62,"name":"CreatePostScreen exibe SnackBar quando createPost falha","suiteID":28,"groupIDs":[57,58],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":74,"root_column":5,"root_url":"file:///C:/Users/USER/Downloads/Intera-oEdu/test/widgets/create_post_screen_test.dart"},"type":"testStart","time":38385}
+{"testID":62,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":38710}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":"http://127.0.0.1:56639/Wff8WLColKE=/"}}]
+{"testID":37,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":41443}
+{"group":{"id":63,"suiteID":36,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":4,"line":null,"column":null,"url":null},"type":"group","time":41444}
+{"group":{"id":64,"suiteID":36,"parentID":63,"name":"LoginScreen","metadata":{"skip":false,"skipReason":null},"testCount":4,"line":33,"column":3,"url":"file:///C:/Users/USER/Downloads/Intera-oEdu/test/widgets/login_screen_test.dart"},"type":"group","time":41444}
+{"test":{"id":65,"name":"LoginScreen renderiza campos de email e senha","suiteID":36,"groupIDs":[63,64],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":34,"root_column":5,"root_url":"file:///C:/Users/USER/Downloads/Intera-oEdu/test/widgets/login_screen_test.dart"},"type":"testStart","time":41444}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":"http://127.0.0.1:56648/_-fwdHxhZDY=/"}}]
+{"testID":56,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":42060}
+{"group":{"id":66,"suiteID":55,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":1,"line":null,"column":null,"url":null},"type":"group","time":42061}
+{"test":{"id":67,"name":"App builds without errors","suiteID":55,"groupIDs":[66],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":5,"root_column":3,"root_url":"file:///C:/Users/USER/Downloads/Intera-oEdu/test/widget_test.dart"},"type":"testStart","time":42061}
+{"testID":65,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":44025}
+{"test":{"id":68,"name":"LoginScreen exibe erro de validação com email inválido","suiteID":36,"groupIDs":[63,64],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":42,"root_column":5,"root_url":"file:///C:/Users/USER/Downloads/Intera-oEdu/test/widgets/login_screen_test.dart"},"type":"testStart","time":44026}
+{"testID":68,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":44550}
+{"test":{"id":69,"name":"LoginScreen chama AuthNotifier.login com credenciais corretas","suiteID":36,"groupIDs":[63,64],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":54,"root_column":5,"root_url":"file:///C:/Users/USER/Downloads/Intera-oEdu/test/widgets/login_screen_test.dart"},"type":"testStart","time":44550}
+{"testID":69,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":44803}
+{"test":{"id":70,"name":"LoginScreen exibe SnackBar quando login falha","suiteID":36,"groupIDs":[63,64],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":72,"root_column":5,"root_url":"file:///C:/Users/USER/Downloads/Intera-oEdu/test/widgets/login_screen_test.dart"},"type":"testStart","time":44803}
+{"testID":70,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":45064}
+{"testID":67,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":45230}
+{"success":true,"type":"done","time":46320}

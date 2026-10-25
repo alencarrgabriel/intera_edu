@@ -1,0 +1,24 @@
+{
+  "checked_at": "2026-10-25T15:19:17.0769882+00:00",
+  "repository": "alencarrgabriel/intera_edu",
+  "default_branch": "master",
+  "open_pull_requests": 0,
+  "branches": [
+    {
+      "name": "docs/cleanup",
+      "protected": false,
+      "sha": "f15bcb22cff3d97f20c32e2cd364cf26e4093f44"
+    },
+    {
+      "name": "feat/fase-1-e-2",
+      "protected": false,
+      "sha": "77d32c720778f151391072b602d2c3a64a2fc901"
+    },
+    {
+      "name": "master",
+      "protected": false,
+      "sha": "d04d9496578b01aa9332fcb21cd07fb297854310"
+    }
+  ],
+  "releases": []
+}

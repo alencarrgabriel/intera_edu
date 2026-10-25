@@ -1,0 +1,10 @@
+FROM node:20-bookworm@sha256:8f693eaa7e0a8e71560c9a82b55fd54c2ae920a2ba5d2cde28bac7d1c01c9ba5 AS node
+FROM ghcr.io/cirruslabs/flutter:3.38.10@sha256:3a94866984c440444661873d06668b0c38817923b931780e7932370618c484ed
+COPY --from=node /usr/local/bin/node /usr/local/bin/node
+COPY --from=node /usr/local/lib/node_modules/npm /usr/local/lib/node_modules/npm
+RUN ln -s /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm
+RUN apt-get update && apt-get install -y --no-install-recommends python3 && rm -rf /var/lib/apt/lists/*
+WORKDIR /app
+COPY . .
+RUN flutter pub get --enforce-lockfile && cd backend && npm ci --no-audit --no-fund
+CMD ["python3", ".scripts/run-tests.py"]

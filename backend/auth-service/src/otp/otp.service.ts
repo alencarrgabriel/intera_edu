@@ -45,8 +45,11 @@ export class OtpService {
     const from = process.env.RESEND_FROM ?? 'InteraEdu <onboarding@resend.dev>';
 
     if (!apiKey) {
-      this.logger.warn(`[DEV] OTP for ${email}: ${code}`);
-      return;
+      if (process.env.NODE_ENV === 'development' && process.env.ALLOW_DEV_OTP_LOG === 'true') {
+        this.logger.warn(`[DEV ONLY] OTP for ${email}: ${code}`);
+        return;
+      }
+      throw new HttpException('Email delivery is not configured.', HttpStatus.SERVICE_UNAVAILABLE);
     }
 
     const subject = purpose === 'registration'
@@ -68,8 +71,8 @@ export class OtpService {
     });
 
     if (!res.ok) {
-      const body = await res.text();
-      this.logger.error(`Resend error ${res.status}: ${body}`);
+      this.logger.error(`Email delivery failed with status ${res.status}`);
+      throw new HttpException('Email delivery failed.', HttpStatus.SERVICE_UNAVAILABLE);
     }
   }
 

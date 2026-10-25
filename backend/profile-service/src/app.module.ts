@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { HealthController } from '@interaedu/shared';
 import { APP_GUARD } from '@nestjs/core';
 import { ConfigModule } from '@nestjs/config';
 import { DatabaseModule, RedisModule, JwtAuthGuard, JwtStrategy, AuditModule } from '@interaedu/shared';
@@ -22,7 +23,7 @@ import { SuggestionsModule } from './suggestions/suggestions.module';
     SuggestionsModule,
     AuditModule,
   ],
-  controllers: [],
+  controllers: [HealthController],
   providers: [
     {
       provide: APP_GUARD,

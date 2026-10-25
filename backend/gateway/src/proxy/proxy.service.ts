@@ -23,6 +23,18 @@ export class ProxyService {
     return url;
   }
 
+  async checkHealth(): Promise<Record<string, boolean>> {
+    const entries = await Promise.all(Object.entries(this.serviceUrls).map(async ([name, url]) => {
+      try {
+        const response = await axios.get(`${url}/health`, { timeout: 3000 });
+        return [name, response.status === 200 && response.data?.status === 'ok'] as const;
+      } catch {
+        return [name, false] as const;
+      }
+    }));
+    return Object.fromEntries(entries);
+  }
+
   async forward(
     service: string,
     method: string,

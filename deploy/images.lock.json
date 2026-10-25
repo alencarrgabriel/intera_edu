@@ -1,0 +1,12 @@
+{
+  "alpine:3.22": "alpine:3.22@sha256:2e0b81d60597f449baa56dc25d355367869d2dca4cd57e866f1e2b52af3eb55f",
+  "ghcr.io/cirruslabs/flutter:3.38.10": "ghcr.io/cirruslabs/flutter:3.38.10@sha256:3a94866984c440444661873d06668b0c38817923b931780e7932370618c484ed",
+  "golang:1.24.8-bookworm": "golang:1.24.8-bookworm@sha256:4ed690d6649d63c312b99a6120025ec79ce3b542968a37da53d6236c7c61a848",
+  "grafana/grafana:latest": "grafana/grafana:latest@sha256:dbbc38ea21103cefb50396340cd88afec779c7e070b0a7bf5a75b4ce46651d3f",
+  "nginx:1.28-alpine": "nginx:1.28-alpine@sha256:a8b39bd9cf0f83869a2162827a0caf6137ddf759d50a171451b335cecc87d236",
+  "node:20-alpine": "node:20-alpine@sha256:fb4cd12c85ee03686f6af5362a0b0d56d50c58a04632e6c0fb8363f609372293",
+  "node:20-bookworm": "node:20-bookworm@sha256:8f693eaa7e0a8e71560c9a82b55fd54c2ae920a2ba5d2cde28bac7d1c01c9ba5",
+  "postgres:16-alpine": "postgres:16-alpine@sha256:f4610795587492cd4fb887c2dc3de301b813278bb6f616992061141b5f15ac36",
+  "prom/prometheus:latest": "prom/prometheus:latest@sha256:fa3302279710be2f21a8301ec17a8b4f2301fd829bd113839b3b6b02b6f191a2",
+  "redis:7-alpine": "redis:7-alpine@sha256:57e4255cc971b1c8d6f8a6ca283ac01bc3ecdd914273ef6bfaede87aaecd6541"
+}
